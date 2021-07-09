@@ -13,6 +13,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
 
+import { fbAuth } from "./firebase";
+
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(
