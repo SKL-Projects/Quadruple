@@ -14,6 +14,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
 
 import { fbAuth } from "./firebase";
+import Auth from "./src/screens/Auth";
 
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();
@@ -31,8 +32,17 @@ export default function App() {
    return (
       <Provider store={store}>
          <NavigationContainer>
-            <Stack.Navigator initialRouteName="홈">
-               <Stack.Screen name="홈" component={HomeScreen} />
+            <Stack.Navigator initialRouteName="Home">
+               <Stack.Screen
+                  name="Home"
+                  component={HomeScreen}
+                  options={{ headerShown: false }}
+               />
+               <Stack.Screen
+                  name="Auth"
+                  component={Auth}
+                  options={{ headerShown: false }}
+               />
             </Stack.Navigator>
          </NavigationContainer>
       </Provider>
