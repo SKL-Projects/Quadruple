@@ -1,9 +1,10 @@
 import { combineReducers } from "redux";
 import { all } from "redux-saga/effects";
 import dataReduxExample, { dataSaga } from "./data";
+import auth from "./auth";
 
 // 일반 redux 연결
-const rootReducer = combineReducers({ dataReduxExample });
+const rootReducer = combineReducers({ auth });
 
 // react saga 연결
 export function* rootSaga() {
