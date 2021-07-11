@@ -14,6 +14,12 @@ function Home({ navigation }) {
                onPress={() => navigation.navigate("Auth")}
             />
          </View>
+         <View style={styles.map}>
+            <Button
+               title="Show Map"
+               onPress={() => navigation.navigate("GoogleMap")}
+            />
+         </View>
       </View>
    );
 }
@@ -30,7 +36,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
    },
-   login: {
+   map: {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",

@@ -15,6 +15,7 @@ import HomeScreen from "./src/screens/Home";
 
 import { fbAuth } from "./firebase";
 import Auth from "./src/screens/Auth";
+import GoogleMap from "./src/screens/GoogleMap";
 
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();
@@ -41,6 +42,11 @@ export default function App() {
                <Stack.Screen
                   name="Auth"
                   component={Auth}
+                  options={{ headerShown: false }}
+               />
+               <Stack.Screen
+                  name="GoogleMap"
+                  component={GoogleMap}
                   options={{ headerShown: false }}
                />
             </Stack.Navigator>
