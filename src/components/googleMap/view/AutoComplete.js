@@ -1,11 +1,17 @@
-import * as React from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { StyleSheet,View, Text } from 'react-native';
 import Constants from 'expo-constants';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { fbConfig } from "../../../../env";
 
-const GOOGLE_PLACES_API_KEY = 'AIzaSyBjBwEuQRkMmKS6bXKVdOdUrkV-Qoiveg0'; // never save your real api key in a snack!
+const GOOGLE_PLACES_API_KEY = fbConfig.googleMapKey; // never save your real api key in a snack!
 
-const App = () => {
+export default function AutoComplete() {
+  const [placeId, setPlaceId] = useState('');
+
+  useEffect(() => {    
+ }, []);
+
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
@@ -14,14 +20,13 @@ const App = () => {
           key: GOOGLE_PLACES_API_KEY,
           language: 'ko', // language of the results
         }}
-        onPress={(data, details = null) => console.log(data)}
+        onPress={(data, details = null) => {
+          console.log(data.place_id);
+          setPlaceId(data.place_id)
+        }}
         onFail={(error) => console.error(error)}
-        requestUrl={{
-          url:
-            'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api',
-          useOnPlatform: 'web',
-        }} // this in only required for use on the web. See https://git.io/JflFv more for details.
       />
+      <Text>{placeId}</Text>
     </View>
   );
 };
@@ -34,5 +39,3 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
   },
 });
-
-export default App;
