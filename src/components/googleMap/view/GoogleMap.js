@@ -23,19 +23,19 @@ export default function GoogleMap() {
       getLocation();      
    }, []);
    return (
-      <>
+      <View style={styles.container}>
          {isLoading ? (
             <View style={styles.content}>
                <Text>Loading...</Text>
             </View>
          ):(
-         <View style={styles.container}>
-            <MapView style={styles.map} zoom={20} initialRegion={{ latitude: pos.latitude, longitude: pos.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }}> 
-               <MapView.Marker coordinate={{ latitude: pos.latitude, longitude: pos.longitude, }} />
-            </MapView>
-         </View>
+            <>
+               <MapView style={styles.map} zoom={20} initialRegion={{ latitude: pos.latitude, longitude: pos.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }}> 
+                  <MapView.Marker coordinate={{ latitude: pos.latitude, longitude: pos.longitude, }} />
+               </MapView>
+            </>
          )}
-      </>
+      </View>
    );
 }
 

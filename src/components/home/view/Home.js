@@ -14,10 +14,16 @@ function Home({ navigation }) {
                onPress={() => navigation.navigate("Auth")}
             />
          </View>
-         <View style={styles.map}>
+         <View style={styles.login}>
             <Button
                title="Show Map"
                onPress={() => navigation.navigate("GoogleMap")}
+            />
+         </View>
+         <View style={styles.login}>
+            <Button
+               title="Show search"
+               onPress={() => navigation.navigate("AutoComplete")}
             />
          </View>
       </View>
@@ -36,7 +42,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
    },
-   map: {
+   login: {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",

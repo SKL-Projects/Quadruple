@@ -16,6 +16,7 @@ import HomeScreen from "./src/screens/Home";
 import { fbAuth } from "./firebase";
 import Auth from "./src/screens/Auth";
 import GoogleMap from "./src/screens/GoogleMap";
+import AutoComplete from "./src/screens/AutoComplete.js";
 
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();
@@ -47,6 +48,11 @@ export default function App() {
                <Stack.Screen
                   name="GoogleMap"
                   component={GoogleMap}
+                  options={{ headerShown: false }}
+               />
+               <Stack.Screen
+                  name="AutoComplete"
+                  component={AutoComplete}
                   options={{ headerShown: false }}
                />
             </Stack.Navigator>
