@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Login from "../view/Login";
-import { fbAuth, fbStore } from "../../../../firebase";
+import { fbAuth, fbStore, googleSignIn } from "../../../../firebase";
 import { isIOS } from "react-native-elements/dist/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { signin } from "../../../modules/auth";
@@ -113,6 +113,15 @@ function LoginContainer({ navigation }) {
       setLoading(false);
    };
 
+   const googleLogin = async () => {
+      try {
+         const res = await googleSignIn();
+         console.log(res);
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
    return (
       <Login
          navigation={navigation}
@@ -123,6 +132,7 @@ function LoginContainer({ navigation }) {
          onPressLogin={onPressLogin}
          errMsg={errMsg}
          loading={loading}
+         googleLogin={googleLogin}
       />
    );
 }

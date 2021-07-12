@@ -25,3 +25,14 @@ firebase.initializeApp(firebaseConfig);
 
 export const fbAuth = firebase.auth();
 export const fbStore = firebase.firestore();
+export async function googleSignIn() {
+   const fbAuthGoogleProvider = new firebase.auth.GoogleAuthProvider();
+   try {
+      const res = await fbAuth.signInWithPopup(fbAuthGoogleProvider);
+      console.log(res);
+      return res;
+   } catch (err) {
+      console.log(err);
+      return err;
+   }
+}

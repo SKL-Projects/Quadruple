@@ -11,9 +11,8 @@ import rootReducer, { rootSaga } from "./src/modules";
 /*네비게이션 */
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "./src/screens/Home";
 
-import { fbAuth } from "./firebase";
+import HomeScreen from "./src/screens/Home";
 import Auth from "./src/screens/Auth";
 
 /*리덕스 */

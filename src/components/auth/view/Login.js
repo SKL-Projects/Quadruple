@@ -16,8 +16,9 @@ const styles = StyleSheet.create({
    },
    content: {
       flex: 5,
-      alignItems: "center",
-      justifyContent: "center",
+   },
+   input: {
+      width: 300,
    },
    header: {
       flex: 1,
@@ -25,13 +26,10 @@ const styles = StyleSheet.create({
    },
    inputContainer: {
       flex: 5,
-   },
-   input: {
-      width: "80vw",
-      maxWidth: "300px",
+      width: 300,
    },
    button: {
-      width: "100px",
+      width: 100,
    },
 });
 
@@ -44,6 +42,7 @@ function Login({
    onPressLogin,
    errMsg,
    loading,
+   googleLogin,
 }) {
    return (
       <View style={styles.container}>
@@ -54,8 +53,8 @@ function Login({
                <Input
                   placeholder="이메일"
                   leftIcon={<Icon name="user" size={24} color="black" />}
-                  style={styles.input}
                   value={userInfo.email}
+                  style={styles.input}
                   errorMessage={errMsg.email}
                   onChangeText={(value) => onChange("email", value)}
                />
@@ -83,18 +82,19 @@ function Login({
                   style={{
                      flexDirection: "row",
                      justifyContent: "flex-end",
+                     width: 300,
                   }}>
                   <Button
                      title={login ? "Sign Up" : "Log In"}
                      type="clear"
-                     onPress={() => setLogIn((prev) => !prev)}
                      containerStyle={styles.button}
+                     onPress={() => setLogIn((prev) => !prev)}
                   />
                   <Button
                      title={login ? "Log In" : "Sign Up"}
-                     containerStyle={styles.button}
                      onPress={onPressLogin}
                      loading={loading}
+                     containerStyle={styles.button}
                   />
                </View>
                <View style={{ marginTop: 30 }}>
@@ -102,12 +102,13 @@ function Login({
                      title="구글로 로그인하기"
                      type="outline"
                      iconPosition="left"
+                     onPress={googleLogin}
                      icon={
                         <Icon
                            name="google"
                            size={15}
                            color="#ea4335"
-                           style={{ position: "absolute", left: "50px" }}
+                           style={{ position: "absolute", left: 30 }}
                         />
                      }
                   />
