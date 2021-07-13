@@ -16,7 +16,6 @@ import rootReducer, { rootSaga } from "./src/modules";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
-import Auth from "./src/screens/Auth";
 
 import { fbAuth } from "./firebase";
 import Auth from "./src/screens/Auth";
