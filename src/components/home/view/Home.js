@@ -6,23 +6,27 @@ import { LinearGradient } from 'expo-linear-gradient'
 function Home({ navigation }) {
    return (
       <View style={styles.container}>
-         <LinearGradient
-            colors={['#7f7fd5', '#86a8e7', '#91eae4']}
-            style={styles.container}>
-            <View style={styles.content}>
-               <Text>Home Screen</Text>
-            </View>
-            <View style={styles.login}>
-               <Button
-                  title="Log in"
-                  onPress={() => navigation.navigate("Auth")}
-               />
-               <Button
-                  title="Template"
-                  onPress={() => navigation.navigate("Template")}
-               />
-            </View>
-         </LinearGradient>
+         <View style={styles.content}>
+            <Text>Home Screen</Text>
+         </View>
+         <View style={styles.login}>
+            <Button
+               title="Log in"
+               onPress={() => navigation.navigate("Auth")}
+            />
+         </View>
+         <View style={styles.login}>
+            <Button
+               title="Show Map"
+               onPress={() => navigation.navigate("GoogleMap")}
+            />
+         </View>
+         <View style={styles.login}>
+            <Button
+               title="Show search"
+               onPress={() => navigation.navigate("AutoComplete")}
+            />
+         </View>
       </View>
    );
 }
