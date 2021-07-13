@@ -1,8 +1,8 @@
 import React from "react";
 
 /*테마 */
-import { ThemeProvider } from 'styled-components'
-import theme from './src/lib/styles/theme'
+import { ThemeProvider } from "styled-components";
+import theme from "./src/lib/styles/theme";
 
 /*리덕스 */
 import createSagaMiddleware from "redux-saga";
@@ -19,7 +19,6 @@ import HomeScreen from "./src/screens/Home";
 import Auth from "./src/screens/Auth";
 
 import { fbAuth } from "./firebase";
-import Auth from "./src/screens/Auth";
 import GoogleMap from "./src/screens/GoogleMap";
 import AutoComplete from "./src/screens/AutoComplete.js";
 
