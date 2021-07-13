@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
       flex: 5,
    },
    input: {
-      width: 300,
+      width: 400,
    },
    header: {
       flex: 1,
@@ -26,15 +26,19 @@ const styles = StyleSheet.create({
    },
    inputContainer: {
       flex: 5,
-      width: 300,
+      width: 400,
    },
    button: {
       width: 100,
    },
+   buttonPwReset: {
+      width: 110,
+      position: "absolute",
+      left: 0,
+   },
 });
 
 function Login({
-   navigation,
    userInfo,
    onChange,
    login,
@@ -42,7 +46,8 @@ function Login({
    onPressLogin,
    errMsg,
    loading,
-   googleLogin,
+   wrongPW,
+   passwordReset,
 }) {
    return (
       <View style={styles.container}>
@@ -82,8 +87,16 @@ function Login({
                   style={{
                      flexDirection: "row",
                      justifyContent: "flex-end",
-                     width: 300,
+                     width: 400,
                   }}>
+                  {wrongPW && (
+                     <Button
+                        title="비밀번호 찾기"
+                        type="clear"
+                        containerStyle={styles.buttonPwReset}
+                        onPress={passwordReset}
+                     />
+                  )}
                   <Button
                      title={login ? "Sign Up" : "Log In"}
                      type="clear"
@@ -102,7 +115,6 @@ function Login({
                      title="구글로 로그인하기"
                      type="outline"
                      iconPosition="left"
-                     onPress={googleLogin}
                      icon={
                         <Icon
                            name="google"

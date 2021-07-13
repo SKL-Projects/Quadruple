@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Login from "../view/Login";
-import { fbAuth, fbStore, googleSignIn } from "../../../../firebase";
-import { isIOS } from "react-native-elements/dist/helpers";
-import { useDispatch, useSelector } from "react-redux";
+import { fbAuth, fbStore } from "../../../../firebase";
+import { useDispatch } from "react-redux";
 import { signin } from "../../../modules/auth";
+import { View } from "react-native";
+import PwResetModal from "../view/PwResetModal";
 
 function LoginContainer({ navigation }) {
    const [login, setLogIn] = useState(true);
@@ -17,7 +18,11 @@ function LoginContainer({ navigation }) {
       password: "",
       passwordCheck: "",
    });
+   const [wrongPW, setWrongPW] = useState(false);
    const [loading, setLoading] = useState(false);
+   const [modalVisible, setModalVisible] = useState(false);
+   const [loadingPwReset, setLoadingPwReset] = useState(false);
+   const [PwResetSended, setPwResetSended] = useState(false);
    const dispatch = useDispatch();
 
    const onChange = (name, value) => {
@@ -60,6 +65,7 @@ function LoginContainer({ navigation }) {
                   ...prev,
                   password: "비밀번호가 틀렸습니다.",
                }));
+               setWrongPW(true);
             } else if (err.code === "auth/user-not-found") {
                setErrMsg((prev) => ({
                   ...prev,
@@ -113,27 +119,45 @@ function LoginContainer({ navigation }) {
       setLoading(false);
    };
 
-   const googleLogin = async () => {
+   const passwordReset = () => {
+      setModalVisible(true);
+   };
+   const sendPwResetEmail = async () => {
+      setLoadingPwReset(true);
       try {
-         const res = await googleSignIn();
-         console.log(res);
+         await fbAuth.sendPasswordResetEmail(userInfo.email);
+         setPwResetSended(true);
+         setUserInfo((prev) => ({ ...prev, password: "" }));
       } catch (err) {
          console.log(err);
       }
+      setLoadingPwReset(false);
    };
 
    return (
-      <Login
-         navigation={navigation}
-         userInfo={userInfo}
-         onChange={onChange}
-         login={login}
-         setLogIn={setLogIn}
-         onPressLogin={onPressLogin}
-         errMsg={errMsg}
-         loading={loading}
-         googleLogin={googleLogin}
-      />
+      <View style={{ flex: 1 }}>
+         <Login
+            navigation={navigation}
+            userInfo={userInfo}
+            onChange={onChange}
+            login={login}
+            setLogIn={setLogIn}
+            onPressLogin={onPressLogin}
+            errMsg={errMsg}
+            loading={loading}
+            wrongPW={wrongPW}
+            passwordReset={passwordReset}
+         />
+         <PwResetModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            email={userInfo.email}
+            sendPwResetEmail={sendPwResetEmail}
+            loadingPwReset={loadingPwReset}
+            PwResetSended={PwResetSended}
+            setPwResetSended={setPwResetSended}
+         />
+      </View>
    );
 }
 
