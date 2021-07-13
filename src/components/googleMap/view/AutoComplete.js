@@ -1,41 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet,View, Text } from 'react-native';
-import Constants from 'expo-constants';
+import { StyleSheet, View,Text, Dimensions } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { fbConfig } from "../../../../env";
 
 const GOOGLE_PLACES_API_KEY = fbConfig.googleMapKey; // never save your real api key in a snack!
 
-export default function AutoComplete() {
-  const [placeId, setPlaceId] = useState('');
+export default function AutoComplete( props ) {
+  
 
   useEffect(() => {    
  }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.autoCompleteContainer}>
       <GooglePlacesAutocomplete
         placeholder="Search"
+        style={styles.autoComplete}
         query={{
           key: GOOGLE_PLACES_API_KEY,
           language: 'ko', // language of the results
         }}
         onPress={(data, details = null) => {
-          console.log(data.place_id);
-          setPlaceId(data.place_id)
+          console.log(details.geometry.location);
+          props.setRegion({
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          });
         }}
+        fetchDetails={true}
         onFail={(error) => console.error(error)}
       />
-      <Text>{placeId}</Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
+  autoCompleteContainer:{
     flex: 1,
-    padding: 10,
-    paddingTop: Constants.statusBarHeight + 10,
+    position:'absolute',
+    top:20,
+    zIndex:999,
+    width:'100%'
+  },
+  bar: {
     backgroundColor: '#ecf0f1',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
 });
+

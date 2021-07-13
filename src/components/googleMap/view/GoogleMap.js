@@ -2,20 +2,28 @@ import React, { useState, useEffect } from "react";
 import MapView from 'react-native-maps';
 import { StyleSheet, View,Text, Dimensions } from 'react-native';
 import * as Location from "expo-location";
+import AutoComplete from "./AutoComplete";
 
 export default function GoogleMap() {
    const [isLoading, setIsLoading] = useState(true);
-   const [pos, setPos] = useState();
+   const [region, setRegion] = useState('');
+   const [initialPos, setinitialPos] = useState('');
 
    const getLocation = async () => {
       try {
         await Location.requestForegroundPermissionsAsync();
         const { coords } = await Location.getCurrentPositionAsync();        
-        setPos(coords)
+        setRegion({
+         latitude: coords.latitude,
+         longitude: coords.longitude,
+         latitudeDelta: 0.01,
+         longitudeDelta: 0.01,
+        })
+        setinitialPos(coords)
         setIsLoading(false);
       } catch (error) {
-        Alert.alert("Can't find you.", "So sad");
-        history.back();
+        alert("Can't find you.", "So sad");
+        console.log(error)
       }
    };
 
@@ -29,11 +37,15 @@ export default function GoogleMap() {
                <Text>Loading...</Text>
             </View>
          ):(
-            <>
-               <MapView style={styles.map} zoom={20} initialRegion={{ latitude: pos.latitude, longitude: pos.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }}> 
-                  <MapView.Marker coordinate={{ latitude: pos.latitude, longitude: pos.longitude, }} />
-               </MapView>
-            </>
+            <View style={styles.content}>
+                  <AutoComplete setRegion={setRegion}/>
+                  <MapView style={styles.map} 
+                     initialRegion={{ latitude: initialPos.latitude, longitude: initialPos.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }}
+                     animateToCoordinate ={{ latitude: region.latitude, longitude: region.longitude},1000}
+                  > 
+                  <MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude, }} />
+                </MapView>
+            </View>
          )}
       </View>
    );
@@ -47,12 +59,14 @@ const styles = StyleSheet.create({
       justifyContent: "center",
    },
    content: {
-      flex: 5,
-      alignItems: "center",
-      justifyContent: "center",
+    position:'absolute',
+    flex: 5,
+    alignItems: "center",
+    justifyContent: "center",
    },
    map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+    zIndex:1,
    },
 });
