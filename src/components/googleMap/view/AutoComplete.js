@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { StyleSheet, View,Text, Dimensions } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { fbConfig } from "../../../../env";
@@ -7,9 +7,6 @@ const GOOGLE_PLACES_API_KEY = fbConfig.googleMapKey; // never save your real api
 
 export default function AutoComplete( props ) {
   
-
-  useEffect(() => {    
- }, []);
 
   return (
     <View style={styles.autoCompleteContainer}>
@@ -21,13 +18,14 @@ export default function AutoComplete( props ) {
           language: 'ko', // language of the results
         }}
         onPress={(data, details = null) => {
-          console.log(details.geometry.location);
+          //console.log(details.geometry.location);
           props.setRegion({
             latitude: details.geometry.location.lat,
             longitude: details.geometry.location.lng,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
-          });
+          });          
+          props.setIsSearch(true)
         }}
         fetchDetails={true}
         onFail={(error) => console.error(error)}
@@ -43,11 +41,6 @@ const styles = StyleSheet.create({
     top:20,
     zIndex:999,
     width:'100%'
-  },
-  bar: {
-    backgroundColor: '#ecf0f1',
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
   },
 });
 
