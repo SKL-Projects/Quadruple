@@ -48,6 +48,7 @@ function Login({
    loading,
    wrongPW,
    passwordReset,
+   onGoogleSignin,
 }) {
    return (
       <View style={styles.container}>
@@ -115,6 +116,7 @@ function Login({
                      title="구글로 로그인하기"
                      type="outline"
                      iconPosition="left"
+                     onPress={onGoogleSignin}
                      icon={
                         <Icon
                            name="google"

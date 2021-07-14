@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Login from "../view/Login";
 import { fbAuth, fbStore } from "../../../../firebase";
 import { useDispatch } from "react-redux";
 import { signin } from "../../../modules/auth";
 import { View } from "react-native";
 import PwResetModal from "../view/PwResetModal";
+
+import * as Google from "expo-google-app-auth";
+import { googleSignIn } from "../../../../env";
 
 function LoginContainer({ navigation }) {
    const [login, setLogIn] = useState(true);
@@ -23,6 +26,7 @@ function LoginContainer({ navigation }) {
    const [modalVisible, setModalVisible] = useState(false);
    const [loadingPwReset, setLoadingPwReset] = useState(false);
    const [PwResetSended, setPwResetSended] = useState(false);
+   const [googleUser, setGoogleUser] = useState(false);
    const dispatch = useDispatch();
 
    const onChange = (name, value) => {
@@ -134,6 +138,19 @@ function LoginContainer({ navigation }) {
       setLoadingPwReset(false);
    };
 
+   const onGoogleSignin = async () => {
+      try {
+         const res = await Google.logInAsync({
+            androidClientId: googleSignIn.clientId,
+
+            scopes: ["profile", "email"],
+         });
+         console.log(res);
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
    return (
       <View style={{ flex: 1 }}>
          <Login
@@ -147,6 +164,7 @@ function LoginContainer({ navigation }) {
             loading={loading}
             wrongPW={wrongPW}
             passwordReset={passwordReset}
+            onGoogleSignin={onGoogleSignin}
          />
          <PwResetModal
             modalVisible={modalVisible}

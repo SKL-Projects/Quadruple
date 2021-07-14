@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 /*테마 */
 import { ThemeProvider } from "styled-components";
@@ -16,8 +16,9 @@ import rootReducer, { rootSaga } from "./src/modules";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
+import Auth from "./src/screens/Auth";
 
-import { fbAuth } from "./firebase";
+/* 파이어페이스 */
 import GoogleMap from "./src/screens/GoogleMap";
 import AutoComplete from "./src/screens/AutoComplete.js";
 
