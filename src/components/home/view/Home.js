@@ -1,19 +1,27 @@
 import React from "react";
 import { Button } from "react-native-elements";
 import { StyleSheet, View, Text } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient'
+import { LinearGradient } from "expo-linear-gradient";
+import { useDispatch, useSelector } from "react-redux";
+import logout from "../../auth/container/LogoutFunc";
 
 function Home({ navigation }) {
+   const { auth } = useSelector((data) => data);
+   const dispatch = useDispatch();
    return (
       <View style={styles.container}>
          <View style={styles.content}>
             <Text>Home Screen</Text>
          </View>
          <View style={styles.login}>
-            <Button
-               title="Log in"
-               onPress={() => navigation.navigate("Auth")}
-            />
+            {auth.signined ? (
+               <Button title="Log out" onPress={() => logout(auth, dispatch)} />
+            ) : (
+               <Button
+                  title="Log in"
+                  onPress={() => navigation.navigate("Auth")}
+               />
+            )}
          </View>
          <View style={styles.login}>
             <Button
@@ -47,7 +55,7 @@ const styles = StyleSheet.create({
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      flexDirection: 'row',
+      flexDirection: "row",
    },
 });
 

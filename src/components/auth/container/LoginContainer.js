@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Login from "../view/Login";
-import { fbAuth, fbStore } from "../../../../firebase";
+import { fbAuth, fbAuthObject, fbStore } from "../../../../firebase";
 import { useDispatch } from "react-redux";
 import { signin } from "../../../modules/auth";
 import { View } from "react-native";
 import PwResetModal from "../view/PwResetModal";
 
-import * as Google from "expo-google-app-auth";
+import * as WebBrowser from "expo-web-browser";
+import { ResponseType } from "expo-auth-session";
+import * as Google from "expo-auth-session/providers/google";
 import { googleSignIn } from "../../../../env";
+
+WebBrowser.maybeCompleteAuthSession();
 
 function LoginContainer({ navigation }) {
    const [login, setLogIn] = useState(true);
@@ -26,7 +30,13 @@ function LoginContainer({ navigation }) {
    const [modalVisible, setModalVisible] = useState(false);
    const [loadingPwReset, setLoadingPwReset] = useState(false);
    const [PwResetSended, setPwResetSended] = useState(false);
-   const [googleUser, setGoogleUser] = useState(false);
+   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+      expoClientId: googleSignIn.expoGoClientId,
+      androidClientId: googleSignIn.androidClientId,
+      iosClientId: googleSignIn.iosClientId,
+      webClientId: googleSignIn.webClientId,
+      clientId: googleSignIn.clientId,
+   });
    const dispatch = useDispatch();
 
    const onChange = (name, value) => {
@@ -103,7 +113,7 @@ function LoginContainer({ navigation }) {
                userInfo.email,
                userInfo.password
             );
-            dispatch(signin(res.user.email, res.user.uid));
+            dispatch(signin(res.user.email, res.user.uid, "email"));
             navigation.navigate("Home");
          } catch (err) {
             if (err.code === "auth/invalid-email") {
@@ -138,14 +148,24 @@ function LoginContainer({ navigation }) {
       setLoadingPwReset(false);
    };
 
+   useEffect(() => {
+      const googleSignin = async (credential) => {
+         const res = await fbAuth.signInWithCredential(credential);
+         dispatch(signin(res.user.email, res.user.uid, "google"));
+      };
+      if (response?.type === "success") {
+         const { id_token } = response.params;
+
+         const credential =
+            fbAuthObject.GoogleAuthProvider.credential(id_token);
+         googleSignin(credential);
+      }
+   }, [response]);
+
    const onGoogleSignin = async () => {
       try {
-         const res = await Google.logInAsync({
-            androidClientId: googleSignIn.clientId,
-
-            scopes: ["profile", "email"],
-         });
-         console.log(res);
+         await promptAsync();
+         navigation.navigate("Home");
       } catch (err) {
          console.log(err);
       }
