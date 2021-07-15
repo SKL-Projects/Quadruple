@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
   autoCompleteContainer:{
     flex: 1,
     position:'absolute',
-    top:20,
+    top:30,
     zIndex:999,
-    width:'100%'
+    width:'95%'
   },
 });
 
