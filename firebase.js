@@ -8,6 +8,7 @@ import firebase from "firebase/app";
 // Add the Firebase products that you want to use
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/storage";
 
 import { fbConfig } from "./env";
 
@@ -25,4 +26,5 @@ firebase.initializeApp(firebaseConfig);
 
 export const fbAuth = firebase.auth();
 export const fbStore = firebase.firestore();
+export const fbStorageRef = firebase.storage().ref();
 export const fbAuthObject = firebase.auth;

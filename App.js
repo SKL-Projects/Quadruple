@@ -21,6 +21,7 @@ import Auth from "./src/screens/Auth";
 /* 파이어페이스 */
 import GoogleMap from "./src/screens/GoogleMap";
 import AutoComplete from "./src/screens/AutoComplete.js";
+import ProfileScreen from "./src/screens/Profile";
 
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();
@@ -57,6 +58,11 @@ export default function App() {
                <Stack.Screen
                   name="AutoComplete"
                   component={AutoComplete}
+                  options={{ headerShown: false }}
+               />
+               <Stack.Screen
+                  name="Profile"
+                  component={ProfileScreen}
                   options={{ headerShown: false }}
                />
             </Stack.Navigator>

@@ -7,9 +7,9 @@ import { View } from "react-native";
 import PwResetModal from "../view/PwResetModal";
 
 import * as WebBrowser from "expo-web-browser";
-import { ResponseType } from "expo-auth-session";
 import * as Google from "expo-auth-session/providers/google";
 import { googleSignIn } from "../../../../env";
+import { getProfileAction } from "../../../modules/profile";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -19,9 +19,11 @@ function LoginContainer({ navigation }) {
       password: "",
       passwordCheck: "",
       email: "",
+      nickname: "",
    });
    const [errMsg, setErrMsg] = useState({
       email: "",
+      nickname: "",
       password: "",
       passwordCheck: "",
    });
@@ -40,28 +42,79 @@ function LoginContainer({ navigation }) {
    const dispatch = useDispatch();
 
    const onChange = (name, value) => {
-      if (name === "email" && errMsg.email) {
-         setErrMsg((prev) => ({ ...prev, email: "" }));
-      } else if (name === "password" && errMsg.password) {
-         setErrMsg((prev) => ({ ...prev, password: "" }));
-      } else if (name === "passwordCheck" && errMsg.passwordCheck) {
-         setErrMsg((prev) => ({ ...prev, passwordCheck: "" }));
+      if (errMsg[name]) {
+         setErrMsg((prev) => ({ ...prev, [name]: "" }));
+      }
+      if (value && name !== "nickname" && !/[0-9a-zA-Z.;\-]/.test(value)) {
+         setErrMsg((prev) => ({
+            ...prev,
+            [name]: "영어, 숫자, 특수문자만 가능합니다.",
+         }));
+         return;
       }
       setUserInfo((prev) => ({ ...prev, [name]: value }));
    };
 
+   const handleError = (code) => {
+      switch (code) {
+         case "blank_email":
+            setErrMsg((prev) => ({
+               ...prev,
+               email: "이메일을 입력해주세요.",
+            }));
+            break;
+         case "blank_password":
+            setErrMsg((prev) => ({
+               ...prev,
+               password: "비밀번호를 입력해주세요.",
+            }));
+         case "auth/wrong-password":
+            setErrMsg((prev) => ({
+               ...prev,
+               password: "비밀번호가 틀렸습니다.",
+            }));
+            setWrongPW(true);
+            break;
+
+         case "auth/user-not-found":
+            setErrMsg((prev) => ({
+               ...prev,
+               email: "존재하지 않는 회원입니다..",
+            }));
+            break;
+         case "auth/invalid-email":
+            setErrMsg((prev) => ({
+               ...prev,
+               email: "이메일 형식을 지켜주세요.",
+            }));
+            break;
+         case "auth/email-already-in-use":
+            setErrMsg((prev) => ({
+               ...prev,
+               email: "이미 사용중인 이메일입니다.",
+            }));
+            break;
+         case "not_match_password_and_check":
+            setErrMsg((prev) => ({
+               ...prev,
+               passwordCheck: "비밀번호가 일치하지 않습니다.",
+            }));
+            break;
+         case "blank_nickname":
+            setErrMsg((prev) => ({
+               ...prev,
+               nickname: "닉네임을 입력해주세요.",
+            }));
+            break;
+      }
+   };
+
    const onPressLogin = async () => {
       if (!userInfo.email) {
-         setErrMsg((prev) => ({
-            ...prev,
-            email: "이메일을 입력해주세요.",
-         }));
+         handleError("blank_email");
          return;
       } else if (!userInfo.password) {
-         setErrMsg((prev) => ({
-            ...prev,
-            password: "비밀번호를 입력해주세요.",
-         }));
+         handleError("blank_password");
          return;
       }
       setLoading(true);
@@ -71,34 +124,19 @@ function LoginContainer({ navigation }) {
                userInfo.email,
                userInfo.password
             );
-            dispatch(signin(res.user.email, res.user.uid));
+            dispatch(signin(res.user.email, res.user.uid, "email"));
+            dispatch(getProfileAction(res.user.uid));
             navigation.navigate("Home");
          } catch (err) {
-            if (err.code === "auth/wrong-password") {
-               setErrMsg((prev) => ({
-                  ...prev,
-                  password: "비밀번호가 틀렸습니다.",
-               }));
-               setWrongPW(true);
-            } else if (err.code === "auth/user-not-found") {
-               setErrMsg((prev) => ({
-                  ...prev,
-                  email: "존재하지 않는 회원입니다..",
-               }));
-            } else if (err.code === "auth/invalid-email") {
-               setErrMsg((prev) => ({
-                  ...prev,
-                  email: "이메일 형식을 지켜주세요.",
-               }));
-            }
+            handleError(err.code);
             console.log(err.code);
          }
       } else {
          if (userInfo.password !== userInfo.passwordCheck) {
-            setErrMsg((prev) => ({
-               ...prev,
-               passwordCheck: "비밀번호가 일치하지 않습니다.",
-            }));
+            handleError("not_match_password_and_check");
+            return;
+         } else if (!userInfo.nickname) {
+            handleError("blank_nickname");
             return;
          }
          try {
@@ -106,27 +144,19 @@ function LoginContainer({ navigation }) {
                userInfo.email,
                userInfo.password
             );
-            await fbStore.collection(res.user.uid).doc("user").set({
+            await fbStore.collection(res.user.uid).doc("profile").set({
                createdAt: Date.now(),
+               nickname: userInfo.nickname,
             });
             res = await fbAuth.signInWithEmailAndPassword(
                userInfo.email,
                userInfo.password
             );
             dispatch(signin(res.user.email, res.user.uid, "email"));
+            dispatch(getProfileAction(res.user.uid));
             navigation.navigate("Home");
          } catch (err) {
-            if (err.code === "auth/invalid-email") {
-               setErrMsg((prev) => ({
-                  ...prev,
-                  email: "이메일 형식을 지켜주세요.",
-               }));
-            } else if (err.code === "auth/email-already-in-use") {
-               setErrMsg((prev) => ({
-                  ...prev,
-                  email: "이미 사용중인 이메일입니다.",
-               }));
-            }
+            handleError(err.code);
             console.log(err.code);
          }
       }
@@ -151,6 +181,7 @@ function LoginContainer({ navigation }) {
    useEffect(() => {
       const googleSignin = async (credential) => {
          const res = await fbAuth.signInWithCredential(credential);
+         dispatch(getProfileAction(res.user.uid));
          dispatch(signin(res.user.email, res.user.uid, "google"));
       };
       if (response?.type === "success") {

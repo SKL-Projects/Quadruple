@@ -58,12 +58,22 @@ function Login({
             <View style={styles.inputContainer}>
                <Input
                   placeholder="이메일"
-                  leftIcon={<Icon name="user" size={24} color="black" />}
+                  leftIcon={<Icon name="envelope" size={20} color="black" />}
                   value={userInfo.email}
                   style={styles.input}
                   errorMessage={errMsg.email}
                   onChangeText={(value) => onChange("email", value)}
                />
+               {!login && (
+                  <Input
+                     placeholder="닉네임"
+                     leftIcon={<Icon name="user" size={24} color="black" />}
+                     style={styles.input}
+                     value={userInfo.nickname}
+                     onChangeText={(value) => onChange("nickname", value)}
+                     errorMessage={errMsg.nickname}
+                  />
+               )}
                <Input
                   placeholder="비밀번호"
                   leftIcon={<Icon name="lock" size={24} color="black" />}

@@ -15,7 +15,16 @@ function Home({ navigation }) {
          </View>
          <View style={styles.login}>
             {auth.signined ? (
-               <Button title="Log out" onPress={() => logout(auth, dispatch)} />
+               <>
+                  <Button
+                     title="Log out"
+                     onPress={() => logout(auth, dispatch)}
+                  />
+                  <Button
+                     title="Profile"
+                     onPress={() => navigation.navigate("Profile")}
+                  />
+               </>
             ) : (
                <Button
                   title="Log in"
