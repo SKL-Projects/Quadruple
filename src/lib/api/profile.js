@@ -1,4 +1,4 @@
-import { fbStorageRef, fbStore } from "../../../firebase";
+import { fbAuth, fbStorageRef, fbStore } from "../../../firebase";
 
 export const getProfile = async (uid) => {
    try {
@@ -9,7 +9,7 @@ export const getProfile = async (uid) => {
    }
 };
 
-export const updateProfileAvatar = async (uid, uri, profile) => {
+export const updateProfileAvatar = async (uid, uri, user) => {
    try {
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -26,10 +26,8 @@ export const updateProfileAvatar = async (uid, uri, profile) => {
          task.then(
             async (snapshot) => {
                const url = await snapshot.ref.getDownloadURL();
-               await fbStore
-                  .collection(`${uid}`)
-                  .doc("profile")
-                  .set({ ...profile, avatar: url });
+
+               await user.updateProfile({ photoURL: url });
                resolve(url);
             },
             (err) => reject(err)
@@ -38,5 +36,14 @@ export const updateProfileAvatar = async (uid, uri, profile) => {
    } catch (err) {
       console.log(err);
       return false;
+   }
+};
+
+export const updateDisplayName = async (user, newName) => {
+   try {
+      const res = await user.updateProfile({ displayName: newName });
+      return res;
+   } catch (err) {
+      return err;
    }
 };

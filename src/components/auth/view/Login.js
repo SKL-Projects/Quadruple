@@ -66,12 +66,12 @@ function Login({
                />
                {!login && (
                   <Input
-                     placeholder="닉네임"
+                     placeholder="성함"
                      leftIcon={<Icon name="user" size={24} color="black" />}
                      style={styles.input}
-                     value={userInfo.nickname}
-                     onChangeText={(value) => onChange("nickname", value)}
-                     errorMessage={errMsg.nickname}
+                     value={userInfo.name}
+                     onChangeText={(value) => onChange("name", value)}
+                     errorMessage={errMsg.name}
                   />
                )}
                <Input

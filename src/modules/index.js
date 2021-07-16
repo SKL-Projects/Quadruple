@@ -1,14 +1,14 @@
 import { combineReducers } from "redux";
 import { all } from "redux-saga/effects";
 import auth from "./auth";
-import profile, { profileSaga } from "./profile";
+import { dataSaga } from "./data";
 
 // 일반 redux 연결
-const rootReducer = combineReducers({ auth, profile });
+const rootReducer = combineReducers({ auth });
 
 // react saga 연결
 export function* rootSaga() {
-   yield all([profileSaga()]);
+   yield all([dataSaga]);
 }
 
 export default rootReducer;

@@ -19,11 +19,11 @@ function LoginContainer({ navigation }) {
       password: "",
       passwordCheck: "",
       email: "",
-      nickname: "",
+      name: "",
    });
    const [errMsg, setErrMsg] = useState({
       email: "",
-      nickname: "",
+      name: "",
       password: "",
       passwordCheck: "",
    });
@@ -45,7 +45,7 @@ function LoginContainer({ navigation }) {
       if (errMsg[name]) {
          setErrMsg((prev) => ({ ...prev, [name]: "" }));
       }
-      if (value && name !== "nickname" && !/[0-9a-zA-Z.;\-]/.test(value)) {
+      if (value && name !== "name" && !/[0-9a-zA-Z.;\-]/.test(value)) {
          setErrMsg((prev) => ({
             ...prev,
             [name]: "영어, 숫자, 특수문자만 가능합니다.",
@@ -100,10 +100,16 @@ function LoginContainer({ navigation }) {
                passwordCheck: "비밀번호가 일치하지 않습니다.",
             }));
             break;
-         case "blank_nickname":
+         case "blank_name":
             setErrMsg((prev) => ({
                ...prev,
-               nickname: "닉네임을 입력해주세요.",
+               name: "닉네임을 입력해주세요.",
+            }));
+            break;
+         case "auth/weak-password":
+            setErrMsg((prev) => ({
+               ...prev,
+               password: "비밀번호가 너무 간단합니다.",
             }));
             break;
       }
@@ -124,8 +130,7 @@ function LoginContainer({ navigation }) {
                userInfo.email,
                userInfo.password
             );
-            dispatch(signin(res.user.email, res.user.uid, "email"));
-            dispatch(getProfileAction(res.user.uid));
+            dispatch(signin(res.user, "email"));
             navigation.navigate("Home");
          } catch (err) {
             handleError(err.code);
@@ -135,8 +140,8 @@ function LoginContainer({ navigation }) {
          if (userInfo.password !== userInfo.passwordCheck) {
             handleError("not_match_password_and_check");
             return;
-         } else if (!userInfo.nickname) {
-            handleError("blank_nickname");
+         } else if (!userInfo.name) {
+            handleError("blank_name");
             return;
          }
          try {
@@ -144,16 +149,16 @@ function LoginContainer({ navigation }) {
                userInfo.email,
                userInfo.password
             );
+            await res.user.updateProfile({ displayName: userInfo.name });
             await fbStore.collection(res.user.uid).doc("profile").set({
                createdAt: Date.now(),
-               nickname: userInfo.nickname,
+               name: userInfo.name,
             });
             res = await fbAuth.signInWithEmailAndPassword(
                userInfo.email,
                userInfo.password
             );
-            dispatch(signin(res.user.email, res.user.uid, "email"));
-            dispatch(getProfileAction(res.user.uid));
+            dispatch(signin(res.user, "email"));
             navigation.navigate("Home");
          } catch (err) {
             handleError(err.code);
@@ -181,8 +186,7 @@ function LoginContainer({ navigation }) {
    useEffect(() => {
       const googleSignin = async (credential) => {
          const res = await fbAuth.signInWithCredential(credential);
-         dispatch(getProfileAction(res.user.uid));
-         dispatch(signin(res.user.email, res.user.uid, "google"));
+         dispatch(signin(res.user, "google"));
       };
       if (response?.type === "success") {
          const { id_token } = response.params;

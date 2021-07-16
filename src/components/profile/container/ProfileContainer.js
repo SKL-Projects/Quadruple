@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Profile from "../view/Profile";
 import * as ImagePicker from "expo-image-picker";
-import { updateProfileAvatar } from "../../../lib/api/profile";
-import { setProfileAction } from "../../../modules/profile";
-import { Modal } from "react-native";
-import { ActivityIndicator } from "react-native";
+import {
+   updateDisplayName,
+   updateProfileAvatar,
+} from "../../../lib/api/profile";
 
 function ProfileContainer() {
-   const profile = useSelector(({ profile }) => profile);
-   const auth = useSelector(({ auth }) => auth);
-   const dispatch = useDispatch();
-   const [loading, setLoading] = useState(false);
+   const { user } = useSelector(({ auth }) => auth);
+   const [loading, setLoading] = useState({ photo: false, name: false });
+   const [onEdit, setOnEdit] = useState({});
+   const [editUserInfo, setEditUserInfo] = useState({});
 
    const changeAvatar = async () => {
       try {
@@ -28,25 +28,50 @@ function ProfileContainer() {
             aspect: [4, 4],
             quality: 1,
          });
-         setLoading(true);
+         setLoading((prev) => ({ ...prev, photo: true }));
          if (!result.cancelled) {
-            await updateProfileAvatar(auth.uid, result.uri, profile).then(
-               (data) => dispatch(setProfileAction({ avatar: data }))
-            );
+            await updateProfileAvatar(user.uid, result.uri, user);
          }
       } catch (err) {
          console.log(err);
       }
-      setLoading(false);
+      setLoading((prev) => ({ ...prev, photo: false }));
+   };
+   const changeDisplayName = async () => {
+      setOnEdit({});
+      setLoading((prev) => ({ ...prev, name: true }));
+      if (user.displayName !== editUserInfo.name) {
+         try {
+            const res = await updateDisplayName(user, editUserInfo.name);
+            console.log(res);
+         } catch (err) {
+            console.log(err);
+         }
+      }
+      setLoading((prev) => ({ ...prev, name: false }));
+   };
+
+   const onPressOnEdit = (name, value) => {
+      if (Object.keys(onEdit).length === 0) {
+         setOnEdit({ [name]: true });
+         setEditUserInfo({ [name]: value });
+      }
+   };
+   const onChange = (name, value) => {
+      setEditUserInfo((prev) => ({ ...prev, [name]: value }));
    };
 
    return (
       <>
          <Profile
-            profile={profile}
-            auth={auth}
+            user={user}
             changeAvatar={changeAvatar}
             loading={loading}
+            changeDisplayName={changeDisplayName}
+            onPressOnEdit={onPressOnEdit}
+            onEdit={onEdit}
+            onChange={onChange}
+            editUserInfo={editUserInfo}
          />
       </>
    );
