@@ -3,12 +3,9 @@ import MapView,{PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
-  ScrollView,
   Animated,
   Image,
-  TouchableOpacity,
   Dimensions,
   Platform,
 } from "react-native";
@@ -29,8 +26,8 @@ const GOOGLE_API_KEY = fbConfig.googleMapKey; // never save your real api key in
 export default function GoogleMap() {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
-  const [isSearch, setIsSearch] = useState(false);
   const [data,setData] = useState(markers)
+  const [directionData,setDirectionData] = useState()
 
   const mapView = React.createRef();   
   const _scrollView = React.useRef(null);
@@ -43,6 +40,10 @@ export default function GoogleMap() {
     {
       latitude: 40.221101,
       longitude: -74.755597,
+    },
+    {
+      latitude: 40.4847945, 
+      longitude: -74.370061,
     },
   ];
 
@@ -69,21 +70,11 @@ export default function GoogleMap() {
     }
   }
 
- 
-    
   const animateMap = async() => {
     mapView.current.animateToRegion(region,1000)
-    //setIsSearch(false)
-    //console.log(region)
   }   
 
-  useEffect(() => {
-    if(isLoading)
-      getLocation();
-
-    if(isSearch)
-      animateMap(); 
-
+  const scrollAnimate = async() => {
     mapAnimation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
       if (index >= data.length) {
@@ -99,7 +90,7 @@ export default function GoogleMap() {
         if( mapIndex != index ) {
           mapIndex = index;
           const { coordinate } = data[index];
-          console.log(data[index])
+          //console.log(coordinate)
           mapView.current.animateToRegion(
             {
               ...coordinate,
@@ -110,8 +101,16 @@ export default function GoogleMap() {
           );
         }
       }, 10);
-    });
-  }, [isSearch]);
+    })
+  }
+  useEffect(() => {
+    scrollAnimate();
+    
+    if(isLoading)
+      getLocation();
+
+    animateMap(); 
+  }, []);
 
   const interpolations = data.map((marker, index) => {
     const inputRange = [
@@ -140,132 +139,131 @@ export default function GoogleMap() {
     _scrollView.current.scrollTo({x: x, y: 0, animated: true});
   }
 
-  const onAnimated = () => {
-   console.log()
-  }
-
-   return (
-      <View style={styles.container}>
-        {isLoading ? (
-          <View style={styles.content}>
-            <Text>Loading...</Text>
-          </View>
-        ):(
-          <>
-            <AutoComplete setRegion={setRegion} setIsSearch={setIsSearch}/>
-              <MapView 
-                provider={PROVIDER_GOOGLE} 
-                region={region}
-                ref={mapView}
-                style={styles.map}>
-                {isSearch ? (
-                  <Marker 
-                    coordinate={{ latitude: region.latitude, longitude: region.longitude, }} 
-                    image={require('../../../../assets/map_marker.png')}
-                  >
-                  </Marker>
-                ):(<></>)}
-                 <MapViewDirections
-                    lineDashPattern={[0]}
-                    origin={coordinates[0]}
-                    destination={coordinates[1]}
-                    apikey={GOOGLE_API_KEY} // insert your API Key here
-                    strokeColor="#111111"
-                    mode="TRANSIT"
-                    onReady={result => {
-                      console.log(`Distance: ${result.distance} km`)
-                      console.log(`Duration: ${result.duration} min.`)
-                    }}
-                    onError={(errorMessage) => {
-                      // console.log('GOT AN ERROR');
-                    }}
-                  />
-                  <Marker 
-                    coordinate={coordinates[0]} 
-                    image={require('../../../../assets/map_marker.png')} 
-                    //title="start point" 
-                    //description="장소명"
-                  >
-                    <Callout tooltip>
-                      <View style={styles.bubble}>
-                        <View>
-                          <Text style={styles.name}>Start Point</Text>
-                        </View>
+  return (
+    <View style={styles.container}>
+      {isLoading ? (
+        <View style={styles.content}>
+          <Text>Loading...</Text>
+        </View>
+      ):(
+        <>
+          <AutoComplete setRegion={setRegion}/>
+            <MapView 
+              provider={PROVIDER_GOOGLE} 
+              region={region}
+              ref={mapView}
+              style={styles.map}>
+                <MapViewDirections
+                  lineDashPattern={[0]}
+                  origin={coordinates[0]}
+                  destination={coordinates[1]}
+                  apikey={GOOGLE_API_KEY} // insert your API Key here
+                  strokeWidth={4}
+                  strokeColor="#111111"
+                  mode="TRANSIT"
+                  onReady={result => {
+                    console.log(`Distance: ${result.distance} km`)
+                    console.log(`Duration: ${result.duration} min.`)
+                    setDirectionData(result)
+                  }}
+                  onError={(errorMessage) => {
+                    // console.log('GOT AN ERROR');
+                  }}
+                />
+                <Marker 
+                  coordinate={coordinates[0]} 
+                  image={require('../../../../assets/map_marker.png')} 
+                  //title="start point" 
+                  //description="장소명"
+                >
+                  <Callout tooltip>
+                    <View style={styles.bubble}>
+                      <View>
+                        <Text style={styles.name}>Start Point</Text>
                       </View>
-                    </Callout>
-                  </Marker>
-                  <Marker coordinate={coordinates[1]} image={require('../../../../assets/map_marker.png')} title="end point" description="장소명"/> 
-                  
-                  {data.map((marker, index) => {
-                    const scaleStyle = {
-                      transform: [
-                        {
-                          scale: interpolations[index].scale,
-                        },
-                      ],
-                    };
-                    return (
-                      <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)}>
-                        <Animated.View style={[styles.markerWrap]}>
-                          <Animated.Image
-                            source={require('../../../../assets/map_marker.png')}
-                            style={[styles.marker, scaleStyle]}
-                            resizeMode="cover"
-                          />
-                        </Animated.View>
-                      </MapView.Marker>
-                    );
-                  })}
-
-              </MapView>
-              <Animated.ScrollView
-                ref={_scrollView}
-                horizontal
-                pagingEnabled
-                scrollEventThrottle={1}
-                showsHorizontalScrollIndicator={false}
-                snapToInterval={CARD_WIDTH + 20}
-                snapToAlignment="center"
-                style={styles.scrollView}
-                contentInset={{
-                  top: 0,
-                  left: SPACING_FOR_CARD_INSET,
-                  bottom: 0,
-                  right: SPACING_FOR_CARD_INSET
-                }}
-                contentContainerStyle={{
-                  paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
-                }}
-                onScroll={Animated.event(
-                  [
-                    {
-                      nativeEvent: {
-                        contentOffset: {
-                          x: mapAnimation,
-                        }
-                      },
-                    },
-                  ],
-                  {useNativeDriver: true}
-                )}
-              >
-                {data.map((marker, index) =>(
-                  <View style={styles.card} key={index}>
-                    <Image 
-                      source={marker.image}
-                      style={styles.cardImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.textContent}>
-                      <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
-                      <Text numberOfLines={1} style={styles.cardDescription}>{marker.description}</Text>
                     </View>
+                  </Callout>
+                </Marker>
+                <Marker coordinate={coordinates[1]} image={require('../../../../assets/map_marker.png')} title="end point" description="장소명"/> 
+                <MapView.Marker coordinate={coordinates[2]} onPress={(e)=>onMarkerPress(e)}>
+                  <View style={styles.price}>
+                    <Text>&nbsp;{directionData?.distance}km&nbsp;</Text>
+                    <Text>&nbsp;{Math.floor(directionData?.duration)}분&nbsp;</Text>
                   </View>
-                ))}
-              </Animated.ScrollView>
-            </>
-         )}
-      </View>
+                </MapView.Marker>
+                {data.map((marker, index) => {
+                  const scaleStyle = {
+                    transform: [
+                      {
+                        scale: interpolations[index].scale,
+                      },
+                    ],
+                  };
+                  return (
+                    <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)}>
+                      <Animated.View style={[styles.markerWrap]}>
+                        <Animated.Image
+                          source={require('../../../../assets/map_marker.png')}
+                          style={[styles.marker, scaleStyle]}
+                          resizeMode="cover"
+                        />
+                      </Animated.View>
+                      <View style={styles.price}>
+                        <Text>&nbsp;&#8361;{marker.price}&nbsp;</Text>
+                      </View>
+                    </MapView.Marker>
+                  );
+                })}
+
+            </MapView>
+            <Animated.ScrollView
+              ref={_scrollView}
+              horizontal
+              pagingEnabled
+              scrollEventThrottle={1}
+              showsHorizontalScrollIndicator={false}
+              snapToInterval={CARD_WIDTH + 20}
+              snapToAlignment="center"
+              style={styles.scrollView}
+              contentInset={{
+                top: 0,
+                left: SPACING_FOR_CARD_INSET,
+                bottom: 0,
+                right: SPACING_FOR_CARD_INSET
+              }}
+              contentContainerStyle={{
+                paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
+              }}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        x: mapAnimation,
+                      }
+                    },
+                  },
+                ],
+                {useNativeDriver: true}
+              )}
+            >
+              {data.map((marker, index) =>(
+                <View style={styles.card} key={index}>
+                  <Image 
+                    source={marker.image}
+                    style={styles.cardImage}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.textContent}>
+                    <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
+                    <Text numberOfLines={1} style={styles.cardDescription}>{marker.description}</Text>
+                  </View>
+                </View>
+              ))}
+            </Animated.ScrollView>
+          </>
+        )}
+    </View>
    );
 }
 
@@ -308,6 +306,10 @@ const styles = StyleSheet.create({
     right: 0,
     paddingVertical: 10,
     zIndex:999,
+  },
+  price:{
+    backgroundColor:"#ffffff",
+    borderRadius:10,
   },
   card: {
     // padding: 10,
