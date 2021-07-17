@@ -6,12 +6,27 @@ import {
    updateDisplayName,
    updateProfileAvatar,
 } from "../../../lib/api/profile";
+import PwResetModal from "../../auth/view/PwResetModal";
+import { fbAuth } from "../../../../firebase";
+import { signout } from "../../../modules/auth";
+import PwUpdate from "../view/PwUpdate";
+import RemoveUserModal from "../view/RemoveUserModal";
 
-function ProfileContainer() {
+function ProfileContainer({ navigation }) {
    const { user } = useSelector(({ auth }) => auth);
    const [loading, setLoading] = useState({ photo: false, name: false });
    const [onEdit, setOnEdit] = useState({});
    const [editUserInfo, setEditUserInfo] = useState({});
+   const [modalVisible, setModalVisible] = useState(false);
+   const [removeUserVisible, setRemoveUserVisible] = useState(false);
+   const dispatch = useDispatch();
+
+   useEffect(() => {
+      const reload = async () => {
+         await user.reload();
+      };
+      reload();
+   }, []);
 
    const changeAvatar = async () => {
       try {
@@ -50,7 +65,6 @@ function ProfileContainer() {
       }
       setLoading((prev) => ({ ...prev, name: false }));
    };
-
    const onPressOnEdit = (name, value) => {
       if (Object.keys(onEdit).length === 0) {
          setOnEdit({ [name]: true });
@@ -60,7 +74,9 @@ function ProfileContainer() {
    const onChange = (name, value) => {
       setEditUserInfo((prev) => ({ ...prev, [name]: value }));
    };
-
+   const changePassword = async () => {
+      setModalVisible(true);
+   };
    return (
       <>
          <Profile
@@ -72,6 +88,14 @@ function ProfileContainer() {
             onEdit={onEdit}
             onChange={onChange}
             editUserInfo={editUserInfo}
+            changePassword={changePassword}
+            setRemoveUserVisible={setRemoveUserVisible}
+         />
+         <PwUpdate visible={modalVisible} setVisible={setModalVisible} />
+         <RemoveUserModal
+            visible={removeUserVisible}
+            setVisible={setRemoveUserVisible}
+            navigation={navigation}
          />
       </>
    );

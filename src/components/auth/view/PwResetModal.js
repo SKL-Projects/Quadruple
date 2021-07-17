@@ -1,25 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { TouchableHighlight } from "react-native";
 import { Modal } from "react-native";
 import { StyleSheet, View, Text } from "react-native";
+import { fbAuth } from "../../../../firebase";
 
 function PwResetModal({
    modalVisible,
    setModalVisible,
    email,
-   sendPwResetEmail,
-   loadingPwReset,
    PwResetSended,
    setPwResetSended,
 }) {
+   const [loadingPwReset, setLoadingPwReset] = useState(false);
+   const sendPwResetEmail = async () => {
+      setLoadingPwReset(true);
+      try {
+         await fbAuth.sendPasswordResetEmail(email);
+         setPwResetSended(true);
+         setUserInfo((prev) => ({ ...prev, password: "" }));
+      } catch (err) {
+         console.log(err);
+      }
+      setLoadingPwReset(false);
+   };
    return (
-      <Modal
-         animationType="slide"
-         transparent={true}
-         visible={modalVisible}
-         onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-         }}>
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
          <View style={styles.centeredView}>
             <View style={styles.modalView}>
                {!loadingPwReset ? (

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 
+import { ModalPortal } from "react-native-modals";
 /*테마 */
 import { ThemeProvider } from "styled-components";
 import theme from "./src/lib/styles/theme";
@@ -60,13 +61,10 @@ export default function App() {
                   component={AutoComplete}
                   options={{ headerShown: false }}
                />
-               <Stack.Screen
-                  name="Profile"
-                  component={ProfileScreen}
-                  options={{ headerShown: false }}
-               />
+               <Stack.Screen name="Profile" component={ProfileScreen} />
             </Stack.Navigator>
          </NavigationContainer>
+         <ModalPortal />
       </Provider>
    );
 }
