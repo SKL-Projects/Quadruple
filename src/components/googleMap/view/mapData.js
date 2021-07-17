@@ -15,7 +15,7 @@ export const markers = [
       title: "Amazing Place",
       description: "This is the best place",
       image: Images[0].image,
-      rating: 4,
+      price: 1000,
       reviews: 99,
     },
     {
@@ -26,7 +26,7 @@ export const markers = [
       title: "Second Amazing Place",
       description: "This is the second best place",
       image: Images[1].image,
-      rating: 5,
+      price: 12300,
       reviews: 102,
     },
     {
@@ -37,7 +37,7 @@ export const markers = [
       title: "Third Amazing Place",
       description: "This is the third best place",
       image: Images[2].image,
-      rating: 3,
+      price: 10000,
       reviews: 220,
     },
     {
@@ -48,7 +48,7 @@ export const markers = [
       title: "Fourth Amazing Place",
       description: "This is the fourth best place",
       image: Images[3].image,
-      rating: 4,
+      price: 2000,
       reviews: 48,
     },
     {
@@ -59,7 +59,7 @@ export const markers = [
       title: "Fifth Amazing Place",
       description: "This is the fifth best place",
       image: Images[4].image,
-      rating: 4,
+      price: 3000,
       reviews: 178,
     },
 ];

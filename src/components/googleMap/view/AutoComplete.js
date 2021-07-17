@@ -24,8 +24,7 @@ export default function AutoComplete( props ) {
             longitude: details.geometry.location.lng,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
-          });          
-          props.setIsSearch(true)
+          });                    
         }}
         fetchDetails={true}
         onFail={(error) => console.error(error)}
