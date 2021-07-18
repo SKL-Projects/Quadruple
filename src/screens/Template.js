@@ -3,6 +3,7 @@ import styled from 'styled-components/native'
 import { Text } from 'react-native'
 import { Button } from '@ant-design/react-native'
 import BottomSheet from 'reanimated-bottom-sheet'
+import BottomDrawer from '../components/elements/BottomDrawer'
 
 const Container = styled.View`
   flex: 1;
@@ -10,12 +11,23 @@ const Container = styled.View`
   justify-content: center;
 `
 
-const SheetContainer = styled.View`
-  background: ${({ theme }) => theme.color.white};
-  height: 100%;
-  padding-top: 20px;
-  align-items: center;
-`
+// const SheetContainer = styled.ScrollView`
+//   background: ${({ theme }) => theme.color.white};
+//   height: 100%;
+//   padding-top: 20px;
+//   align-items: center;
+// `
+
+const Shee = styled.View``
+
+const SheetContainer = styled.ScrollView.attrs({
+  contentContainerStyle: props => {
+    return {
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }
+})``
 
 // const StyledButton = styled(Button)`
 //   width: 100px;
@@ -27,36 +39,18 @@ const SheetContainer = styled.View`
 
 const arr = Array(1000).fill('내용')
 
-const renderHeader = () => {
-  <Header>
-    <Text>헤더</Text>
-  </Header>
-}
 
-const renderContent = () => (
-  <SheetContainer>
-    {arr.map((v, i) => (<Text>{v}{i}</Text>))}
-  </SheetContainer>
-);
-
-
-function Template() {
-  const sheetRef = React.useRef(null);
+export default function Template() {
   return (
     <Container>
       <Container>
         <Text style={{fontSize: 150}}>지도</Text>
       </Container>
-      <BottomSheet
-        ref={sheetRef}
-        snapPoints={['100%', '50%', '10%']}
-        initialSnap={1}
-        borderRadius={24}
-        renderContent={renderContent}
-        enabledBottomInitialAnimation
-      />
+      <BottomDrawer>
+        <Container>
+          {arr.map((v, i) => (<Text>{v}{i}</Text>))}
+        </Container>
+      </BottomDrawer>
     </Container>
    );
 }
-
-export default Template;

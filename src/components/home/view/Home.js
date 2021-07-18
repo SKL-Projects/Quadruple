@@ -27,6 +27,12 @@ function Home({ navigation }) {
                onPress={() => navigation.navigate("AutoComplete")}
             />
          </View>
+         <View style={styles.login}>
+            <Button
+               title="Template"
+               onPress={() => navigation.navigate("Template")}
+            />
+         </View>
       </View>
    );
 }
