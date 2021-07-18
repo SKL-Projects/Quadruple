@@ -1,9 +1,19 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
+import { Input } from "react-native-elements";
 import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../utils/CustomModal";
 
-function ReauthenticateModal({ reauthenticate, onClose, visible, success }) {
+function ReauthenticateModal({
+   reauthenticate,
+   onClose,
+   visible,
+   reauthPw,
+   reauthWithPw,
+   onChange,
+   errMsg,
+   password,
+}) {
    const title = <ModalTitle title="재인증" hasTitleBar />;
    const footer = (
       <ModalFooter>
@@ -11,31 +21,38 @@ function ReauthenticateModal({ reauthenticate, onClose, visible, success }) {
          <ModalButton text="재로그인" onPress={reauthenticate} />
       </ModalFooter>
    );
-   const footerOnSuccess = (
+   const footerPw = (
       <ModalFooter>
-         <ModalButton text="확인" onPress={onClose} />
+         <ModalButton text="확인" onPress={reauthWithPw} />
       </ModalFooter>
    );
    return (
       <CustomModal
          visible={visible}
          title={title}
-         footer={success ? footerOnSuccess : footer}>
+         footer={reauthPw ? footerPw : footer}>
          <View style={styles.container}>
-            <Text
-               style={{
-                  fontSize: 20,
-                  alignItems: "center",
-               }}>
-               {success ? (
-                  <>
-                     성공하셨습니다.{"\n\n"}확인을 눌러 창을 끄고 계속
-                     진행해주십쇼.
-                  </>
-               ) : (
-                  "비밀번호 변경/회원탈퇴를 위해선 재로그인이 필요합니다."
-               )}
-            </Text>
+            {reauthPw ? (
+               <>
+                  <Text style={{ fontSize: 20 }}>
+                     새로운 비밀번호를 입력해주세요.
+                  </Text>
+                  <Input
+                     secureTextEntry={true}
+                     value={password}
+                     errorMessage={errMsg.password}
+                     onChangeText={onChange}
+                  />
+               </>
+            ) : (
+               <Text
+                  style={{
+                     fontSize: 20,
+                     alignItems: "center",
+                  }}>
+                  비밀번호 변경/회원탈퇴를 위해선 재로그인이 필요합니다.
+               </Text>
+            )}
          </View>
       </CustomModal>
    );
@@ -44,6 +61,7 @@ function ReauthenticateModal({ reauthenticate, onClose, visible, success }) {
 const styles = StyleSheet.create({
    container: {
       padding: 30,
+      paddingBottom: 0,
       backgroundColor: "#fff",
       alignItems: "center",
       justifyContent: "center",

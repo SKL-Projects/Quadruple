@@ -8,11 +8,10 @@ import PwResetModal from "../view/PwResetModal";
 
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import { googleSignIn } from "../../../../env";
-import { getProfileAction } from "../../../modules/profile";
-import handleError from "../../utils/HandleAuthErr";
+import handleError, { checkPassword } from "../../utils/HandleAuthErr";
 import VerifyEmailModal from "../view/VerifyEmailModal";
 import testPassword from "../../utils/testPassword";
+import { config } from "../../utils/GoogleAuthConfig";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -34,13 +33,8 @@ function LoginContainer({ navigation }) {
    const [loading, setLoading] = useState(false);
    const [modalVisible, setModalVisible] = useState(false);
    const [PwResetSended, setPwResetSended] = useState(false);
-   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-      expoClientId: googleSignIn.expoGoClientId,
-      androidClientId: googleSignIn.androidClientId,
-      iosClientId: googleSignIn.iosClientId,
-      webClientId: googleSignIn.webClientId,
-      clientId: googleSignIn.clientId,
-   });
+   const [request, response, promptAsync] =
+      Google.useIdTokenAuthRequest(config);
    const dispatch = useDispatch();
    const [visibleSentEmail, setVisibleSentEmail] = useState(false);
 
@@ -75,11 +69,7 @@ function LoginContainer({ navigation }) {
       if (!userInfo.email) {
          handleError("blank_email", setErrMsg);
          return;
-      } else if (!userInfo.password) {
-         handleError("blank_password", setErrMsg);
-         return;
-      } else if (!testPassword(userInfo.password)) {
-         handleError("password_not_formmatted", setErrMsg);
+      } else if (!checkPassword(userInfo.password, setErrMsg)) {
          return;
       }
       setLoading(true);

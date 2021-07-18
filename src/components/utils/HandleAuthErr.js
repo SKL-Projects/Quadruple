@@ -1,3 +1,5 @@
+import testPassword from "./testPassword";
+
 export default function handleError(code, setErrMsg) {
    switch (code) {
       case "blank_email":
@@ -63,3 +65,14 @@ export default function handleError(code, setErrMsg) {
          break;
    }
 }
+
+export const checkPassword = (pw, setErrMsg) => {
+   if (!pw.length) {
+      handleError("blank_password", setErrMsg);
+      return false;
+   } else if (!testPassword(pw)) {
+      handleError("password_not_formmatted", setErrMsg);
+      return false;
+   }
+   return true;
+};

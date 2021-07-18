@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PwUpdate from "../view/PwUpdate";
-import handleError from "../../utils/HandleAuthErr";
+import handleError, { checkPassword } from "../../utils/HandleAuthErr";
 import testPassword from "../../utils/testPassword";
 import { fbAuth, fbAuthObject } from "../../../../firebase";
 
@@ -12,8 +12,7 @@ function PwUpdateContainer({ visible, setVisible }) {
    const onPasswordUpdate = async (pw) => {
       if (success) {
          return;
-      } else if (!testPassword(password)) {
-         handleError("password_not_formmatted", setErrMsg);
+      } else if (!checkPassword(pw, setErrMsg)) {
          return;
       }
       try {
