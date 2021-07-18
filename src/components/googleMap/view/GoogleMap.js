@@ -230,7 +230,10 @@ export default function GoogleMap() {
               contentContainerStyle={{
                 paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
               }}
-              onScroll={(e)=>{scrollAnimate(e.nativeEvent.contentOffset.x);Animated.event([{nativeEvent: {contentOffset: {x: mapAnimation}}}],{useNativeDriver: true})}}
+              onScroll={(e)=>{
+                scrollAnimate(e.nativeEvent.contentOffset.x);
+                mapAnimation.setValue(e.nativeEvent.contentOffset.x)
+              }}
             >
               {data.map((marker, index) =>(
                 <View style={styles.card} key={index}>
