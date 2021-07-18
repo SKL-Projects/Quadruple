@@ -8,6 +8,7 @@ import {
 } from "../../../lib/api/profile";
 import RemoveUserModal from "../view/RemoveUserModal";
 import PwUpdateContainer from "./PwUpdateContainer";
+import ReauthenticateModalContainer from "./ReauthenticateModalContainer";
 
 function ProfileContainer({ navigation }) {
    const { user } = useSelector(({ auth }) => auth);
@@ -16,6 +17,8 @@ function ProfileContainer({ navigation }) {
    const [editUserInfo, setEditUserInfo] = useState({});
    const [modalVisible, setModalVisible] = useState(false);
    const [removeUserVisible, setRemoveUserVisible] = useState(false);
+   const [reauthenticated, setReauthenticated] = useState(false);
+   const [reauthVisible, setReauthVisible] = useState(false);
    const dispatch = useDispatch();
 
    useEffect(() => {
@@ -71,8 +74,13 @@ function ProfileContainer({ navigation }) {
    const onChange = (name, value) => {
       setEditUserInfo((prev) => ({ ...prev, [name]: value }));
    };
-   const changePassword = async () => {
+   const showChangePassword = async () => {
       setModalVisible(true);
+      setReauthVisible(true);
+   };
+   const showRemoveUser = async () => {
+      setRemoveUserVisible(true);
+      setReauthVisible(true);
    };
    return (
       <>
@@ -85,18 +93,28 @@ function ProfileContainer({ navigation }) {
             onEdit={onEdit}
             onChange={onChange}
             editUserInfo={editUserInfo}
-            changePassword={changePassword}
-            setRemoveUserVisible={setRemoveUserVisible}
+            showChangePassword={showChangePassword}
+            showRemoveUser={showRemoveUser}
          />
-         <PwUpdateContainer
-            visible={modalVisible}
-            setVisible={setModalVisible}
-         />
-         <RemoveUserModal
-            visible={removeUserVisible}
-            setVisible={setRemoveUserVisible}
-            navigation={navigation}
-         />
+         {(modalVisible || removeUserVisible) && !reauthenticated ? (
+            <ReauthenticateModalContainer
+               reauthVisible={reauthVisible}
+               setReauthVisible={setReauthVisible}
+               setReauthenticated={setReauthenticated}
+            />
+         ) : (
+            <>
+               <PwUpdateContainer
+                  visible={modalVisible}
+                  setVisible={setModalVisible}
+               />
+               <RemoveUserModal
+                  visible={removeUserVisible}
+                  setVisible={setRemoveUserVisible}
+                  navigation={navigation}
+               />
+            </>
+         )}
       </>
    );
 }

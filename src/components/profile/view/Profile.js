@@ -33,8 +33,8 @@ function Profile({
    onEdit,
    onChange,
    editUserInfo,
-   changePassword,
-   setRemoveUserVisible,
+   showChangePassword,
+   showRemoveUser,
 }) {
    return (
       <View style={styles.container}>
@@ -61,14 +61,14 @@ function Profile({
          </View>
          <View style={styles.bottomBar}>
             {user?.providerData[0].providerId === "password" && (
-               <Button title="비밀번호 변경" onPress={changePassword} />
+               <Button title="비밀번호 변경" onPress={showChangePassword} />
             )}
             <Button
                title="회원탈퇴"
                type="clear"
                color="red"
                titleStyle={{ color: "red" }}
-               onPress={() => setRemoveUserVisible(true)}
+               onPress={showRemoveUser}
             />
          </View>
       </View>
