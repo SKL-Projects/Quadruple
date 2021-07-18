@@ -70,12 +70,9 @@ export default function GoogleMap() {
     }
   }
 
-  const animateMap = async() => {
-    mapView.current.animateToRegion(region,1000)
-  }   
+   
 
-  const scrollAnimate = async() => {
-    mapAnimation.addListener(({ value }) => {
+  const scrollAnimate = (value) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
       if (index >= data.length) {
         index = data.length - 1;
@@ -101,15 +98,14 @@ export default function GoogleMap() {
           );
         }
       }, 10);
-    })
+    
   }
   useEffect(() => {
-    scrollAnimate();
+    //scrollAnimate();
     
     if(isLoading)
       getLocation();
 
-    animateMap(); 
   }, []);
 
   const interpolations = data.map((marker, index) => {
@@ -234,18 +230,7 @@ export default function GoogleMap() {
               contentContainerStyle={{
                 paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
               }}
-              onScroll={Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        x: mapAnimation,
-                      }
-                    },
-                  },
-                ],
-                {useNativeDriver: true}
-              )}
+              onScroll={(e)=>{scrollAnimate(e.nativeEvent.contentOffset.x);Animated.event([{nativeEvent: {contentOffset: {x: mapAnimation}}}],{useNativeDriver: true})}}
             >
               {data.map((marker, index) =>(
                 <View style={styles.card} key={index}>
