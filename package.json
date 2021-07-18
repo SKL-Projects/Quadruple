@@ -34,6 +34,8 @@
       "react-native-google-places-autocomplete": "^2.2.0",
       "react-native-maps": "^0.28.0",
       "react-native-modals": "^0.22.3",
+      "react-native-neomorph-shadows": "^1.1.2",
+      "react-native-pager-view": "^5.2.1",
       "react-native-reanimated": "~2.2.0",
       "react-native-safe-area-context": "3.2.0",
       "react-native-screens": "~3.4.0",
