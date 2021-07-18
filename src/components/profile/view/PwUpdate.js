@@ -2,53 +2,17 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Input } from "react-native-elements";
 import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
-import { fbAuth, fbAuthObject } from "../../../../firebase";
 import CustomModal from "../../utils/CustomModal";
-import handleError from "../../utils/HandleAuthErr";
 
-function PwUpdate({ visible, setVisible }) {
-   const [password, setPassword] = useState("");
-   const [success, setSuccess] = useState(false);
-   const [errMsg, setErrMsg] = useState({ password: "" });
-
-   const onPasswordUpdate = async (pw) => {
-      if (success) {
-         return;
-      }
-      try {
-         /*
-         await fbAuth.currentUser.reauthenticateWithCredential(
-            fbAuthObject.AuthCredential.fromJSON({
-               providerId: "password",
-               signInMethod: "password",
-            })
-         );*/
-         await fbAuth.currentUser.updatePassword(pw);
-         setSuccess(true);
-      } catch (err) {
-         handleError(err.code, setErrMsg);
-         console.log(err.code);
-      }
-   };
-   const onChange = (v) => {
-      if (errMsg.password) {
-         setErrMsg({ password: "" });
-      }
-      if (v && !/[0-9a-zA-Z.;\-]/.test(v)) {
-         setErrMsg({
-            password: "영어, 숫자, 특수문자만 가능합니다.",
-         });
-         return;
-      }
-      setPassword(v);
-   };
-   const clear = () => {
-      setPassword("");
-      setErrMsg({ password: "" });
-      setSuccess(false);
-      setVisible(false);
-   };
-
+function PwUpdate({
+   visible,
+   password,
+   clear,
+   onChange,
+   onPasswordUpdate,
+   errMsg,
+   success,
+}) {
    const title = <ModalTitle title="비밀번호 변경" hasTitleBar />;
    const footer = (
       <ModalFooter>

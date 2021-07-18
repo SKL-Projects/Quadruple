@@ -54,5 +54,12 @@ export default function handleError(code, setErrMsg) {
             password: "비밀번호가 너무 간단합니다.",
          }));
          break;
+      case "password_not_formmatted":
+         setErrMsg((prev) => ({
+            ...prev,
+            password:
+               "비밀번호는 영문자, 숫자, 특수문자 조합으로 8~50자여야합니다.",
+         }));
+         break;
    }
 }

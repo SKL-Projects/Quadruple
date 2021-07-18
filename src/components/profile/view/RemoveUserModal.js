@@ -1,33 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import {
-   ModalButton,
-   ModalContent,
-   ModalFooter,
-   ModalTitle,
-} from "react-native-modals";
-import { useDispatch } from "react-redux";
-import { fbAuth } from "../../../../firebase";
-import { signout } from "../../../modules/auth";
+import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../utils/CustomModal";
 
-function RemoveUserModal({ visible, setVisible, navigation }) {
-   const [success, setSuccess] = useState(false);
-   const dispatch = useDispatch();
-
-   const removeUser = async () => {
-      try {
-         await fbAuth.currentUser.delete();
-         setSuccess(true);
-      } catch (err) {
-         console.log(err.code);
-      }
-   };
+function RemoveUserModal({
+   visible,
+   setVisible,
+   afterRemove,
+   removeUser,
+   success,
+}) {
    const title = <ModalTitle title="주의" hasTitleBar />;
    const footer = (
       <ModalFooter>
          <ModalButton
-            text="삭제"
+            text="탈퇴"
             textStyle={{ color: "red" }}
             onPress={removeUser}
          />
@@ -36,13 +23,7 @@ function RemoveUserModal({ visible, setVisible, navigation }) {
    );
    const footerOnSuccess = (
       <ModalFooter>
-         <ModalButton
-            text="확인"
-            onPress={() => {
-               dispatch(signout());
-               navigation.navigate("Home");
-            }}
-         />
+         <ModalButton text="확인" onPress={afterRemove} />
       </ModalFooter>
    );
    return (

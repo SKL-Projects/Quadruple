@@ -12,6 +12,7 @@ import { googleSignIn } from "../../../../env";
 import { getProfileAction } from "../../../modules/profile";
 import handleError from "../../utils/HandleAuthErr";
 import VerifyEmailModal from "../view/VerifyEmailModal";
+import testPassword from "../../utils/testPassword";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -76,6 +77,9 @@ function LoginContainer({ navigation }) {
          return;
       } else if (!userInfo.password) {
          handleError("blank_password", setErrMsg);
+         return;
+      } else if (!testPassword(userInfo.password)) {
+         handleError("password_not_formmatted", setErrMsg);
          return;
       }
       setLoading(true);

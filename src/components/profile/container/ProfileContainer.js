@@ -6,11 +6,8 @@ import {
    updateDisplayName,
    updateProfileAvatar,
 } from "../../../lib/api/profile";
-import PwResetModal from "../../auth/view/PwResetModal";
-import { fbAuth } from "../../../../firebase";
-import { signout } from "../../../modules/auth";
-import PwUpdate from "../view/PwUpdate";
 import RemoveUserModal from "../view/RemoveUserModal";
+import PwUpdateContainer from "./PwUpdateContainer";
 
 function ProfileContainer({ navigation }) {
    const { user } = useSelector(({ auth }) => auth);
@@ -91,7 +88,10 @@ function ProfileContainer({ navigation }) {
             changePassword={changePassword}
             setRemoveUserVisible={setRemoveUserVisible}
          />
-         <PwUpdate visible={modalVisible} setVisible={setModalVisible} />
+         <PwUpdateContainer
+            visible={modalVisible}
+            setVisible={setModalVisible}
+         />
          <RemoveUserModal
             visible={removeUserVisible}
             setVisible={setRemoveUserVisible}
