@@ -6,9 +6,9 @@ import {
    updateDisplayName,
    updateProfileAvatar,
 } from "../../../lib/api/profile";
-import RemoveUserModal from "../view/RemoveUserModal";
 import PwUpdateContainer from "./PwUpdateContainer";
 import ReauthenticateModalContainer from "./ReauthenticateModalContainer";
+import RemoveUserModalContainer from "./RemoveUserModalContainer";
 
 function ProfileContainer({ navigation }) {
    const { user } = useSelector(({ auth }) => auth);
@@ -108,10 +108,11 @@ function ProfileContainer({ navigation }) {
                   visible={modalVisible}
                   setVisible={setModalVisible}
                />
-               <RemoveUserModal
+               <RemoveUserModalContainer
                   visible={removeUserVisible}
                   setVisible={setRemoveUserVisible}
                   navigation={navigation}
+                  user={user}
                />
             </>
          )}

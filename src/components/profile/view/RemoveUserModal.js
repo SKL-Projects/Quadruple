@@ -7,7 +7,7 @@ function RemoveUserModal({
    visible,
    setVisible,
    afterRemove,
-   removeUser,
+   removeUserFunc,
    success,
 }) {
    const title = <ModalTitle title="주의" hasTitleBar />;
@@ -16,7 +16,7 @@ function RemoveUserModal({
          <ModalButton
             text="탈퇴"
             textStyle={{ color: "red" }}
-            onPress={removeUser}
+            onPress={removeUserFunc}
          />
          <ModalButton text="취소" onPress={() => setVisible(false)} />
       </ModalFooter>
@@ -33,9 +33,10 @@ function RemoveUserModal({
          footer={success ? footerOnSuccess : footer}>
          <View style={styles.container}>
             <Text style={{ fontSize: 20 }}>
-               회원님과 관련된 모든 정보가 삭제됩니다.
-               {"\n\n"}
-               정말로 탈퇴하시겠습니까?
+               {" "}
+               {success
+                  ? "이용해주셔서 감사합니다."
+                  : "회원님과 관련된 모든 정보가 삭제됩니다.\n\n정말로 탈퇴하시겠습니까?"}
             </Text>
          </View>
       </CustomModal>

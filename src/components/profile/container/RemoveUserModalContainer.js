@@ -1,30 +1,37 @@
 import React, { useState } from "react";
 import RemoveUserModal from "../view/RemoveUserModal";
 import { useDispatch } from "react-redux";
-import { fbAuth } from "../../../../firebase";
 import { signout } from "../../../modules/auth";
+import { deleteProfile } from "../../../lib/api/profile";
 
-function RemoveUserModalContainer({ visible, setVisible, navigation }) {
+function RemoveUserModalContainer({ visible, setVisible, navigation, user }) {
    const [success, setSuccess] = useState(false);
    const dispatch = useDispatch();
 
-   const removeUser = async () => {
+   const removeUserFunc = async () => {
+      const uid = user.uid;
       try {
-         await fbAuth.currentUser.delete();
-         setSuccess(true);
+         await user.delete();
       } catch (err) {
-         console.log(err.code);
+         console.log(err);
+      }
+      setSuccess(true);
+      dispatch(signout());
+
+      try {
+         await deleteProfile(uid);
+      } catch (err) {
+         console.log(err);
       }
    };
    const afterRemove = () => {
-      dispatch(signout());
       navigation.navigate("Home");
    };
    return (
       <RemoveUserModal
          visible={visible}
          setVisible={setVisible}
-         removeUser={removeUser}
+         removeUserFunc={removeUserFunc}
          afterRemove={afterRemove}
          success={success}
       />

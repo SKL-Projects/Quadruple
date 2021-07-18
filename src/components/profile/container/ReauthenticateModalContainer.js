@@ -5,7 +5,7 @@ import ReauthenticateModal from "../view/ReauthenticateModal";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { checkPassword } from "../../utils/HandleAuthErr";
-import { fbAuth } from "../../../../firebase";
+import { fbAuth, fbAuthObject } from "../../../../firebase";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -22,15 +22,26 @@ function ReauthenticateModalContainer({
    const [errMsg, setErrMsg] = useState({ password: "" });
 
    useEffect(() => {
+      const callReauth = async (credential) => {
+         await reauthWithCredential(credential);
+      };
       if (response?.type === "success") {
          setReauthenticated(true);
+         const { id_token } = response.params;
+         const credential =
+            fbAuthObject.GoogleAuthProvider.credential(id_token);
+         callReauth(credential);
       }
    }, [response]);
 
+   const reauthWithCredential = async (credential) => {
+      await user.reauthenticateWithCredential(credential);
+      setReauthenticated(true);
+   };
    const reauthenticate = async () => {
       if (user.providerData[0].providerId === "password") {
          setReauthPw(true);
-      } else if (user.providerData[0].providerId === "google") {
+      } else if (user.providerData[0].providerId === "google.com") {
          try {
             await promptAsync();
          } catch (err) {
@@ -43,13 +54,11 @@ function ReauthenticateModalContainer({
          if (!checkPassword(password, setErrMsg)) {
             return;
          }
-         const resp = await fbAuth.signInWithEmailAndPassword(
+         const authCredential = await fbAuthObject.EmailAuthProvider.credential(
             user.email,
             password
          );
-         console.log(resp);
-         const res = await user.reauthenticateWithCredential(resp);
-         console.log(res);
+         await reauthWithCredential(authCredential);
       } catch (err) {
          console.log(err);
       }

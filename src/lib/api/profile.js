@@ -47,3 +47,11 @@ export const updateDisplayName = async (user, newName) => {
       return err;
    }
 };
+
+export const deleteProfile = async (uid) => {
+   try {
+      console.log(asd);
+   } catch (err) {
+      return err;
+   }
+};
