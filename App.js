@@ -17,12 +17,13 @@ import rootReducer, { rootSaga } from "./src/modules";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
-import Auth from "./src/screens/Auth";
-
-/* 파이어페이스 */
+import Auth from './src/screens/Auth'
+import { fbAuth } from "./firebase";
 import GoogleMap from "./src/screens/GoogleMap";
 import AutoComplete from "./src/screens/AutoComplete.js";
 import ProfileScreen from "./src/screens/Profile";
+
+import Template from './src/screens/Template'
 
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();
@@ -38,33 +39,40 @@ const Stack = createStackNavigator();
 /* 앱 함수 */
 export default function App() {
    return (
-      <Provider store={store}>
-         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
-               <Stack.Screen
-                  name="Home"
-                  component={HomeScreen}
-                  options={{ headerShown: false }}
-               />
-               <Stack.Screen
-                  name="Auth"
-                  component={Auth}
-                  options={{ headerShown: false }}
-               />
-               <Stack.Screen
-                  name="GoogleMap"
-                  component={GoogleMap}
-                  options={{ headerShown: false }}
-               />
-               <Stack.Screen
-                  name="AutoComplete"
-                  component={AutoComplete}
-                  options={{ headerShown: false }}
-               />
-               <Stack.Screen name="Profile" component={ProfileScreen} />
-            </Stack.Navigator>
-         </NavigationContainer>
-         <ModalPortal />
-      </Provider>
+      <ThemeProvider theme={theme}>
+         <Provider store={store}>
+            <NavigationContainer>
+               <Stack.Navigator initialRouteName="Home">
+                  <Stack.Screen
+                     name="Home"
+                     component={HomeScreen}
+                     options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                     name="Auth"
+                     component={Auth}
+                     options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                     name="GoogleMap"
+                     component={GoogleMap}
+                     options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                     name="AutoComplete"
+                     component={AutoComplete}
+                     options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                     name="Template"
+                     component={Template}
+                     options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="Profile" component={ProfileScreen} />
+               </Stack.Navigator>
+            </NavigationContainer>
+            <ModalPortal />
+         </Provider>
+      </ThemeProvider>
    );
 }
