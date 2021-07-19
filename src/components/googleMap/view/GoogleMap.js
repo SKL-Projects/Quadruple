@@ -160,6 +160,7 @@ export default function GoogleMap() {
                     ):(
                     <>
                       <MapViewDirections
+                        key={'D'+index}
                         lineDashPattern={[1]}
                         origin={marker.startPoint}
                         destination={marker.endPoint}
