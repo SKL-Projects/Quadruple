@@ -1,65 +1,128 @@
 const Images = [
-    { image: require("../../../../assets/attraction1.jpg") },
-    { image: require("../../../../assets/attraction2.jpg") },
-    { image: require("../../../../assets/attraction3.jpg") },
-    { image: require("../../../../assets/attraction4.jpg") },
-    { image: require("../../../../assets/attraction5.jpg") },
+  { image: require("../../../../assets/attraction1.jpg") },
+  { image: require("../../../../assets/attraction2.jpg") },
+  { image: require("../../../../assets/attraction3.jpg") },
+  { image: require("../../../../assets/attraction4.jpg") },
+  { image: require("../../../../assets/attraction5.jpg") },
 ];
 
+export const directions = [
+{
+  coordinate: {
+    latitude: 40.740019,
+    longitude: -73.989287,
+  },
+  startPoint: {
+    latitude: 40.731296,
+    longitude: -73.993267,
+  },
+  endPoint: {
+    latitude: 40.748743,
+    longitude: -73.985307,
+  },
+  type:"transit",
+  index:1
+},
+{
+  coordinate: {
+    latitude: 40.758419,
+    longitude: -73.987297,
+  },
+  startPoint: {
+    latitude: 40.748743,
+    longitude: -73.985307,
+  },
+  endPoint: {
+    latitude: 40.768095,
+    longitude: -73.979837,
+  },
+  type:"transit",
+  index:3
+},
+]
 export const markers = [
-    {
-      coordinate: {
-        latitude: 22.6293867,
-        longitude: 88.4354486,
-      },
-      title: "Amazing Place",
-      description: "This is the best place",
-      image: Images[0].image,
-      price: 1000,
-      reviews: 99,
-    },
-    {
-      coordinate: {
-        latitude: 22.6345648,
-        longitude: 88.4377279,
-      },
-      title: "Second Amazing Place",
-      description: "This is the second best place",
-      image: Images[1].image,
-      price: 12300,
-      reviews: 102,
-    },
-    {
-      coordinate: {
-        latitude: 22.6281662,
-        longitude: 88.4410113,
-      },
-      title: "Third Amazing Place",
-      description: "This is the third best place",
-      image: Images[2].image,
-      price: 10000,
-      reviews: 220,
-    },
-    {
-      coordinate: {
-        latitude: 22.6341137,
-        longitude: 88.4497463,
-      },
-      title: "Fourth Amazing Place",
-      description: "This is the fourth best place",
-      image: Images[3].image,
-      price: 2000,
-      reviews: 48,
-    },
-    {
-      coordinate: {
-        latitude: 22.6292757,
-        longitude: 88.444781,
-      },
-      title: "Fifth Amazing Place",
-      description: "This is the fifth best place",
-      image: Images[4].image,
-      price: 3000,
-      reviews: 178,
-    },
+{
+  index:0,
+  coordinate: {
+    latitude: 40.731296, 
+    longitude: -73.993267,
+  },
+  type:"location",
+  title: "숙소",
+  description: "This is the best place",
+  image: Images[0].image,
+  price: 1000,
+  reviews: 99,
+},
+{
+  index:1,
+  coordinate: {
+    latitude: 40.740019,
+    longitude: -73.989287,
+  },
+  startPoint: {
+    latitude: 40.731296,
+    longitude: -73.993267,
+  },
+  endPoint: {
+    latitude: 40.748743,
+    longitude: -73.985307,
+  },
+  type:"transit",
+},
+{
+  index:2,
+  coordinate: {
+    latitude: 40.748743,
+    longitude: -73.985307,
+  },
+  type:"location",
+  title: "엠파이어 스테이트 빌딩",
+  description: "This is the second best place",
+  image: Images[1].image,
+  price: 12300,
+  reviews: 102,
+},
+{
+  index:3,
+  coordinate: {
+    latitude: 40.758419,
+    longitude: -73.982572,
+  },
+  startPoint: {
+    latitude: 40.748743,
+    longitude: -73.985307,
+  },
+  endPoint: {
+    latitude: 40.768095,
+    longitude: -73.979837,
+  },
+  type:"transit",
+},
+{
+  index:4,
+  coordinate: {
+    latitude: 40.768095,
+    longitude: -73.970388,
+  },
+  type:"location",
+  title: "센트럴 파크",
+  description: "This is the third best place",
+  image: Images[2].image,
+  price: 10000,
+  reviews: 220,
+},
+{
+  index:5,
+  coordinate: {
+    latitude: 40.690151,
+    longitude: -74.045541,
+  },
+  type:"location",
+  title: "자유의 여신상",
+  description: "This is the fourth best place",
+  image: Images[3].image,
+  price: 2000,
+  reviews: 48,
+},
 ];
