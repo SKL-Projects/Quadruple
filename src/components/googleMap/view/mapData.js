@@ -115,8 +115,24 @@ export const markers = [
 {
   index:5,
   coordinate: {
-    latitude: 40.690151,
-    longitude: -74.045541,
+    latitude: 40.734654,
+    longitude: -74.011305,
+  },
+  startPoint: {
+    latitude: 40.768095,
+    longitude: -73.970388,
+  },
+  endPoint: {
+    latitude: 40.701214,
+    longitude: -74.052223,
+  },
+  type:"transit",
+},
+{
+  index:6,
+  coordinate: {
+    latitude: 40.701214,
+    longitude: -74.052223,
   },
   type:"location",
   title: "자유의 여신상",

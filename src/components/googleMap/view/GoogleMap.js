@@ -26,14 +26,13 @@ const GOOGLE_API_KEY = fbConfig.googleMapKey; // never save your real api key in
 export default function GoogleMap() {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
-  const [moveData,setMoveData] = useState()
 
   const mapView = React.createRef();   
   const _scrollView = React.useRef(null);
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
-
+  
   const getLocation = async () => { //위치 가져오기
     try {
       await Location.requestForegroundPermissionsAsync(); //퍼미션 받고
@@ -72,12 +71,22 @@ export default function GoogleMap() {
           mapIndex = index;
           
           const { coordinate } = markers[index];
+          
+          markers[index].type == 'location' ? (
+            mapView.current.animateToRegion({
+              ...coordinate,
+              latitudeDelta: 0.04,
+              longitudeDelta: 0.04,
+            },350)
+          ):(
+            mapView.current.animateToRegion({
+              ...coordinate,
+              latitudeDelta: Math.abs(markers[index].startPoint.latitude-markers[index].endPoint.latitude)*3,
+              longitudeDelta: Math.abs(markers[index].startPoint.longitude-markers[index].endPoint.longitude)*3,
+            },350)
+          )
 
-          mapView.current.animateToRegion({
-            ...coordinate,
-            latitudeDelta: 0.04,
-            longitudeDelta: 0.04,
-          },350)
+          
         }
       }, 10);
     
@@ -107,6 +116,7 @@ export default function GoogleMap() {
     return { scale };
   });
 
+
   const onMarkerPress = (mapEventData) => {
     const markerID = mapEventData._targetInst.return.key;
 
@@ -131,6 +141,7 @@ export default function GoogleMap() {
             provider={PROVIDER_GOOGLE} 
             region={region}
             ref={mapView}
+            key="Gmap"
             style={styles.map}>
               {markers.map((marker, index) => {
                 const scaleStyle = {
@@ -158,35 +169,31 @@ export default function GoogleMap() {
                         </MapView.Marker>
                       
                     ):(
-                    <>
+                    <View>
                       <MapViewDirections
-                        key={'D'+index}
+                        key={index}
                         lineDashPattern={[1]}
                         origin={marker.startPoint}
                         destination={marker.endPoint}
                         apikey={GOOGLE_API_KEY} // insert your API Key here
-                        strokeWidth={4}
+                        strokeWidth={5}
                         strokeColor="#20B2AA"
                         mode="TRANSIT"
                         onReady={result => {
                           console.log(`Distance: ${result.distance} km`)
-                          console.log(`Duration: ${result.duration} min.`)
-                          setMoveData(result)
+                          console.log(`Duration: ${result.duration} min.`)                          
+                          
                         }}
                         onError={(errorMessage) => {
                           // console.log('GOT AN ERROR');
                         }}
                       />
-                    </>
+                    </View>
+                    
                   )}
                   </>
                 );
-                
-              })}
-              
-                  
-                
-              
+              })}              
             </MapView>
             <Animated.ScrollView
               ref={_scrollView}
