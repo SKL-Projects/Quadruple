@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import PwUpdate from "../view/PwUpdate";
 import handleError, { checkPassword } from "../../utils/HandleAuthErr";
 import testPassword from "../../utils/testPassword";
-import { fbAuth, fbAuthObject } from "../../../../firebase";
+import { fbAuth } from "../../../../firebase";
 
 function PwUpdateContainer({ visible, setVisible }) {
    const [password, setPassword] = useState("");
    const [success, setSuccess] = useState(false);
    const [errMsg, setErrMsg] = useState({ password: "" });
+   const [loading, setLoading] = useState(false);
 
    const onPasswordUpdate = async (pw) => {
       if (success) {
@@ -16,19 +17,14 @@ function PwUpdateContainer({ visible, setVisible }) {
          return;
       }
       try {
-         /*
-         await fbAuth.currentUser.reauthenticateWithCredential(
-            fbAuthObject.AuthCredential.fromJSON({
-               providerId: "password",
-               signInMethod: "password",
-            })
-         );*/
+         setLoading(true);
          await fbAuth.currentUser.updatePassword(pw);
          setSuccess(true);
       } catch (err) {
          handleError(err.code, setErrMsg);
          console.log(err.code);
       }
+      setLoading(false);
    };
    const onChange = (v) => {
       if (errMsg.password) {
@@ -57,6 +53,7 @@ function PwUpdateContainer({ visible, setVisible }) {
          onPasswordUpdate={onPasswordUpdate}
          errMsg={errMsg}
          success={success}
+         loading={loading}
       />
    );
 }

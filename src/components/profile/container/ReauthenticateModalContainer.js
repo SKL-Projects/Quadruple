@@ -20,6 +20,7 @@ function ReauthenticateModalContainer({
    const [reauthPw, setReauthPw] = useState(false);
    const [password, setPassword] = useState("");
    const [errMsg, setErrMsg] = useState({ password: "" });
+   const [loading, setLoading] = useState(false);
 
    useEffect(() => {
       const callReauth = async (credential) => {
@@ -54,6 +55,7 @@ function ReauthenticateModalContainer({
          if (!checkPassword(password, setErrMsg)) {
             return;
          }
+         setLoading(true);
          const authCredential = await fbAuthObject.EmailAuthProvider.credential(
             user.email,
             password
@@ -62,6 +64,7 @@ function ReauthenticateModalContainer({
       } catch (err) {
          console.log(err);
       }
+      setLoading(false);
    };
    const onChange = (v) => {
       if (errMsg.password) {
@@ -89,6 +92,7 @@ function ReauthenticateModalContainer({
          onChange={onChange}
          errMsg={errMsg}
          password={password}
+         loading={loading}
       />
    );
 }

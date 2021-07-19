@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 import { Input } from "react-native-elements";
 import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../utils/CustomModal";
+import LottieView from "lottie-react-native";
 
 function PwUpdate({
    visible,
@@ -12,6 +13,7 @@ function PwUpdate({
    onPasswordUpdate,
    errMsg,
    success,
+   loading,
 }) {
    const title = <ModalTitle title="비밀번호 변경" hasTitleBar />;
    const footer = (
@@ -23,27 +25,47 @@ function PwUpdate({
          <ModalButton text={success ? "확인" : "취소"} onPress={clear} />
       </ModalFooter>
    );
+   const footerSuccess = (
+      <ModalFooter>
+         <ModalButton text="확인" onPress={clear} />
+      </ModalFooter>
+   );
 
    return (
-      <CustomModal visible={visible} title={title} footer={footer}>
+      <CustomModal
+         visible={visible}
+         title={title}
+         footer={success ? footerSuccess : footer}>
          <View style={styles.container}>
-            {success ? (
-               <Text style={{ fontSize: 20 }}>
-                  비밀번호 변경에 성공하셨습니다.
-               </Text>
-            ) : (
-               <>
+            {!loading ? (
+               success ? (
                   <Text style={{ fontSize: 20 }}>
-                     새로운 비밀번호를 입력해주세요.
+                     비밀번호 변경에 성공하셨습니다.
                   </Text>
-                  <Input
-                     style={{ width: "80%" }}
-                     secureTextEntry={true}
-                     value={password}
-                     errorMessage={errMsg.password}
-                     onChangeText={onChange}
-                  />
-               </>
+               ) : (
+                  <>
+                     <Text style={{ fontSize: 20 }}>
+                        새로운 비밀번호를 입력해주세요.
+                     </Text>
+                     <Input
+                        style={{ width: "80%" }}
+                        secureTextEntry={true}
+                        value={password}
+                        errorMessage={errMsg.password}
+                        onChangeText={onChange}
+                     />
+                  </>
+               )
+            ) : (
+               <LottieView
+                  style={{
+                     width: 100,
+                     height: 100,
+                     backgroundColor: "white",
+                  }}
+                  autoPlay
+                  source={require("../../../lib/styles/lottie/loading-circle.json")}
+               />
             )}
          </View>
       </CustomModal>

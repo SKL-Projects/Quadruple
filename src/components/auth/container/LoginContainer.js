@@ -41,7 +41,11 @@ function LoginContainer({ navigation }) {
    useEffect(() => {
       const googleSignin = async (credential) => {
          const res = await fbAuth.signInWithCredential(credential);
-         dispatch(signin(res.user, "google"));
+         dispatch(signin(res.user));
+         const resPersist = await fbAuth.setPersistence(
+            fbAuthObject.Auth.Persistence.LOCAL
+         );
+         console.log(resPersist);
       };
       if (response?.type === "success") {
          const { id_token } = response.params;
@@ -72,17 +76,21 @@ function LoginContainer({ navigation }) {
       } else if (!checkPassword(userInfo.password, setErrMsg)) {
          return;
       }
-      setLoading(true);
       if (login) {
          try {
+            setLoading(true);
             const res = await fbAuth.signInWithEmailAndPassword(
                userInfo.email,
                userInfo.password
             );
-            dispatch(signin(res.user, "email"));
+            dispatch(signin(res.user));
+            await fbAuth.setPersistence(fbAuthObject.Auth.Persistence.LOCAL);
             navigation.navigate("Home");
          } catch (err) {
             handleError(err.code, setErrMsg);
+            if (err.code === "auth/wrong-password") {
+               setWrongPW(true);
+            }
          }
       } else {
          if (userInfo.password !== userInfo.passwordCheck) {
@@ -93,6 +101,7 @@ function LoginContainer({ navigation }) {
             return;
          }
          try {
+            setLoading(true);
             let res = await fbAuth.createUserWithEmailAndPassword(
                userInfo.email,
                userInfo.password

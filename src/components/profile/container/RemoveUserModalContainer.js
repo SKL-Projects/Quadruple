@@ -6,10 +6,12 @@ import { deleteProfile } from "../../../lib/api/profile";
 
 function RemoveUserModalContainer({ visible, setVisible, navigation, user }) {
    const [success, setSuccess] = useState(false);
+   const [loading, setLoading] = useState(false);
    const dispatch = useDispatch();
 
    const removeUserFunc = async () => {
       const uid = user.uid;
+      setLoading(true);
       try {
          await user.delete();
       } catch (err) {
@@ -23,6 +25,7 @@ function RemoveUserModalContainer({ visible, setVisible, navigation, user }) {
       } catch (err) {
          console.log(err);
       }
+      setLoading(false);
    };
    const afterRemove = () => {
       navigation.navigate("Home");
@@ -34,6 +37,7 @@ function RemoveUserModalContainer({ visible, setVisible, navigation, user }) {
          removeUserFunc={removeUserFunc}
          afterRemove={afterRemove}
          success={success}
+         loading={loading}
       />
    );
 }

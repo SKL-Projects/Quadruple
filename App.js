@@ -10,20 +10,19 @@ import createSagaMiddleware from "redux-saga";
 import logger from "redux-logger";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { applyMiddleware, createStore } from "redux";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import rootReducer, { rootSaga } from "./src/modules";
 
 /*네비게이션 */
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
-import Auth from './src/screens/Auth'
-import { fbAuth } from "./firebase";
+import Auth from "./src/screens/Auth";
 import GoogleMap from "./src/screens/GoogleMap";
 import AutoComplete from "./src/screens/AutoComplete.js";
 import ProfileScreen from "./src/screens/Profile";
 
-import Template from './src/screens/Template'
+import Template from "./src/screens/Template";
 
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();

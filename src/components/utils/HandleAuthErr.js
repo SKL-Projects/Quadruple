@@ -13,12 +13,12 @@ export default function handleError(code, setErrMsg) {
             ...prev,
             password: "비밀번호를 입력해주세요.",
          }));
+         break;
       case "auth/wrong-password":
          setErrMsg((prev) => ({
             ...prev,
             password: "비밀번호가 틀렸습니다.",
          }));
-         setWrongPW(true);
          break;
       case "auth/user-not-found":
          setErrMsg((prev) => ({
@@ -67,7 +67,8 @@ export default function handleError(code, setErrMsg) {
 }
 
 export const checkPassword = (pw, setErrMsg) => {
-   if (!pw.length) {
+   if (!pw) {
+      console.log("this");
       handleError("blank_password", setErrMsg);
       return false;
    } else if (!testPassword(pw)) {

@@ -1,9 +1,9 @@
 import { fbAuth, fbStorageRef, fbStore } from "../../../firebase";
 
-export const getProfile = async (uid) => {
+export const getProfile = async () => {
    try {
-      const res = await fbStore.collection(`${uid}`).doc("profile").get();
-      return res.data();
+      const res = await fbAuth.currentUser;
+      return res;
    } catch (err) {
       console.log(err);
    }
