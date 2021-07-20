@@ -12,20 +12,24 @@ import {
 import * as Location from "expo-location";
 import AutoComplete from "./AutoComplete";
 import MapViewDirections from 'react-native-maps-directions';
-import { fbConfig } from "../../../../env";
 import { markers} from './mapData';
+import { fbConfig } from "../../../../env";
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-const GOOGLE_API_KEY = fbConfig.googleMapKey; // never save your real api key in a snack!
+const GOOGLE_API_KEY = fbConfig.googleMapKey;
 
+function sleep(ms) { //sleep 함수
+  return new Promise(resolve=>setTimeout(resolve, ms));
+}
 
 export default function GoogleMap() {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
+  const [x, setX] = useState('');
 
   const mapView = React.createRef();   
   const _scrollView = React.useRef(null);
@@ -58,38 +62,35 @@ export default function GoogleMap() {
 
   const scrollAnimate = (value) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-      if (index >= markers.length) {
+      
+      if (index >= markers.length) 
         index = markers.length - 1;
-      }
-      if (index <= 0) {
+      if (index <= 0) 
         index = 0;
-      }
-      clearTimeout(regionTimeout)
-
-      const regionTimeout = setTimeout(() => {
-        if( mapIndex != index ) {
-          mapIndex = index;
-          
-          const { coordinate } = markers[index];
-          
-          markers[index].type == 'location' ? (
-            mapView.current.animateToRegion({
-              ...coordinate,
-              latitudeDelta: 0.04,
-              longitudeDelta: 0.04,
-            },350)
-          ):(
-            mapView.current.animateToRegion({
-              ...coordinate,
-              latitudeDelta: Math.abs(markers[index].startPoint.latitude-markers[index].endPoint.latitude)*3,
-              longitudeDelta: Math.abs(markers[index].startPoint.longitude-markers[index].endPoint.longitude)*3,
-            },350)
-          )
-
-          
-        }
-      }, 10);
     
+      mapIndex = index;
+      
+      const { coordinate } = markers[index];
+      let pos;
+      
+      setX(index)
+
+      markers[index].type == 'location' ? (
+        pos = {
+          ...coordinate,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        }
+      ):(
+          pos = {
+          ...coordinate,
+          latitudeDelta: Math.abs(markers[index].startPoint.latitude-markers[index].endPoint.latitude)*3,
+          longitudeDelta: Math.abs(markers[index].startPoint.longitude-markers[index].endPoint.longitude)*3,
+        } 
+      )
+      mapView.current.animateToRegion(pos,350)
+      setRegion({pos}) 
+      
   }
 
   useEffect(() => {
@@ -124,7 +125,6 @@ export default function GoogleMap() {
     if (Platform.OS === 'ios') {
       x = x - SPACING_FOR_CARD_INSET;
     }
-
     _scrollView.current.scrollTo({x: x, y: 0, animated: true});
   }
 
@@ -143,7 +143,7 @@ export default function GoogleMap() {
             ref={mapView}
             key="Gmap"
             style={styles.map}>
-              {markers.map((marker, index) => {
+              {markers.filter((marker) => marker.type =='location').map((marker,index) =>{
                 const scaleStyle = {
                   transform: [
                     {
@@ -152,48 +152,39 @@ export default function GoogleMap() {
                   ],
                 };
                 return (
-                  <>
-                    {marker.type=='location'?(
-                      
-                        <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)}>
-                          <Animated.View style={[styles.markerWrap]}>
-                            <Animated.Image
-                              source={require('../../../../assets/map_marker.png')}
-                              style={[styles.marker, scaleStyle]}
-                              resizeMode="cover"
-                            />
-                          </Animated.View>
-                          <View style={styles.price}>
-                            <Text>&nbsp;&#8361;{marker.price}&nbsp;</Text>
-                          </View>
-                        </MapView.Marker>
-                      
-                    ):(
-                    <View>
-                      <MapViewDirections
-                        key={index}
-                        lineDashPattern={[1]}
-                        origin={marker.startPoint}
-                        destination={marker.endPoint}
-                        apikey={GOOGLE_API_KEY} // insert your API Key here
-                        strokeWidth={5}
-                        strokeColor="#20B2AA"
-                        mode="TRANSIT"
-                        onReady={result => {
-                          console.log(`Distance: ${result.distance} km`)
-                          console.log(`Duration: ${result.duration} min.`)                          
-                          
-                        }}
-                        onError={(errorMessage) => {
-                          // console.log('GOT AN ERROR');
-                        }}
+                  <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)}>
+                    <Animated.View style={[styles.markerWrap]}>
+                      <Animated.Image
+                        source={require('../../../../assets/map_marker.png')}
+                        style={[styles.marker, scaleStyle]}
+                        resizeMode="cover"
                       />
+                    </Animated.View>
+                    <View style={styles.price}>
+                      <Text>&nbsp;&#8361;{marker.price}&nbsp;</Text>
                     </View>
-                    
-                  )}
-                  </>
+                  </MapView.Marker>   
                 );
-              })}              
+              })}          
+
+              <MapViewDirections               
+                lineDashPattern={[1]}
+                origin={markers[x] ? markers[x].startPoint : 0}
+                destination={markers[x] ? markers[x].endPoint : 0}
+                apikey={GOOGLE_API_KEY} // insert your API Key here
+                strokeWidth={5}
+                strokeColor="#20B2AA"
+                mode="TRANSIT"
+                onReady={result => {
+                  console.log(`Distance: ${result.distance} km`)
+                  console.log(`Duration: ${result.duration} min.`)                          
+                  console.log(mapAnimation.__getValue())
+                }}
+                onError={(errorMessage) => {
+                  // console.log('GOT AN ERROR');
+                }}
+              />
+
             </MapView>
             <Animated.ScrollView
               ref={_scrollView}
@@ -220,7 +211,6 @@ export default function GoogleMap() {
             >
               {markers.map((marker, index) =>(
                 <View style={styles.card} key={index}>
-                  
                   {marker.type=='location'?(
                     <>
                       <Image 
@@ -238,7 +228,6 @@ export default function GoogleMap() {
                       <Text numberOfLines={1} style={styles.cardtitle}>this is transit</Text>
                     </View>
                   )}
-                  
                 </View>
               ))}
             </Animated.ScrollView>
@@ -266,10 +255,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
     zIndex:1,
   },
-   
-  line: {
-    opacity: 1,
-  },
+
   scrollView: {
     position: "absolute",
     bottom: 0,
