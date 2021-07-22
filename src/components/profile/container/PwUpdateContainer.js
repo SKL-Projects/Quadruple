@@ -21,8 +21,7 @@ function PwUpdateContainer({ visible, setVisible }) {
          await fbAuth.currentUser.updatePassword(pw);
          setSuccess(true);
       } catch (err) {
-         handleError(err.code, setErrMsg);
-         console.log(err.code);
+         checkPassword(err.code, setErrMsg, "password");
       }
       setLoading(false);
    };

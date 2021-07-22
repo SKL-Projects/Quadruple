@@ -37,6 +37,7 @@ function Header({
    onEdit,
    onChange,
    editUserInfo,
+   errMsg,
 }) {
    return (
       <>
@@ -73,6 +74,7 @@ function Header({
                <Input
                   containerStyle={{ ...styles.name }}
                   value={editUserInfo.name}
+                  errorMessage={errMsg.name}
                   onChangeText={(value) => onChange("name", value)}
                   placeholder="성함"
                />

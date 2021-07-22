@@ -4,7 +4,7 @@ import { config } from "../../utils/GoogleAuthConfig";
 import ReauthenticateModal from "../view/ReauthenticateModal";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import { checkPassword } from "../../utils/HandleAuthErr";
+import handleError, { checkPassword } from "../../utils/HandleAuthErr";
 import { fbAuth, fbAuthObject } from "../../../../firebase";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -35,6 +35,15 @@ function ReauthenticateModalContainer({
       }
    }, [response]);
 
+   const catchError = (code, setErrMsg, lastSection) => {
+      if (!handleError(code, setErrMsg)) {
+         setErrMsg((prev) => ({
+            ...prev,
+            [lastSection]: "알수없는 오류가 발생했습니다. 다시 시도해주세요.",
+         }));
+      }
+   };
+
    const reauthWithCredential = async (credential) => {
       await user.reauthenticateWithCredential(credential);
       setReauthenticated(true);
@@ -62,7 +71,7 @@ function ReauthenticateModalContainer({
          );
          await reauthWithCredential(authCredential);
       } catch (err) {
-         console.log(err);
+         catchError(err.code, setErrMsg, "password");
       }
       setLoading(false);
    };

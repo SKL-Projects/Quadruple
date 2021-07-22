@@ -19,6 +19,7 @@ function ProfileContainer({ navigation }) {
    const [removeUserVisible, setRemoveUserVisible] = useState(false);
    const [reauthenticated, setReauthenticated] = useState(false);
    const [reauthVisible, setReauthVisible] = useState(false);
+   const [errMsg, setErrMsg] = useState({ name: "" });
    const dispatch = useDispatch();
 
    useEffect(() => {
@@ -52,19 +53,25 @@ function ProfileContainer({ navigation }) {
       }
       setLoading((prev) => ({ ...prev, photo: false }));
    };
+
    const changeDisplayName = async () => {
-      setOnEdit({});
       setLoading((prev) => ({ ...prev, name: true }));
       if (user.displayName !== editUserInfo.name) {
          try {
-            const res = await updateDisplayName(user, editUserInfo.name);
-            console.log(res);
+            await updateDisplayName(user, editUserInfo.name);
+            setOnEdit({});
          } catch (err) {
-            console.log(err);
+            setErrMsg((prev) => ({
+               ...prev,
+               name: "변경 중에 오류가 발생했습니다. 다시 시도해주세요.",
+            }));
          }
+      } else {
+         setOnEdit({});
       }
       setLoading((prev) => ({ ...prev, name: false }));
    };
+
    const onPressOnEdit = (name, value) => {
       if (Object.keys(onEdit).length === 0) {
          setOnEdit({ [name]: true });
@@ -72,6 +79,9 @@ function ProfileContainer({ navigation }) {
       }
    };
    const onChange = (name, value) => {
+      if (!errMsg[name]) {
+         setErrMsg((prev) => ({ ...prev, [name]: "" }));
+      }
       setEditUserInfo((prev) => ({ ...prev, [name]: value }));
    };
    const showChangePassword = async () => {
@@ -95,6 +105,7 @@ function ProfileContainer({ navigation }) {
             editUserInfo={editUserInfo}
             showChangePassword={showChangePassword}
             showRemoveUser={showRemoveUser}
+            errMsg={errMsg}
          />
          {(modalVisible || removeUserVisible) && !reauthenticated ? (
             <ReauthenticateModalContainer

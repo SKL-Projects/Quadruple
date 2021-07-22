@@ -8,9 +8,11 @@ import PwResetModal from "../view/PwResetModal";
 
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import handleError, { checkPassword } from "../../utils/HandleAuthErr";
+import handleError, {
+   catchError,
+   checkPassword,
+} from "../../utils/HandleAuthErr";
 import VerifyEmailModal from "../view/VerifyEmailModal";
-import testPassword from "../../utils/testPassword";
 import { config } from "../../utils/GoogleAuthConfig";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -41,11 +43,8 @@ function LoginContainer({ navigation }) {
    useEffect(() => {
       const googleSignin = async (credential) => {
          const res = await fbAuth.signInWithCredential(credential);
+         await fbAuth.setPersistence(fbAuthObject.Auth.Persistence.LOCAL);
          dispatch(signin(res.user));
-         const resPersist = await fbAuth.setPersistence(
-            fbAuthObject.Auth.Persistence.LOCAL
-         );
-         console.log(resPersist);
       };
       if (response?.type === "success") {
          const { id_token } = response.params;
@@ -69,6 +68,7 @@ function LoginContainer({ navigation }) {
       }
       setUserInfo((prev) => ({ ...prev, [name]: value }));
    };
+
    const onPressLogin = async () => {
       if (!userInfo.email) {
          handleError("blank_email", setErrMsg);
@@ -77,8 +77,8 @@ function LoginContainer({ navigation }) {
          return;
       }
       if (login) {
+         setLoading(true);
          try {
-            setLoading(true);
             const res = await fbAuth.signInWithEmailAndPassword(
                userInfo.email,
                userInfo.password
@@ -87,7 +87,7 @@ function LoginContainer({ navigation }) {
             await fbAuth.setPersistence(fbAuthObject.Auth.Persistence.LOCAL);
             navigation.navigate("Home");
          } catch (err) {
-            handleError(err.code, setErrMsg);
+            catchError(err.code, setErrMsg, "password");
             if (err.code === "auth/wrong-password") {
                setWrongPW(true);
             }
@@ -100,27 +100,47 @@ function LoginContainer({ navigation }) {
             handleError("blank_name", setErrMsg);
             return;
          }
-         try {
-            setLoading(true);
-            let res = await fbAuth.createUserWithEmailAndPassword(
-               userInfo.email,
-               userInfo.password
-            );
-            await res.user.updateProfile({ displayName: userInfo.name });
-            await fbStore.collection(res.user.uid).doc("profile").set({
-               createdAt: Date.now(),
-               name: userInfo.name,
-            });
+         setLoading(true);
 
-            res = await fbAuth.signInWithEmailAndPassword(
+         //가입
+         let res;
+         try {
+            res = await fbAuth.createUserWithEmailAndPassword(
                userInfo.email,
                userInfo.password
             );
+         } catch (err) {
+            catchError(err.code, setErrMsg, "passwordCheck");
+            return;
+         }
+
+         // 사용자 이름 업데이트
+         await res.user.updateProfile({ displayName: userInfo.name });
+         /*
+         await fbStore.collection(res.user.uid).doc("profile").set({
+            createdAt: Date.now(),
+            name: userInfo.name,
+         });*/
+
+         // 로그인
+         res = await fbAuth.signInWithEmailAndPassword(
+            userInfo.email,
+            userInfo.password
+         );
+         dispatch(signin(res.user, "email"));
+
+         // 인증 메일 보내기
+         try {
             await res.user.sendEmailVerification();
             setVisibleSentEmail(true);
-            dispatch(signin(res.user, "email"));
          } catch (err) {
-            handleError(err.code, setErrMsg);
+            try {
+               await res.user.sendEmailVerification();
+               setVisibleSentEmail(true);
+            } catch (err) {
+               catchError(err.code, setErrMsg, "passwordCheck");
+               return;
+            }
          }
       }
       setLoading(false);
