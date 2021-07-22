@@ -43,10 +43,7 @@ export default function GoogleMap() {
       const { coords } = await Location.getCurrentPositionAsync();     //내위치 가져와서 coords에
        
       setRegion({
-        //latitude: coords.latitude,
-        //longitude: coords.longitude,
-        latitude: 40.748743,
-        longitude: -73.985307,
+        ...markers[0].coordinate,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       })
@@ -143,7 +140,7 @@ export default function GoogleMap() {
             ref={mapView}
             key="Gmap"
             style={styles.map}>
-              {markers.filter((marker) => marker.type =='location').map((marker,index) =>{
+              {markers.map((marker,index) =>{
                 const scaleStyle = {
                   transform: [
                     {
@@ -153,24 +150,35 @@ export default function GoogleMap() {
                 };
                 return (
                   <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)}>
-                    <Animated.View style={[styles.markerWrap]}>
-                      <Animated.Image
-                        source={require('../../../../assets/map_marker.png')}
-                        style={[styles.marker, scaleStyle]}
-                        resizeMode="cover"
-                      />
-                    </Animated.View>
-                    <View style={styles.price}>
-                      <Text>&nbsp;&#8361;{marker.price}&nbsp;</Text>
-                    </View>
-                  </MapView.Marker>   
+                    {marker.type == 'location' ? (
+                      <>
+                        <Animated.View style={[styles.markerWrap]}>
+                        <Animated.Image
+                          source={require('../../../../assets/map_marker.png')}
+                          style={[styles.marker, scaleStyle]}
+                          resizeMode="cover"
+                        />
+                      </Animated.View>
+                      <View style={styles.price}>
+                        <Text>&nbsp;&#8361;{marker.price}&nbsp;</Text>
+                      </View>
+                    
+                    </>
+                    ) : (
+                      <>
+                        <View style={styles.line}>
+                          <Text></Text>
+                        </View>
+                      </>
+                    )}
+                  </MapView.Marker>    
                 );
               })}          
 
               <MapViewDirections               
                 lineDashPattern={[1]}
-                origin={markers[x] ? markers[x].startPoint : 0}
-                destination={markers[x] ? markers[x].endPoint : 0}
+                origin={markers[x]?.startPoint ? markers[x].startPoint : 0}
+                destination={markers[x]?.endPoint ? markers[x].endPoint : 0}
                 apikey={GOOGLE_API_KEY} // insert your API Key here
                 strokeWidth={5}
                 strokeColor="#20B2AA"
@@ -266,6 +274,9 @@ const styles = StyleSheet.create({
   },
   price:{
     backgroundColor:"#ffffff",
+    borderRadius:10,
+  },
+  line:{
     borderRadius:10,
   },
   card: {
