@@ -13,38 +13,32 @@ function sleep(ms) {
    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function GoogleMapContainer() {
-   const [isLoading, setIsLoading] = useState(true);
+function GoogleMapContainer({ markersInput }) {
    const [region, setRegion] = useState("");
    const [markers, setMarkers] = useState([]);
+   const [loading, setLoading] = useState(true);
    const mapViewRef = React.createRef();
-
    let mapIndex = 0;
    let mapAnimation = new Animated.Value(0);
 
-   const getLocation = async () => {
-      //위치 가져오기
-      try {
-         await Location.requestForegroundPermissionsAsync(); //퍼미션 받고
-         const { coords } = await Location.getCurrentPositionAsync(); //내위치 가져와서 coords에
+   useEffect(() => {
+      setMarkers(markersInput);
+      if (markersInput[0]) {
+         setLoading(false);
          setRegion({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+            ...markersInput[0].location,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
          });
-
-         setIsLoading(false);
-      } catch (error) {
-         alert("Can't find you.", "So sad");
-         console.log(error);
+      } else {
+         setRegion({
+            latitude: 0,
+            longitude: 0,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+         });
       }
-   };
-
-   useEffect(() => {
-      if (isLoading) getLocation();
-      setMarkers(markersData);
-   }, []);
+   }, [markersInput]);
 
    const interpolations = markers.map((marker, index) => {
       const inputRange = [
@@ -64,8 +58,8 @@ function GoogleMapContainer() {
 
    return (
       <GoogleMap
-         isLoading={isLoading}
          setRegion={setRegion}
+         loading={loading}
          region={region}
          mapViewRef={mapViewRef}
          interpolations={interpolations}

@@ -8,17 +8,17 @@ import { googleMapKey } from "../../../../env";
 const GOOGLE_API_KEY = googleMapKey;
 
 export default function GoogleMap({
-   isLoading,
    setRegion,
    region,
    mapViewRef,
    interpolations,
    markers,
+   loading,
 }) {
    const [x, setX] = useState(5);
    return (
       <View style={styles.container}>
-         {isLoading ? (
+         {loading ? (
             <View style={styles.content}>
                <Text>Loading...</Text>
             </View>
@@ -44,29 +44,19 @@ export default function GoogleMap({
                      return (
                         <MapView.Marker
                            key={index}
-                           coordinate={marker.coordinate}>
-                           {marker.type == "location" ? (
-                              <>
-                                 <Animated.View style={[styles.markerWrap]}>
-                                    <Animated.Image
-                                       source={require("../../../../assets/map_marker.png")}
-                                       style={[styles.marker, scaleStyle]}
-                                       resizeMode="cover"
-                                    />
-                                 </Animated.View>
-                                 <View style={styles.price}>
-                                    <Text>
-                                       &nbsp;&#8361;{marker.price}&nbsp;
-                                    </Text>
-                                 </View>
-                              </>
-                           ) : (
-                              <>
-                                 <View style={styles.line}>
-                                    <Text></Text>
-                                 </View>
-                              </>
-                           )}
+                           coordinate={marker.location}>
+                           <>
+                              <Animated.View style={[styles.markerWrap]}>
+                                 <Animated.Image
+                                    source={require("../../../../assets/map_marker.png")}
+                                    style={[styles.marker, scaleStyle]}
+                                    resizeMode="cover"
+                                 />
+                              </Animated.View>
+                              <View style={styles.price}>
+                                 <Text>&nbsp;&#8361;{marker.cost}&nbsp;</Text>
+                              </View>
+                           </>
                         </MapView.Marker>
                      );
                   })}
@@ -111,7 +101,7 @@ const styles = StyleSheet.create({
    },
    map: {
       width: Dimensions.get("window").width,
-      height: Dimensions.get("window").height,
+      height: "100%",
       zIndex: 1,
    },
 
