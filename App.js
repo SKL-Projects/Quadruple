@@ -19,8 +19,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
 import Auth from './src/screens/Auth'
 import { fbAuth } from "./firebase";
-import GoogleMap from "./src/screens/GoogleMap";
-import AutoComplete from "./src/screens/AutoComplete.js";
+import Cost from "./src/screens/Cost";
 import ProfileScreen from "./src/screens/Profile";
 
 import Template from './src/screens/Template'
@@ -54,13 +53,8 @@ export default function App() {
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen
-                     name="GoogleMap"
-                     component={GoogleMap}
-                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                     name="AutoComplete"
-                     component={AutoComplete}
+                     name="Cost"
+                     component={Cost}
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen

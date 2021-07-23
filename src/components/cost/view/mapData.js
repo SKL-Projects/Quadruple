@@ -6,43 +6,10 @@ const Images = [
   { image: require("../../../../assets/attraction5.jpg") },
 ];
 
-export const directions = [
-{
-  coordinate: {
-    latitude: 40.740019,
-    longitude: -73.989287,
-  },
-  startPoint: {
-    latitude: 40.731296,
-    longitude: -73.993267,
-  },
-  endPoint: {
-    latitude: 40.748743,
-    longitude: -73.985307,
-  },
-  type:"transit",
-  index:1
-},
-{
-  coordinate: {
-    latitude: 40.758419,
-    longitude: -73.987297,
-  },
-  startPoint: {
-    latitude: 40.748743,
-    longitude: -73.985307,
-  },
-  endPoint: {
-    latitude: 40.768095,
-    longitude: -73.979837,
-  },
-  type:"transit",
-  index:3
-},
-]
 export const markers = [
 {
   index:0,
+  day:1,
   coordinate: {
     latitude: 40.731296, 
     longitude: -73.993267,
@@ -56,6 +23,7 @@ export const markers = [
 },
 {
   index:1,
+  day:1,
   coordinate: {
     latitude: 40.740019,
     longitude: -73.989287,
@@ -72,6 +40,7 @@ export const markers = [
 },
 {
   index:2,
+  day:1,
   coordinate: {
     latitude: 40.748743,
     longitude: -73.985307,
@@ -85,6 +54,7 @@ export const markers = [
 },
 {
   index:3,
+  day:1,
   coordinate: {
     latitude: 40.758419,
     longitude: -73.982572,
@@ -101,6 +71,7 @@ export const markers = [
 },
 {
   index:4,
+  day:1,
   coordinate: {
     latitude: 40.768095,
     longitude: -73.970388,
@@ -114,6 +85,7 @@ export const markers = [
 },
 {
   index:5,
+  day:1,
   coordinate: {
     latitude: 40.734654,
     longitude: -74.011305,
@@ -130,6 +102,7 @@ export const markers = [
 },
 {
   index:6,
+  day:1,
   coordinate: {
     latitude: 40.701214,
     longitude: -74.052223,
@@ -139,6 +112,34 @@ export const markers = [
   description: "This is the fourth best place",
   image: Images[3].image,
   price: 2000,
+  reviews: 48,
+},
+{
+  index:7,
+  day:2,
+  coordinate: {
+    latitude: 40.721214,
+    longitude: -74.062223,
+  },
+  type:"location",
+  title: "2일",
+  description: "This is the fourth best place",
+  image: Images[3].image,
+  price: 4000,
+  reviews: 48,
+},
+{
+  index:8,
+  day:2,
+  coordinate: {
+    latitude: 40.731214,
+    longitude: -74.042223,
+  },
+  type:"location",
+  title: "2일차",
+  description: "This is the fourth best place",
+  image: Images[3].image,
+  price: 3000,
   reviews: 48,
 },
 ];

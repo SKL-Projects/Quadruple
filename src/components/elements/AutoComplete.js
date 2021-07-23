@@ -1,9 +1,10 @@
 import React from "react";
 import { StyleSheet, View,Text, Dimensions } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { fbConfig } from "../../../../env";
 
-const GOOGLE_PLACES_API_KEY = fbConfig.googleMapKey; // never save your real api key in a snack!
+import { googleMapKey } from "../../../env";
+
+const GOOGLE_PLACES_API_KEY = googleMapKey;
 
 export default function AutoComplete( props ) {
   
