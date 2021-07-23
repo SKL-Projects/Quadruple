@@ -19,10 +19,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
 import Auth from "./src/screens/Auth";
 import GoogleMap from "./src/screens/GoogleMap";
-import AutoComplete from "./src/screens/AutoComplete.js";
 import ProfileScreen from "./src/screens/Profile";
 
 import Template from "./src/screens/Template";
+import TravelScreen from "./src/screens/Travel.js";
 
 /*리덕스 */
 const sagaMiddleware = createSagaMiddleware();
@@ -58,8 +58,8 @@ export default function App() {
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen
-                     name="AutoComplete"
-                     component={AutoComplete}
+                     name="Travel"
+                     component={TravelScreen}
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen

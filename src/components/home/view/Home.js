@@ -40,8 +40,8 @@ function Home({ navigation }) {
          </View>
          <View style={styles.login}>
             <Button
-               title="Show search"
-               onPress={() => navigation.navigate("AutoComplete")}
+               title="Travel"
+               onPress={() => navigation.navigate("Travel")}
             />
          </View>
          <View style={styles.login}>

@@ -1,40 +1,36 @@
 {
-  "expo": {
-    "name": "quadruple",
-    "slug": "quadruple",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "scheme": "myapp",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.quadruple.android"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+   "expo": {
+      "name": "quadruple",
+      "slug": "quadruple",
+      "version": "1.0.0",
+      "orientation": "portrait",
+      "icon": "./assets/icon.png",
+      "scheme": "myapp",
+      "splash": {
+         "image": "./assets/splash.png",
+         "resizeMode": "contain",
+         "backgroundColor": "#ffffff"
       },
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyBjBwEuQRkMmKS6bXKVdOdUrkV-Qoiveg0"
-        }
+      "updates": {
+         "fallbackToCacheTimeout": 0
       },
-      "package": "com.quadruple.android"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
-  }
+      "assetBundlePatterns": ["**/*"],
+      "ios": {
+         "supportsTablet": true,
+         "bundleIdentifier": "com.quadruple.android"
+      },
+      "android": {
+         "adaptiveIcon": {
+            "foregroundImage": "./assets/adaptive-icon.png",
+            "backgroundColor": "#FFFFFF"
+         },
+         "config": {
+            "googleMaps": {}
+         },
+         "package": "com.quadruple.android"
+      },
+      "web": {
+         "favicon": "./assets/favicon.png"
+      }
+   }
 }
