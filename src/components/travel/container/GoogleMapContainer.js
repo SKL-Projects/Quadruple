@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import GoogleMap from "../view/GoogleMap";
-import * as Location from "expo-location";
-import { markersData } from "../view/mapData";
 import { Animated } from "react-native";
 import { Dimensions } from "react-native";
 
@@ -13,10 +11,10 @@ function sleep(ms) {
    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function GoogleMapContainer({ markersInput }) {
-   const [region, setRegion] = useState("");
+function GoogleMapContainer({ markersInput, region, setRegion }) {
    const [markers, setMarkers] = useState([]);
    const [loading, setLoading] = useState(true);
+   const [thisRegion, setThisRegion] = useState(region);
    const mapViewRef = React.createRef();
    let mapIndex = 0;
    let mapAnimation = new Animated.Value(0);
@@ -25,30 +23,32 @@ function GoogleMapContainer({ markersInput }) {
       setMarkers(markersInput);
       if (markersInput[0]) {
          setLoading(false);
-         setRegion({
-            ...markersInput[0].location,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-         });
-      } else {
-         setRegion({
-            latitude: 0,
-            longitude: 0,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-         });
       }
    }, [markersInput]);
 
+   let timeout = 0;
+   useEffect(() => {
+      clearTimeout(timeout);
+      mapViewRef.current?.animateToRegion(region, 900);
+      timeout = setTimeout(() => setThisRegion(region), 1000);
+      let count = 0;
+      for (let i of markers) {
+         if (
+            region.latitude === i.location.latitude &&
+            region.longitude === i.location.longitude
+         ) {
+            mapAnimation.setValue(count);
+            break;
+         }
+         count++;
+      }
+   }, [region]);
+
    const interpolations = markers.map((marker, index) => {
-      const inputRange = [
-         (index - 1) * CARD_WIDTH,
-         index * CARD_WIDTH,
-         (index + 1) * CARD_WIDTH,
-      ];
+      const inputRange = [index - 1, index, index + 1];
 
       const scale = mapAnimation.interpolate({
-         inputRange,
+         inputRange: inputRange,
          outputRange: [1, 1.5, 1],
          extrapolate: "clamp",
       });
@@ -60,7 +60,7 @@ function GoogleMapContainer({ markersInput }) {
       <GoogleMap
          setRegion={setRegion}
          loading={loading}
-         region={region}
+         region={thisRegion}
          mapViewRef={mapViewRef}
          interpolations={interpolations}
          mapAnimation={mapAnimation}
@@ -69,4 +69,4 @@ function GoogleMapContainer({ markersInput }) {
    );
 }
 
-export default GoogleMapContainer;
+export default React.memo(GoogleMapContainer);

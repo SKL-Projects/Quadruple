@@ -7,6 +7,13 @@ function TravelContainer() {
    const [plans, setPlans] = useState({});
    const [length, setLength] = useState(5);
    const [markers, setMarkers] = useState([]);
+   const [region, setRegion] = useState({
+      latitude: 0,
+      longitude: 0,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+   });
+
    useEffect(() => {
       const sortedPlans = planDatas.sort((a, b) => {
          return a.time < b.time ? -1 : 1;
@@ -18,6 +25,7 @@ function TravelContainer() {
             location: item.location,
          }))
       );
+      setRegion((prev) => ({ ...prev, ...sortedPlans[0].location }));
       const groups = sortedPlans.reduce((groups, plan) => {
          const date = `${plan.time.getFullYear()}/${plan.time.getMonth()}/${plan.time.getDate()}`;
          if (!groups[date]) {
@@ -28,12 +36,15 @@ function TravelContainer() {
       }, {});
       setPlans(groups);
    }, []);
+
    return (
       <Travel
          sheetRef={sheetRef}
          plans={plans}
          length={length}
          markers={markers}
+         region={region}
+         setRegion={setRegion}
       />
    );
 }
