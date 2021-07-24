@@ -26,11 +26,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyBjBwEuQRkMmKS6bXKVdOdUrkV-Qoiveg0"
-        }
-      },
       "package": "com.quadruple.android"
     },
     "web": {

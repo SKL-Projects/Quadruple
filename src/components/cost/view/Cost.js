@@ -8,24 +8,23 @@ import {
   Image,
   Dimensions,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import * as Location from "expo-location";
-import MapViewDirections from 'react-native-maps-directions';
 import { markers} from './mapData';
+import Test from './test'
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
-import { googleMapKey } from "../../../../env";
 
-const GOOGLE_API_KEY = googleMapKey;
 
 export default function GoogleMap() {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
   const [x, setX] = useState(0);
-  const [linePos, setLinePos] = useState({startPoint : 0,endPoint : 0});
+  const [p, setP] = useState(false);
   const [dis, setDis] = useState([]);
 
   const mapView = React.createRef();   
@@ -40,10 +39,7 @@ export default function GoogleMap() {
       const { coords } = await Location.getCurrentPositionAsync();     //내위치 가져와서 coords에
        
       setRegion({
-        //latitude: coords.latitude,
-        //longitude: coords.longitude,
-        latitude: 40.748743,
-        longitude: -73.985307,
+        ...markers[0].coordinate,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       })
@@ -79,27 +75,13 @@ export default function GoogleMap() {
       
       setX(index)
       //animateion 설정
-      markers[index].type == 'location' ? (
-        pos = {
-          ...coordinate,
-          latitudeDelta: 0.1,
-          longitudeDelta: 0.1,
-        },
-        setLinePos({
-          startPoint : 0,
-          endPoint : 0
-        })
-      ):(
-          pos = {
-          ...coordinate,
-          latitudeDelta: Math.abs(markers[index].startPoint.latitude-markers[index].endPoint.latitude)*3,
-          longitudeDelta: Math.abs(markers[index].startPoint.longitude-markers[index].endPoint.longitude)*3,
-        },
-        setLinePos({
-          startPoint : markers[x].startPoint,
-          endPoint : markers[x].endPoint
-        })
-      )
+      
+      pos = {
+        ...coordinate,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
+      }
+      
       mapView.current.animateToRegion(pos,350)
       setRegion({pos}) 
       
@@ -135,7 +117,6 @@ export default function GoogleMap() {
 
   const onMarkerPress = (mapEventData) => {
     const markerID = mapEventData._targetInst.return.key;
-
     let x = (markerID * CARD_WIDTH) + (markerID * 20); 
     if (Platform.OS === 'ios') {
       x = x - SPACING_FOR_CARD_INSET;
@@ -151,117 +132,91 @@ export default function GoogleMap() {
         </View>
       ):(
         <>
-          <MapView 
-            provider={PROVIDER_GOOGLE} 
-            region={region}
-            ref={mapView}
-            key="Gmap"
-            style={styles.map}>
-              {markers.map((marker, index) => {
-                const scaleStyle = {
-                  transform: [
-                    {
-                      scale: interpolations[index].scale,
-                    },
-                  ],
-                };
-                
-                return (
-                  <>
-                    {marker.type=='location'?(
-                      <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)} style={{opacity:dis[index]}} >
-                        <Animated.View style={[styles.markerWrap]}>
-                          <Animated.Image
-                            source={require('../../../../assets/map_marker.png')}
-                            style={[styles.marker, scaleStyle]}
-                            resizeMode="cover"
-                          />
-                        </Animated.View>
-                        <View style={styles.price}>
-                          <Text>&nbsp;&#8361;{marker.price}&nbsp;</Text>
-                        </View>
-                      </MapView.Marker>
-                    ):(
-                    <View key={index}>
-                    </View>
-                  )}
-                  </>
-                );
-              })}          
-              {markers[x].startPoint ? (
-                <MapViewDirections
-                  lineDashPattern={[1]}
-                  origin={linePos.startPoint}
-                  destination={linePos.endPoint}
-                  apikey={GOOGLE_API_KEY} // insert your API Key here
-                  strokeWidth={5}
-                  strokeColor="#20B2AA"
-                  mode="TRANSIT"
-                  onReady={result => {
-                    console.log(`Distance: ${result.distance} km`)
-                    console.log(`Duration: ${result.duration} min.`)                          
-                    //console.log(mapAnimation.__getValue())
-                  }}
-                  onError={(errorMessage) => {
-                    // console.log('GOT AN ERROR');
-                  }}
-                />
-              ) : (
-                <></>
-              )}
-              
-
-            </MapView>
-            <View style={styles.scrollHeader}>
-              <Text>{markers[x].day}일차</Text>
-            </View>
-            <Animated.ScrollView
-              ref={_scrollView}
-              horizontal
-              pagingEnabled
-              scrollEventThrottle={1}
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={CARD_WIDTH + 20}
-              snapToAlignment="center"
-              style={styles.scrollView}
-              contentInset={{
-                top: 0,
-                left: SPACING_FOR_CARD_INSET,
-                bottom: 0,
-                right: SPACING_FOR_CARD_INSET
-              }}
-              contentContainerStyle={{
-                paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
-              }}
-              onScroll={(e)=>{
-                scrollAnimate(e.nativeEvent.contentOffset.x);
-                mapAnimation.setValue(e.nativeEvent.contentOffset.x);
-              }}
-            >
-              {markers.map((card, index) =>(
-                <View style={styles.card} key={index}>
-                  {card.type=='location'?(
-                    <>
-                      <Image 
-                        source={card.image}
-                        style={styles.cardImage}
-                        resizeMode="cover"
-                      />
-                      <View style={styles.textContent}>
-                        <Text numberOfLines={1} style={styles.cardtitle}>{card.title}</Text>
-                        <Text numberOfLines={1} style={styles.cardDescription}>{card.description}</Text>
+          {p ? (
+            <Test/>
+          ) : (
+            <MapView 
+              provider={PROVIDER_GOOGLE} 
+              region={region}
+              ref={mapView}
+              key="Gmap"
+              style={styles.map}>
+                {markers.filter((x)=>x.type=='location').map((marker, index) => {
+                  const scaleStyle = {
+                    transform: [
+                      {
+                        scale: interpolations[index].scale,
+                      },
+                    ],
+                  };
+                  
+                  return (
+                    <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)} style={{opacity:dis[index]}} >
+                      <Animated.View style={[styles.markerWrap]}>
+                        <Animated.Image
+                          source={require('../../../../assets/map_marker.png')}
+                          style={[styles.marker, scaleStyle]}
+                          resizeMode="cover"
+                        />
+                      </Animated.View>
+                      <View style={styles.price}>
+                        <Text>&nbsp;&#8361;{marker.price}&nbsp;</Text>
                       </View>
-                    </>
-                  ):(
-                    <View style={styles.textContent}>
-                      <Text numberOfLines={1} style={styles.cardtitle}>this is transit</Text>
-                    </View>
-                  )}
+                    </MapView.Marker>
+                  );
+                })}          
+            </MapView>
+          )}
+          <View style={styles.selector}>
+            <TouchableOpacity style={styles.selector_btn} onPress={()=>setP(false)}>
+              <Text>지도로 보기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.selector_btn} onPress={()=>setP(true)}>
+              <Text>리스트로 보기</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.scrollHeader}>
+            <Text>{markers[x].day}일차</Text>
+          </View>
+          <Animated.ScrollView
+            ref={_scrollView}
+            horizontal
+            pagingEnabled
+            scrollEventThrottle={1}
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CARD_WIDTH + 20}
+            snapToAlignment="center"
+            style={styles.scrollView}
+            contentInset={{
+              top: 0,
+              left: SPACING_FOR_CARD_INSET,
+              bottom: 0,
+              right: SPACING_FOR_CARD_INSET
+            }}
+            contentContainerStyle={{
+              paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
+            }}
+            onScroll={(e)=>{
+              scrollAnimate(e.nativeEvent.contentOffset.x);
+              mapAnimation.setValue(e.nativeEvent.contentOffset.x);
+            }}
+          >
+            {markers.filter((x)=>x.type=='location').map((card, index) =>(
+              <View style={styles.card} key={index}>
+                <Image 
+                  source={card.image}
+                  style={styles.cardImage}
+                  resizeMode="cover"
+                />
+                <View style={styles.textContent}>
+                  <Text numberOfLines={1} style={styles.cardtitle}>{card.title}</Text>
+                  <Text numberOfLines={1} style={styles.cardDescription}>{card.description}</Text>
                 </View>
-              ))}
-            </Animated.ScrollView>
-          </>
-        )}
+              </View>
+            ))}
+          </Animated.ScrollView>
+        </>
+      )}
     </View>
    );
 }
@@ -297,12 +252,28 @@ const styles = StyleSheet.create({
     backgroundColor:"#ffffff",
     borderRadius:10,
   },
+  selector:{
+    width:200,
+    height:40,
+    backgroundColor:'#ffffff',
+    position:"absolute",
+    top:25,
+    zIndex:2,
+    flexDirection: 'row',
+    alignItems: "center",
+    borderRadius:10,
+    
+  },
+  selector_btn:{
+    flex: 1,
+    alignItems: "center",
+  },
   scrollHeader:{
     width:50,
     height:50,
     backgroundColor:'#ffffff',
     position:"absolute",
-    top:30,
+    top:75,
     zIndex:2,
     alignItems: "center",
     justifyContent: "center",
