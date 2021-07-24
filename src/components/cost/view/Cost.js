@@ -58,7 +58,7 @@ export default function GoogleMap() {
   const setMarkerVisible = (bool) =>{
     if(bool)
       setDis([])
-    {markers.map((marker, index) => {
+    {markers.map((marker) => {
       let isVisibie = (markers[x].day == marker.day ? 1 : 0)
       setDis(dis => [...dis,isVisibie])
     })};
@@ -116,7 +116,7 @@ export default function GoogleMap() {
     setMarkerVisible(0)
   }, []);
 
-  const interpolations = markers.map((marker, index) => {
+  const interpolations = markers.map((x, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
