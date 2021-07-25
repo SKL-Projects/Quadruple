@@ -16,6 +16,7 @@ export default function GoogleMap({
    markers,
    loading,
    onPressMarker,
+   onAnimateRegion,
 }) {
    const [x, setX] = useState(5);
 
@@ -33,7 +34,8 @@ export default function GoogleMap({
                   region={region}
                   ref={mapViewRef}
                   key="Gmap"
-                  style={styles.map}>
+                  style={styles.map}
+                  onRegionChangeComplete={onAnimateRegion}>
                   <Markers
                      markers={markers}
                      interpolations={interpolations}

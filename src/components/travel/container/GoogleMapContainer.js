@@ -28,6 +28,17 @@ function GoogleMapContainer({ markersInput, region, setRegion, itemRefs }) {
 
    useEffect(() => {
       mapViewRef.current?.animateToRegion(region, 900);
+      let count = 0;
+      for (let i of markers) {
+         if (
+            region.latitude === i.location.latitude &&
+            region.longitude === i.location.longitude
+         ) {
+            mapAnimation.setValue(count);
+            break;
+         }
+         count++;
+      }
    }, [region]);
 
    const interpolations = markers.map((marker, index) => {
@@ -41,13 +52,14 @@ function GoogleMapContainer({ markersInput, region, setRegion, itemRefs }) {
 
       return { scale };
    });
-   const onPressMarker = useCallback(
-      (index) => {
-         itemRefs[index].current?.scrollIntoView({ align: "top" });
-         mapAnimation.setValue(index);
-      },
-      [itemRefs, markersInput]
-   );
+
+   const onPressMarker = (index) => {
+      itemRefs[index].current?.scrollIntoView({ align: "top" });
+      setRegion((prev) => ({ ...prev, ...markers[index].location }));
+   };
+   const onAnimateRegion = () => {
+      setThisRegion(region);
+   };
 
    return (
       <GoogleMap
@@ -59,6 +71,7 @@ function GoogleMapContainer({ markersInput, region, setRegion, itemRefs }) {
          mapAnimation={mapAnimation}
          markers={markers}
          onPressMarker={onPressMarker}
+         onAnimateRegion={onAnimateRegion}
       />
    );
 }
