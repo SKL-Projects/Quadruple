@@ -5,7 +5,7 @@ import { planDatas } from "./PlanDatas";
 function TravelContainer() {
    const sheetRef = useRef(null);
    const [plans, setPlans] = useState({});
-   const [length, setLength] = useState(5);
+   const [length, setLength] = useState(0);
    const [markers, setMarkers] = useState([]);
    const [region, setRegion] = useState({
       latitude: 0,
@@ -13,6 +13,10 @@ function TravelContainer() {
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
    });
+   //마커 클릭시 스크롤를 위한 refs 배열
+   const itemRefs = Array(100)
+      .fill(0, 0, 100)
+      .map(() => useRef());
 
    useEffect(() => {
       const sortedPlans = planDatas.sort((a, b) => {
@@ -42,6 +46,7 @@ function TravelContainer() {
          sheetRef={sheetRef}
          plans={plans}
          length={length}
+         itemRefs={itemRefs}
          markers={markers}
          region={region}
          setRegion={setRegion}

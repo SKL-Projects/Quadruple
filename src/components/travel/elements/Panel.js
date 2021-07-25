@@ -1,14 +1,38 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { basicVetical, end, start } from "../../utils/Graph";
 import { ListItem } from "react-native-elements";
 import theme from "../../../lib/styles/theme";
+import { ScrollIntoView, wrapScrollView } from "react-native-scroll-into-view";
+import { ScrollView } from "react-native-gesture-handler";
+import {
+   getSnapOneHeight,
+   getSnapZeroHeight,
+   LIST_ITEM_HEIGHT,
+} from "./itemHeight";
 
-const LIST_ITEM_HEIGHT = 70;
+const CustomScrollView = wrapScrollView(ScrollView);
 
-function Panel({ plans, setRegion }) {
+function Panel({ plans, setRegion, curSnap, itemRefs, length }) {
+   let cnt = 0;
+   const onPressListItem = useCallback((location) => {
+      setRegion({
+         latitudeDelta: 0.01,
+         longitudeDelta: 0.01,
+         ...location,
+      });
+   }, []);
    return (
-      <View style={styles.panel}>
+      <CustomScrollView
+         style={[
+            styles.panel,
+            {
+               height:
+                  curSnap === 0
+                     ? getSnapZeroHeight(length)
+                     : getSnapOneHeight(length),
+            },
+         ]}>
          {Object.keys(plans).map((day, idx) => {
             return (
                <View key={`day_${idx}`} style={styles.dayContainer}>
@@ -17,45 +41,44 @@ function Panel({ plans, setRegion }) {
                      const hour = item.time.getHours();
                      const minute = item.time.getMinutes();
                      return (
-                        <ListItem
+                        <ScrollIntoView
                            key={`${day}_${idx}`}
-                           containerStyle={styles.listItem}
-                           underlayColor="white"
-                           onPress={() =>
-                              setRegion((prev) => ({
-                                 ...prev,
-                                 ...item.location,
-                              }))
-                           }>
-                           <View
-                              style={{
-                                 width: 60,
-                                 justifyContent: "center",
-                                 alignItems: "center",
-                                 padding: 0,
-                              }}>
-                              {item.type !== "start"
-                                 ? item.type !== "end"
-                                    ? basicVetical(LIST_ITEM_HEIGHT)
-                                    : end(LIST_ITEM_HEIGHT)
-                                 : start(LIST_ITEM_HEIGHT)}
-                           </View>
-                           <ListItem.Content>
-                              <ListItem.Title style={{ fontSize: 20 }}>
-                                 {hour < 10 ? `0${hour}` : hour}:
-                                 {minute < 10 ? `0${minute}` : minute}
-                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                 {item.title}
-                              </ListItem.Title>
-                           </ListItem.Content>
-                           <ListItem.Chevron />
-                        </ListItem>
+                           ref={itemRefs[cnt++]}>
+                           <ListItem
+                              key={`${day}_${idx}`}
+                              containerStyle={styles.listItem}
+                              underlayColor="white"
+                              onPress={() => onPressListItem(item.location)}>
+                              <View
+                                 style={{
+                                    width: 60,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    padding: 0,
+                                 }}>
+                                 {item.type !== "start"
+                                    ? item.type !== "end"
+                                       ? basicVetical(LIST_ITEM_HEIGHT)
+                                       : end(LIST_ITEM_HEIGHT)
+                                    : start(LIST_ITEM_HEIGHT)}
+                              </View>
+                              <ListItem.Content>
+                                 <ListItem.Title style={{ fontSize: 20 }}>
+                                    {hour < 10 ? `0${hour}` : hour}:
+                                    {minute < 10 ? `0${minute}` : minute}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {item.title}
+                                 </ListItem.Title>
+                              </ListItem.Content>
+                              <ListItem.Chevron />
+                           </ListItem>
+                        </ScrollIntoView>
                      );
                   })}
                </View>
             );
          })}
-      </View>
+      </CustomScrollView>
    );
 }
 

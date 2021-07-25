@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
-import { StyleSheet, Text, View, Animated, Dimensions } from "react-native";
+import React, { useState } from "react";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
 import { googleMapKey } from "../../../../env";
 import AutoCompleteContainer from "../container/AutoCompleteContainer";
@@ -15,8 +15,10 @@ export default function GoogleMap({
    interpolations,
    markers,
    loading,
+   onPressMarker,
 }) {
    const [x, setX] = useState(5);
+
    return (
       <View style={styles.container}>
          {loading ? (
@@ -32,9 +34,19 @@ export default function GoogleMap({
                   ref={mapViewRef}
                   key="Gmap"
                   style={styles.map}>
-                  <Markers markers={markers} interpolations={interpolations} />
-
-                  <MapViewDirections
+                  <Markers
+                     markers={markers}
+                     interpolations={interpolations}
+                     onPressMarker={onPressMarker}
+                  />
+               </MapView>
+            </>
+         )}
+      </View>
+   );
+}
+/*
+<MapViewDirections
                      lineDashPattern={[1]}
                      origin={markers[x]?.startPoint ? markers[x].startPoint : 0}
                      destination={
@@ -51,13 +63,7 @@ export default function GoogleMap({
                      onError={(errorMessage) => {
                         // console.log('GOT AN ERROR');
                      }}
-                  />
-               </MapView>
-            </>
-         )}
-      </View>
-   );
-}
+                  /> */
 
 const styles = StyleSheet.create({
    container: {

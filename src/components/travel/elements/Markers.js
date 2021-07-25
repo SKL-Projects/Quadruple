@@ -3,7 +3,7 @@ import { Animated } from "react-native";
 import { StyleSheet, View, Text } from "react-native";
 import MapView from "react-native-maps";
 
-function Markers({ markers, interpolations }) {
+function Markers({ markers, interpolations, onPressMarker }) {
    return (
       <>
          {markers.map((marker, index) => {
@@ -17,7 +17,8 @@ function Markers({ markers, interpolations }) {
             return (
                <MapView.Marker
                   key={`marker_${index}`}
-                  coordinate={marker.location}>
+                  coordinate={marker.location}
+                  onPress={() => onPressMarker(index)}>
                   <>
                      <Animated.View style={[styles.markerWrap]}>
                         <Animated.Image

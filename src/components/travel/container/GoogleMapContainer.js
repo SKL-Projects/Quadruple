@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import GoogleMap from "../view/GoogleMap";
 import { Animated } from "react-native";
 import { Dimensions } from "react-native";
@@ -11,12 +11,12 @@ function sleep(ms) {
    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function GoogleMapContainer({ markersInput, region, setRegion }) {
+function GoogleMapContainer({ markersInput, region, setRegion, itemRefs }) {
    const [markers, setMarkers] = useState([]);
    const [loading, setLoading] = useState(true);
    const [thisRegion, setThisRegion] = useState(region);
-   const mapViewRef = React.createRef();
-   let mapIndex = 0;
+   const mapViewRef = useRef();
+
    let mapAnimation = new Animated.Value(0);
 
    useEffect(() => {
@@ -26,22 +26,8 @@ function GoogleMapContainer({ markersInput, region, setRegion }) {
       }
    }, [markersInput]);
 
-   let timeout = 0;
    useEffect(() => {
-      clearTimeout(timeout);
       mapViewRef.current?.animateToRegion(region, 900);
-      timeout = setTimeout(() => setThisRegion(region), 1000);
-      let count = 0;
-      for (let i of markers) {
-         if (
-            region.latitude === i.location.latitude &&
-            region.longitude === i.location.longitude
-         ) {
-            mapAnimation.setValue(count);
-            break;
-         }
-         count++;
-      }
    }, [region]);
 
    const interpolations = markers.map((marker, index) => {
@@ -55,6 +41,13 @@ function GoogleMapContainer({ markersInput, region, setRegion }) {
 
       return { scale };
    });
+   const onPressMarker = useCallback(
+      (index) => {
+         itemRefs[index].current?.scrollIntoView({ align: "top" });
+         mapAnimation.setValue(index);
+      },
+      [itemRefs, markersInput]
+   );
 
    return (
       <GoogleMap
@@ -65,6 +58,7 @@ function GoogleMapContainer({ markersInput, region, setRegion }) {
          interpolations={interpolations}
          mapAnimation={mapAnimation}
          markers={markers}
+         onPressMarker={onPressMarker}
       />
    );
 }
