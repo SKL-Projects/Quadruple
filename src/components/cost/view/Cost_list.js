@@ -1,9 +1,7 @@
 import React from "react";
-import { StyleSheet, View,Text, Dimensions } from 'react-native';
+import { StyleSheet, View,Text } from 'react-native';
 
-export default function AutoComplete( props ) {
-  
-
+export default function Cost_map() {
   return (
     <View style={styles.container}>
       <Text>hi</Text>
