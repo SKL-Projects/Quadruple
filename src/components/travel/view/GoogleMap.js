@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
-import MapViewDirections from "react-native-maps-directions";
-import { googleMapKey } from "../../../../env";
 import AutoCompleteContainer from "../container/AutoCompleteContainer";
 import Markers from "../elements/Markers";
-
-const GOOGLE_API_KEY = googleMapKey;
+import Direction from "../elements/Direction";
 
 export default function GoogleMap({
    setRegion,
@@ -18,40 +15,6 @@ export default function GoogleMap({
    onPressMarker,
    onAnimateRegion,
 }) {
-   const [x, setX] = useState(5);
-
-   const showDirections = () => {
-      for (let i = 0; i < markers.length - 1; i++) {
-         if (region.id === markers[i].id) {
-            const origin =
-               markers[i].type !== "transit"
-                  ? markers[i].location
-                  : markers[i - 1].location;
-            const destination =
-               markers[i + 1].type === "transit"
-                  ? markers[i + 2]?.location
-                  : markers[i + 1]?.location;
-            return (
-               <MapViewDirections
-                  lineDashPattern={[1]}
-                  origin={origin}
-                  destination={destination}
-                  apikey={GOOGLE_API_KEY} // insert your API Key here
-                  strokeWidth={5}
-                  language="ko"
-                  strokeColor="red"
-                  mode="TRANSIT"
-                  precision="high"
-                  onReady={(result) => {}}
-                  onError={(errorMessage) => {
-                     console.log(errorMessage);
-                  }}
-               />
-            );
-         }
-      }
-   };
-
    return (
       <View style={styles.container}>
          {loading ? (
@@ -73,7 +36,7 @@ export default function GoogleMap({
                      interpolations={interpolations}
                      onPressMarker={onPressMarker}
                   />
-                  {showDirections()}
+                  <Direction markers={markers} region={region} />
                </MapView>
             </>
          )}
