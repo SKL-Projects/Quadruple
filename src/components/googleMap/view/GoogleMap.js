@@ -41,8 +41,8 @@ export default function GoogleMap() {
    const getLocation = async () => {
       //위치 가져오기
       try {
-         await Location.requestForegroundPermissionsAsync(); //퍼미션 받고
-         const { coords } = await Location.getCurrentPositionAsync(); //내위치 가져와서 coords에
+         // await Location.requestForegroundPermissionsAsync(); //퍼미션 받고
+         // const { coords } = await Location.getCurrentPositionAsync(); //내위치 가져와서 coords에
 
          setRegion({
             ...markers[0].coordinate,

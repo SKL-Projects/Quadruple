@@ -55,7 +55,12 @@ function GoogleMapContainer({ markersInput, region, setRegion, itemRefs }) {
 
    const onPressMarker = (index) => {
       itemRefs[index].current?.scrollIntoView({ align: "top" });
-      setRegion((prev) => ({ ...prev, ...markers[index].location }));
+
+      setRegion((prev) => ({
+         ...prev,
+         ...markers[index].location,
+         id: markers[index].id,
+      }));
    };
    const onAnimateRegion = () => {
       setThisRegion(region);

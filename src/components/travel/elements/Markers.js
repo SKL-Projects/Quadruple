@@ -19,18 +19,26 @@ function Markers({ markers, interpolations, onPressMarker }) {
                   key={`marker_${index}`}
                   coordinate={marker.location}
                   onPress={() => onPressMarker(index)}>
-                  <>
-                     <Animated.View style={[styles.markerWrap]}>
-                        <Animated.Image
-                           source={require("../../../../assets/map_marker.png")}
-                           style={[styles.marker, scaleStyle]}
-                           resizeMode="cover"
-                        />
-                     </Animated.View>
-                     <View style={styles.price}>
-                        <Text>&nbsp;&#8361;{marker.cost}&nbsp;</Text>
-                     </View>
-                  </>
+                  {marker.type !== "transit" ? (
+                     <>
+                        <Animated.View style={[styles.markerWrap]}>
+                           <Animated.Image
+                              source={require("../../../../assets/map_marker.png")}
+                              style={[styles.marker, scaleStyle]}
+                              resizeMode="cover"
+                           />
+                        </Animated.View>
+                        <View style={styles.price}>
+                           <Text>&nbsp;&#8361;{marker.cost}&nbsp;</Text>
+                        </View>
+                     </>
+                  ) : (
+                     <>
+                        <View style={styles.line}>
+                           <Text></Text>
+                        </View>
+                     </>
+                  )}
                </MapView.Marker>
             );
          })}

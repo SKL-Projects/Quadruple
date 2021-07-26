@@ -45,12 +45,13 @@ export const end = (height) => (
    </>
 );
 
-export const basicVetical = (height) => (
+export const basicVetical = (height, type) => (
+   // type === "transit" 이면 이동 블록
    <View
       style={{
          width: 5,
          height: height,
-         backgroundColor: "#7F7FD5",
+         backgroundColor: type === "transit" ? "#20B2AA" : "#7F7FD5",
       }}
    />
 );

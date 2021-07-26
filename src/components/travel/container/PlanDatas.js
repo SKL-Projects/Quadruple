@@ -1,5 +1,6 @@
 export const planDatas = [
    {
+      id: 3123,
       title: "출발",
       location: { latitude: 37.55913443385592, longitude: 127.17909267157005 },
       time: new Date(2021, 7, 23, 14),
@@ -10,6 +11,25 @@ export const planDatas = [
       isConnected: true,
    },
    {
+      id: 3123313,
+      title: "지하철 타고 이동",
+      location: {
+         latitude: 37.557160556701415,
+         longitude: 127.074843935303565,
+      },
+      direction: [
+         { latitude: 37.55913443385592, longitude: 127.17909267157005 },
+         { latitude: 37.55518667954691, longitude: 126.97059519903708 },
+      ],
+      time: new Date(2021, 7, 23, 14),
+      type: "transit",
+      detailType: "subway",
+      memo: "캐리어 잘 챙기기",
+      cost: 25000,
+      isConnected: true,
+   },
+   {
+      id: 31231,
       title: "서울역",
       location: { latitude: 37.55518667954691, longitude: 126.97059519903708 },
       time: new Date(2021, 7, 23, 16),
@@ -20,6 +40,7 @@ export const planDatas = [
       isConnected: true,
    },
    {
+      id: 55332,
       title: "계곡에서 놀기",
       location: { latitude: 37.711308170374174, longitude: 127.45257872466226 },
       time: new Date(2021, 7, 24, 10),
@@ -30,6 +51,25 @@ export const planDatas = [
       isConnected: true,
    },
    {
+      id: 1231231242,
+      title: "걸어서 이동",
+      location: {
+         latitude: 37.716555551210137,
+         longitude: 127.457109361508165,
+      },
+      direction: [
+         { latitude: 37.711308170374174, longitude: 127.45257872466226 },
+         { latitude: 37.7218029320461, longitude: 127.46163999835407 },
+      ],
+      time: new Date(2021, 7, 24, 10),
+      type: "transit",
+      detailType: "walking",
+      memo: "길 잘찾기",
+      cost: 25000,
+      isConnected: true,
+   },
+   {
+      id: 5542241,
       title: "도착",
       location: { latitude: 37.55913443385592, longitude: 127.17909267157005 },
       time: new Date(2021, 7, 25, 14),
@@ -40,6 +80,7 @@ export const planDatas = [
       isConnected: true,
    },
    {
+      id: 123151578,
       title: "숙소",
       location: { latitude: 37.7218029320461, longitude: 127.46163999835407 },
       time: new Date(2021, 7, 23, 19),
@@ -50,6 +91,7 @@ export const planDatas = [
       isConnected: true,
    },
    {
+      id: 976856,
       title: "가평역에서 집으로 가기",
       location: { latitude: 37.814498028199274, longitude: 127.5106822691367 },
       time: new Date(2021, 7, 25, 10),
@@ -60,6 +102,7 @@ export const planDatas = [
       isConnected: true,
    },
    {
+      id: 97654,
       title: "숙소",
       location: { latitude: 37.7218029320461, longitude: 127.46163999835407 },
       time: new Date(2021, 7, 24, 20),

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import GoogleMapContainer from "../container/GoogleMapContainer";
 import BottomSheet from "reanimated-bottom-sheet";
@@ -6,9 +6,8 @@ import theme from "../../../lib/styles/theme";
 import Panel from "../elements/Panel";
 import Reanimated from "react-native-reanimated";
 import {
-   getSnapOneHeight,
-   getSnapZeroHeight,
-   LIST_ITEM_HEIGHT,
+   getMapHeight,
+   getSnapHeight,
    WINDOW_HEIGHT,
 } from "../elements/itemHeight";
 
@@ -23,10 +22,17 @@ function Travel({
 }) {
    const [curSnap, setCurSnap] = useState(0);
    const heightAim = useRef(
-      new Animated.Value(
-         WINDOW_HEIGHT - getSnapOneHeight(length) + LIST_ITEM_HEIGHT
-      )
+      new Animated.Value(getMapHeight(length, curSnap))
    ).current;
+
+   useEffect(() => {
+      // 리스트 길이 변경시, 현재 snap에 맞춰서 맵 높이 변경
+      Animated.timing(heightAim, {
+         toValue: getMapHeight(length, curSnap),
+         duration: 0,
+         useNativeDriver: false,
+      }).start();
+   }, [length]);
 
    const renderContent = useCallback(
       () => (
@@ -54,40 +60,29 @@ function Travel({
    // 바텀시트에 따른 높이 변경
    const { call, onChange } = Reanimated;
    let drawerCallbackNode = new Reanimated.Value(0);
+   const changeMapHeight = (height) => {
+      Animated.timing(heightAim, {
+         toValue: height,
+         duration: 200,
+         useNativeDriver: false,
+      }).start();
+   };
    const onCallback = useCallback(
       ([value]) => {
          if (value < 0.2) {
             setCurSnap(0);
             if (curSnap !== 0) {
-               Animated.timing(heightAim, {
-                  toValue:
-                     WINDOW_HEIGHT -
-                     getSnapZeroHeight(length) +
-                     LIST_ITEM_HEIGHT,
-                  duration: 200,
-                  useNativeDriver: false,
-               }).start();
+               changeMapHeight(getMapHeight(length, 0));
             }
          } else if (value >= 0.5) {
             setCurSnap(2);
             if (curSnap !== 2) {
-               Animated.timing(heightAim, {
-                  toValue: WINDOW_HEIGHT,
-                  duration: 200,
-                  useNativeDriver: false,
-               }).start();
+               changeMapHeight(WINDOW_HEIGHT);
             }
          } else {
             setCurSnap(1);
             if (curSnap !== 1) {
-               Animated.timing(heightAim, {
-                  toValue:
-                     WINDOW_HEIGHT -
-                     getSnapOneHeight(length) +
-                     LIST_ITEM_HEIGHT,
-                  duration: 200,
-                  useNativeDriver: false,
-               }).start();
+               changeMapHeight(getMapHeight(length, 1));
             }
          }
       },
@@ -111,8 +106,8 @@ function Travel({
          <BottomSheet
             ref={sheetRef}
             snapPoints={[
-               getSnapZeroHeight(length),
-               getSnapOneHeight(length),
+               getSnapHeight(length, 0),
+               getSnapHeight(length, 1),
                50,
             ]}
             renderContent={renderContent}

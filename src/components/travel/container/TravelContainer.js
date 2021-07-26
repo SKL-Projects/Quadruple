@@ -19,17 +19,26 @@ function TravelContainer() {
       .map(() => useRef());
 
    useEffect(() => {
+      setLength(planDatas.length);
       const sortedPlans = planDatas.sort((a, b) => {
+         if (a.time === b.time) {
+            return a.type === "transit" ? 1 : -1;
+         }
          return a.time < b.time ? -1 : 1;
       });
-      setLength(sortedPlans.length);
       setMarkers(
          sortedPlans.map((item) => ({
+            id: item.id,
             cost: item.cost,
             location: item.location,
+            type: item.type,
          }))
       );
-      setRegion((prev) => ({ ...prev, ...sortedPlans[0].location }));
+      setRegion((prev) => ({
+         ...prev,
+         ...sortedPlans[0].location,
+         id: sortedPlans[0].id,
+      }));
       const groups = sortedPlans.reduce((groups, plan) => {
          const date = `${plan.time.getFullYear()}/${plan.time.getMonth()}/${plan.time.getDate()}`;
          if (!groups[date]) {

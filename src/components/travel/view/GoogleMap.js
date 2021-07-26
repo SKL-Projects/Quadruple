@@ -20,6 +20,38 @@ export default function GoogleMap({
 }) {
    const [x, setX] = useState(5);
 
+   const showDirections = () => {
+      for (let i = 0; i < markers.length - 1; i++) {
+         if (region.id === markers[i].id) {
+            const origin =
+               markers[i].type !== "transit"
+                  ? markers[i].location
+                  : markers[i - 1].location;
+            const destination =
+               markers[i + 1].type === "transit"
+                  ? markers[i + 2]?.location
+                  : markers[i + 1]?.location;
+            return (
+               <MapViewDirections
+                  lineDashPattern={[1]}
+                  origin={origin}
+                  destination={destination}
+                  apikey={GOOGLE_API_KEY} // insert your API Key here
+                  strokeWidth={5}
+                  language="ko"
+                  strokeColor="red"
+                  mode="TRANSIT"
+                  precision="high"
+                  onReady={(result) => {}}
+                  onError={(errorMessage) => {
+                     console.log(errorMessage);
+                  }}
+               />
+            );
+         }
+      }
+   };
+
    return (
       <View style={styles.container}>
          {loading ? (
@@ -41,31 +73,13 @@ export default function GoogleMap({
                      interpolations={interpolations}
                      onPressMarker={onPressMarker}
                   />
+                  {showDirections()}
                </MapView>
             </>
          )}
       </View>
    );
 }
-/*
-<MapViewDirections
-                     lineDashPattern={[1]}
-                     origin={markers[x]?.startPoint ? markers[x].startPoint : 0}
-                     destination={
-                        markers[x]?.endPoint ? markers[x].endPoint : 0
-                     }
-                     apikey={GOOGLE_API_KEY} // insert your API Key here
-                     strokeWidth={5}
-                     strokeColor="#20B2AA"
-                     mode="TRANSIT"
-                     onReady={(result) => {
-                        console.log(`Distance: ${result.distance} km`);
-                        console.log(`Duration: ${result.duration} min.`);
-                     }}
-                     onError={(errorMessage) => {
-                        // console.log('GOT AN ERROR');
-                     }}
-                  /> */
 
 const styles = StyleSheet.create({
    container: {
