@@ -10,11 +10,9 @@ import {
 import Cost_list from './Cost_list'
 import Cost_map from './Cost_map'
 
-const { width } = Dimensions.get("window");
-
 export default function Cost() {
   const [isLoading, setIsLoading] = useState(true);
-  const [p, setP] = useState(false);
+  const [p, setP] = useState(true);
 
   useEffect(() => {
     setIsLoading(false)
@@ -37,6 +35,7 @@ export default function Cost() {
             <TouchableOpacity style={styles.selector_btn} onPress={()=>setP(false)}>
               <Text>지도로 보기</Text>
             </TouchableOpacity>
+            <View style={styles.line}></View>
             <TouchableOpacity style={styles.selector_btn} onPress={()=>setP(true)}>
               <Text>리스트로 보기</Text>
             </TouchableOpacity>
@@ -70,10 +69,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: "center",
     borderRadius:10,
-    
+    borderWidth:1,
+    borderColor:'#753BBD'
+  },
+  line:{
+    width:1,
+    height:40,
+    backgroundColor:'#753BBD'
   },
   selector_btn:{
     flex: 1,
     alignItems: "center",
+    width:99    
   },
 });
