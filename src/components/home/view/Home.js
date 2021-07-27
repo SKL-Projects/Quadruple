@@ -40,8 +40,8 @@ function Home({ navigation }) {
          </View>
          <View style={styles.login}>
             <Button
-               title="Show search"
-               onPress={() => navigation.navigate("Cost")}
+               title="Show insert"
+               onPress={() => navigation.navigate("Cost_insert")}
             />
          </View>
          <View style={styles.login}>

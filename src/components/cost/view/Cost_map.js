@@ -153,7 +153,7 @@ export default function Cost_map() {
             ref={mapView}
             key="Gmap"
             style={styles.map}>
-            {markers.filter((x)=>x.type=='location').map((marker, index) => {
+            {markers.map((marker, index) => {
               const scaleStyle = {
                 transform: [{scale: interpolations[index].scale,},],
               };
@@ -198,7 +198,7 @@ export default function Cost_map() {
               mapAnimation.setValue(e.nativeEvent.contentOffset.x);
             }}
           >
-            {markers.filter((x)=>x.type=='location').map((card, index) => (
+            {markers.map((card, index) => (
               <View style={styles.card} key={index}>
                 <Text style={styles.edit}>편집</Text>
                 <View style={styles.textContent}>

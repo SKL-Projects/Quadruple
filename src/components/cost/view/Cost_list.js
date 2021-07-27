@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image,  } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity  } from 'react-native';
 import { markers} from './mapData';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function Cost_list() {
+export default function Cost_list({navigation}) {
 
   const [cost, setCost] = useState(0);
   const [expectedCost, setExpectedCost] = useState(0);
@@ -63,15 +63,16 @@ export default function Cost_list() {
           {markers.map((item,i)=>(
             <>
               {item.day == 0 || markers[i]?.day != markers[i-1]?.day ? (
-                <View style={styles.itemDay}>
+                <View style={styles.itemDay} key={'day'+i}>
                   <Text style={styles.itemDayText}>{item.day}일차</Text>
                 </View>  
               ) : (
                 <></>
               )}
-              <View style={styles.item} key={i}>
+              <TouchableOpacity style={styles.item} key={i} onPress={() => navigation.navigate("Cost_insert")}>
+                
                 <View style={styles.item_left}>
-                  <Icon name={images[i]} size={30} color="violet" style={styles.icon}/>
+                  <Icon name={images[i]} size={30} color="#753BBD" style={styles.icon}/>
                 </View>
                 <View style={styles.item_right}>
                   <View style={styles.item1}>
@@ -81,7 +82,7 @@ export default function Cost_list() {
                     <Text style={styles.item2Text}>{makeComma(item.used_price)} 원</Text>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             </>
           ))}
           

@@ -10,12 +10,12 @@ import {
 import Cost_list from './Cost_list'
 import Cost_map from './Cost_map'
 
-export default function Cost() {
+export default function Cost({navigation}) {
   const [isLoading, setIsLoading] = useState(true);
   const [p, setP] = useState(true);
 
   useEffect(() => {
-    setIsLoading(false)
+    setIsLoading(false)    
   }, []);
 
   return (
@@ -27,7 +27,7 @@ export default function Cost() {
       ):(
         <>
           {p ? (
-            <Cost_list/>
+            <Cost_list navigation={navigation}/>
           ) : (
             <Cost_map/>
           )}
