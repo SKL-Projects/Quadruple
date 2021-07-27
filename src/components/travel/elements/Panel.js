@@ -17,9 +17,9 @@ function Panel({ plans, setRegion, curSnap, itemRefs, length }) {
       };
       if (direction) {
          deltas["latitudeDelta"] =
-            Math.abs(direction[0].latitude - direction[1].latitude) * 2;
+            Math.abs(direction[0]?.latitude - direction[1]?.latitude) * 2;
          deltas["longitudeDelta"] =
-            Math.abs(direction[0].longitude - direction[1].longitude) * 2;
+            Math.abs(direction[0]?.longitude - direction[1]?.longitude) * 2;
       }
       setRegion({
          ...deltas,
@@ -27,6 +27,7 @@ function Panel({ plans, setRegion, curSnap, itemRefs, length }) {
          id: id,
       });
    }, []);
+
    return (
       <CustomScrollView
          style={[

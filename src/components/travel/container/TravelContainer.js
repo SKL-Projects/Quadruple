@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
+import { computeScrollYTop } from "react-native-scroll-into-view/build/computeScrollY";
+import { getAllTravelList } from "../../../lib/api/travelList";
 import Travel from "../view/Travel";
 import { planDatas } from "./PlanDatas";
 
 function TravelContainer() {
    const sheetRef = useRef(null);
    const [plans, setPlans] = useState({});
+   const [loading, setLoading] = useState(true);
    const [length, setLength] = useState(0);
    const [markers, setMarkers] = useState([]);
    const [region, setRegion] = useState({
@@ -19,47 +22,80 @@ function TravelContainer() {
       .map(() => useRef());
 
    useEffect(() => {
-      setLength(planDatas.length);
-      const sortedPlans = planDatas.sort((a, b) => {
-         if (a.time === b.time) {
-            return a.type === "transit" ? 1 : -1;
-         }
-         return a.time < b.time ? -1 : 1;
-      });
-      setMarkers(
-         sortedPlans.map((item) => ({
-            id: item.id,
-            cost: item.cost,
-            location: item.location,
-            type: item.type,
-         }))
-      );
-      setRegion((prev) => ({
-         ...prev,
-         ...sortedPlans[0].location,
-         id: sortedPlans[0].id,
-      }));
-      const groups = sortedPlans.reduce((groups, plan) => {
-         const date = `${plan.time.getFullYear()}/${plan.time.getMonth()}/${plan.time.getDate()}`;
-         if (!groups[date]) {
-            groups[date] = [];
-         }
-         groups[date].push(plan);
-         return groups;
-      }, {});
-      setPlans(groups);
+      const getTravel = async () => {
+         const travel = await getAllTravelList("aT1JPMs3GXg7SrkRE1C6KZPJupu1");
+
+         // timeStamp, geoPoint 데이터 preprocessing
+         const datas = travel[0].plans.plans.map((item) => {
+            return {
+               ...item,
+               time: item.time.toDate(),
+               location: {
+                  latitude: item.location.latitude,
+                  longitude: item.location.longitude,
+               },
+            };
+         });
+
+         setLength(datas.length);
+
+         // 시간순으로 정렬. transit 은 같은 시간의 뒤로
+         let sortedPlans = datas.sort((a, b) => {
+            if (a.time.valueOf() === b.time.valueOf()) {
+               return a.type === "transit" ? 1 : -1;
+            }
+            return a.time.valueOf() < b.time.valueOf() ? -1 : 1;
+         });
+
+         //마커, 리전 상태 등록
+         setMarkers(
+            sortedPlans.map((item) => ({
+               id: item.id,
+               cost: item?.cost,
+               location: item.location,
+               type: item.type,
+            }))
+         );
+         setRegion((prev) => ({
+            ...prev,
+            ...sortedPlans[0].location,
+            id: sortedPlans[0].id,
+         }));
+
+         // 같은 날짜로 그룹핑
+         const groups = sortedPlans.reduce((groups, plan) => {
+            const date = `${plan.time.getFullYear()}/${
+               plan.time.getMonth() + 1
+            }/${plan.time.getDate()}`;
+            if (!groups[date]) {
+               groups[date] = [];
+            }
+            groups[date].push(plan);
+            return groups;
+         }, {});
+         setPlans(groups);
+
+         setLoading(false);
+      };
+      getTravel();
    }, []);
 
    return (
-      <Travel
-         sheetRef={sheetRef}
-         plans={plans}
-         length={length}
-         itemRefs={itemRefs}
-         markers={markers}
-         region={region}
-         setRegion={setRegion}
-      />
+      <>
+         {loading ? (
+            <></>
+         ) : (
+            <Travel
+               sheetRef={sheetRef}
+               plans={plans}
+               length={length}
+               itemRefs={itemRefs}
+               markers={markers}
+               region={region}
+               setRegion={setRegion}
+            />
+         )}
+      </>
    );
 }
 
