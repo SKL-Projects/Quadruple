@@ -11,7 +11,7 @@ import {
   Alert
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
-import Cost_map_coordinate from './Cost_map_coordinate'
+import Cost_map_coordinate from '../elements/Googlemap'
 import {Picker} from '@react-native-picker/picker';
 
 export default function Cost_list_insert(props ) {
