@@ -1,45 +1,38 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+   useCallback,
+   useEffect,
+   useMemo,
+   useRef,
+   useState,
+} from "react";
 import GoogleMap from "../view/GoogleMap";
 import { Animated } from "react-native";
-import { Dimensions } from "react-native";
 
-const { width, height } = Dimensions.get("window");
-const CARD_WIDTH = width * 0.8;
-
-function sleep(ms) {
-   //sleep 함수
-   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function GoogleMapContainer({ markersInput, region, setRegion, itemRefs }) {
+function GoogleMapContainer({
+   markersInput,
+   regionInput,
+   setRegion,
+   itemRefs,
+}) {
    const [markers, setMarkers] = useState([]);
-   const [loading, setLoading] = useState(true);
-   const [thisRegion, setThisRegion] = useState(region);
+   const [thisRegion, setThisRegion] = useState(regionInput);
    const mapViewRef = useRef();
 
    let mapAnimation = new Animated.Value(0);
 
    useEffect(() => {
       setMarkers(markersInput);
-      if (markersInput[0]) {
-         setLoading(false);
-      }
    }, [markersInput]);
 
    useEffect(() => {
-      mapViewRef.current?.animateToRegion(region, 900);
-      let count = 0;
-      for (let i of markers) {
-         if (
-            region.latitude === i.location.latitude &&
-            region.longitude === i.location.longitude
-         ) {
-            mapAnimation.setValue(count);
+      mapViewRef.current?.animateToRegion(regionInput, 900);
+      for (let i = 0; i < markers.length; i++) {
+         if (regionInput.id === markers[i].id) {
+            mapAnimation.setValue(i);
             break;
          }
-         count++;
       }
-   }, [region]);
+   }, [regionInput, markers]);
 
    const interpolations = markers.map((marker, index) => {
       const inputRange = [index - 1, index, index + 1];
@@ -53,23 +46,27 @@ function GoogleMapContainer({ markersInput, region, setRegion, itemRefs }) {
       return { scale };
    });
 
-   const onPressMarker = (index) => {
-      itemRefs[index].current?.scrollIntoView({ align: "top" });
+   const onPressMarker = useCallback(
+      (index) => {
+         itemRefs[index].current?.scrollIntoView({ align: "top" });
 
-      setRegion((prev) => ({
-         ...prev,
-         ...markers[index].location,
-         id: markers[index].id,
-      }));
-   };
+         setRegion((prev) => ({
+            ...prev,
+            ...markers[index].location,
+            id: markers[index].id,
+         }));
+      },
+      [itemRefs, markers]
+   );
+
    const onAnimateRegion = () => {
-      setThisRegion(region);
+      setThisRegion(regionInput);
    };
 
    return (
       <GoogleMap
+         regionInput={regionInput}
          setRegion={setRegion}
-         loading={loading}
          region={thisRegion}
          mapViewRef={mapViewRef}
          interpolations={interpolations}

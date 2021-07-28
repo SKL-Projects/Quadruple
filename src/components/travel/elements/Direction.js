@@ -8,11 +8,15 @@ const GOOGLE_API_KEY = googleMapKey;
 
 function Direction({ markers, region }) {
    const [loading, setLoading] = useState(true);
+   const [last, setLast] = useState(false);
    const [showPoly, setShowPoly] = useState(false);
    const [coords, setCoords] = useState([{}, {}]);
+
    useEffect(() => {
+      setLast(false);
       setLoading(true);
       setShowPoly(false);
+      let isLast = true;
       for (let i = 0; i < markers.length - 1; i++) {
          if (region.id === markers[i].id) {
             const origin =
@@ -24,14 +28,19 @@ function Direction({ markers, region }) {
                   ? markers[i + 2].location
                   : markers[i + 1]?.location;
             setCoords([origin, destination]);
+            isLast = false;
+            break;
          }
+      }
+      if (isLast) {
+         setLast(true);
       }
       setLoading(false);
    }, [region]);
 
    return (
       <>
-         {!loading ? (
+         {!last || !loading ? (
             showPoly ? (
                <Polyline
                   coordinates={coords}

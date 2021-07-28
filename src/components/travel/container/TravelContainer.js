@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { computeScrollYTop } from "react-native-scroll-into-view/build/computeScrollY";
 import { getAllTravelList } from "../../../lib/api/travelList";
 import Travel from "../view/Travel";
-import { planDatas } from "./PlanDatas";
+import LottieView from "lottie-react-native";
+import { View } from "react-native";
 
 function TravelContainer() {
-   const sheetRef = useRef(null);
-   const [plans, setPlans] = useState({});
+   const sheetRef = useRef(null); // 바닥 시트 reference
+   const [plans, setPlans] = useState({}); // 날짜별로 그룹지어진 블록등
    const [loading, setLoading] = useState(true);
-   const [length, setLength] = useState(0);
-   const [markers, setMarkers] = useState([]);
+   const [length, setLength] = useState(0); // 전체 블록 개수
+   const [markers, setMarkers] = useState([]); // 마커들
    const [region, setRegion] = useState({
+      // 현재 보여주는 지역
       latitude: 0,
       longitude: 0,
       latitudeDelta: 0.01,
@@ -83,7 +84,21 @@ function TravelContainer() {
    return (
       <>
          {loading ? (
-            <></>
+            <View
+               style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+               }}>
+               <LottieView
+                  style={{
+                     width: 100,
+                     height: 100,
+                  }}
+                  autoPlay
+                  source={require("../../../lib/styles/lottie/loading-circle.json")}
+               />
+            </View>
          ) : (
             <Travel
                sheetRef={sheetRef}

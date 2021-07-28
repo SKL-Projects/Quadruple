@@ -132,4 +132,4 @@ const styles = StyleSheet.create({
    },
 });
 
-export default React.memo(Panel);
+export default Panel;

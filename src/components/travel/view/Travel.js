@@ -25,26 +25,28 @@ function Travel({
       new Animated.Value(getMapHeight(length, curSnap))
    ).current;
 
+   // 리스트 길이 변경시, 현재 snap에 맞춰서 맵 높이 변경
    useEffect(() => {
-      // 리스트 길이 변경시, 현재 snap에 맞춰서 맵 높이 변경
-      Animated.timing(heightAim, {
-         toValue: getMapHeight(length, curSnap),
-         duration: 0,
-         useNativeDriver: false,
-      }).start();
+      changeMapHeight(getMapHeight(length, curSnap));
    }, [length]);
 
-   const renderContent = useCallback(
-      () => (
-         <Panel
-            plans={plans}
-            setRegion={setRegion}
-            curSnap={curSnap}
-            itemRefs={itemRefs}
-            length={length}
-         />
-      ),
-      [plans, curSnap, itemRefs]
+   // 맵 높이 변경 함수
+   const changeMapHeight = useCallback((height) => {
+      Animated.timing(heightAim, {
+         toValue: height,
+         duration: 200,
+         useNativeDriver: false,
+      }).start();
+   }, []);
+
+   const renderContent = () => (
+      <Panel
+         plans={plans}
+         setRegion={setRegion}
+         curSnap={curSnap}
+         itemRefs={itemRefs}
+         length={length}
+      />
    );
    const renderHeader = useCallback(
       () => (
@@ -60,13 +62,6 @@ function Travel({
    // 바텀시트에 따른 높이 변경
    const { call, onChange } = Reanimated;
    let drawerCallbackNode = new Reanimated.Value(0);
-   const changeMapHeight = (height) => {
-      Animated.timing(heightAim, {
-         toValue: height,
-         duration: 200,
-         useNativeDriver: false,
-      }).start();
-   };
    const onCallback = useCallback(
       ([value]) => {
          if (value < 0.2) {
@@ -98,7 +93,7 @@ function Travel({
             }}>
             <GoogleMapContainer
                markersInput={markers}
-               region={region}
+               regionInput={region}
                setRegion={setRegion}
                itemRefs={itemRefs}
             />
