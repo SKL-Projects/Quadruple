@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
   selector_btn:{
     flex: 1,
     alignItems: "center",
-    width:99    
+    justifyContent: "center",
+    width:99,
+    height:38,
   },
 });

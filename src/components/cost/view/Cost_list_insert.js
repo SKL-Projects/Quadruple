@@ -5,14 +5,15 @@ import {
   View,
   TextInput,
   Dimensions,
+  Picker,
   TouchableOpacity,
   Modal,
   Pressable,
-  Alert
+  Alert,
+  ScrollView
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
-import Cost_map_coordinate from '../elements/Googlemap'
-import {Picker} from '@react-native-picker/picker';
+import Cost_map_coordinates from './Cost_map_coordinates'
 
 export default function Cost_list_insert(props ) {
   
@@ -28,17 +29,17 @@ export default function Cost_list_insert(props ) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.box1}> 
-          <Text>금액</Text>
+      <ScrollView style={styles.content}>
+        <View style={[styles.box,styles.box1]}> 
+          <Text style={styles.boxText}>금액</Text>
           <TextInput
             style={styles.input}
             onChangeText={setCost}
             placeholder="금액을 입력하세요"
           />
         </View>
-        <View style={styles.box2}>
-          <Text>날짜*</Text>
+        <View style={[styles.box,styles.box2]}>
+          <Text style={styles.boxText}>날짜</Text>
           <Picker
             selectedValue={day}
             style={{ height: 50, width: 150 }}
@@ -50,54 +51,54 @@ export default function Cost_list_insert(props ) {
             <Picker.Item label="day2" value="2" />
           </Picker>
         </View>
-        <View style={styles.box3}>
-          <Text>장소명*</Text>
+        <View style={[styles.box,styles.box3]}>
+          <Text style={styles.boxText}>장소명</Text>
           <TextInput
             style={styles.input}
             onChangeText={setLocation}
             placeholder="장소명을 입력하세요"
           />
         </View>
-        <View style={styles.box4}>
-          <Text>카테고리*</Text>
-          <View style={styles.btns}>
+        <View style={[styles.box,styles.box4]}>
+          <Text style={styles.boxText}>카테고리</Text>
+          <View style={styles.icons}>
             <TouchableOpacity
-              style={styles.button}
+              style={styles.icon}
               onPress={()=> setType('rm')}
             >
               <Icon name='home-outline' size={30} color="violet"/>
               <Text>숙소</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.button}
+              style={styles.icon}
               onPress={()=> setType('mv')}
             >
               <Icon name='airplane-outline' size={30} color="violet"/>
               <Text>이동</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.button}
+              style={styles.icon}
               onPress={()=> setType('fd')}
             >
               <Icon name='fast-food-outline' size={30} color="violet"/>
               <Text>식당</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.button}
+              style={styles.icon}
               onPress={()=> setType('sp')}
             >
               <Icon name='gift-outline' size={30} color="violet"/>
               <Text>쇼핑</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.button}
+              style={styles.icon}
               onPress={()=> setType('tr')}
             >
               <Icon name='camera-outline' size={30} color="violet"/>
               <Text>관광</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.button}
+              style={styles.icon}
               onPress={()=> setType('etc')}
             >
               <Icon name='ellipsis-horizontal-outline' size={30} color="violet"/>
@@ -105,25 +106,30 @@ export default function Cost_list_insert(props ) {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.box5}>
-          <Text>장소 지정</Text>
+        <View style={[styles.box,styles.box5]}>
+          <Text style={styles.boxText}>장소 지정(선택)</Text>
           <Modal
             animationType="slide"
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
               setModalVisible(!modalVisible);
             }}
           >
             <View>
               <View style={styles.modalView}>
-                <Cost_map_coordinate setcoordinate={setcoordinate}/>
+                <Cost_map_coordinates setcoordinate={setcoordinate}/>
                 <Pressable
-                  style={styles.pressableBtn_hide}
+                  style={[styles.pressableBtn_hide,styles.pressableBtn_hide1]}
+                  onPress={() => (setModalVisible(!modalVisible),setcoordinate(''))}
+                >
+                  <Text>지도 닫기</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.pressableBtn_hide,styles.pressableBtn_hide2]}
                   onPress={() => setModalVisible(!modalVisible)}
                 >
-                  <Text>Hide Modal</Text>
+                  <Text>완료</Text>
                 </Pressable>
               </View>
             </View>
@@ -132,12 +138,24 @@ export default function Cost_list_insert(props ) {
             style={styles.pressableBtn}
             onPress={() => setModalVisible(true)}
           >
-            <Text>Show Modal</Text>
+            {coordinate ? 
+              <Text style={styles.pressableBtnText}>설정 완료</Text> :
+              <Text style={styles.pressableBtnText}>지도에서 설정하기</Text> 
+            }
+            
           </Pressable>
         </View>
-        <Text>{cost},{day},{location},{type}</Text>
-      </View>
-      
+        <Text>cost:{cost}{"\n"}day:{day}{"\n"}location:{location}{"\n"}type:{type}{"\n"}coordinate:{coordinate.latitude}</Text>
+        <Pressable
+            style={styles.pressableBtn}
+            onPress={() => console.log('hi')}
+          >
+            
+              <Text style={styles.pressableBtnText}>저장</Text>
+             
+            
+          </Pressable>
+      </ScrollView>
     </View>
    );
 }
@@ -156,8 +174,25 @@ const styles = StyleSheet.create({
     position:"absolute",
     bottom:5,    
   },
-  btns: {
+  box:{
+    
+    width:Dimensions.get('window').width,
+    padding:10,
+  },
+  boxText:{
+    fontSize:20,
+    fontWeight:'bold',
+    marginBottom:30,
+    
+  },
+  icons: {
     flexDirection: 'row',
+    
+  },
+  icon:{
+    flex:1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   modalView: {
     height: Dimensions.get('window').height,
@@ -167,15 +202,25 @@ const styles = StyleSheet.create({
   pressableBtn_hide: {
     zIndex:2,
     position:'absolute',
-    alignItems: "center",
-    justifyContent: "center",
+    bottom:30,
     borderRadius: 20,
     padding: 10,
     elevation: 2
   },
+  pressableBtn_hide1: {
+    left:20
+  },
+  pressableBtn_hide2: {
+    right:20
+  },
   pressableBtn:{
     borderRadius: 20,
     padding: 10,
-    elevation: 2
-  }
+    elevation: 2,
+    backgroundColor:'#c8c8c8',
+    width:150,
+  },
+  pressableBtnText:{
+    textAlign:'center'
+  },
 });
