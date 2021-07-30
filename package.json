@@ -10,6 +10,7 @@
    "dependencies": {
       "@ant-design/react-native": "^4.2.0",
       "@react-native-community/cameraroll": "^4.0.4",
+      "@react-native-community/datetimepicker": "3.5.2",
       "@react-native-community/masked-view": "0.1.10",
       "@react-native-community/segmented-control": "^2.2.2",
       "@react-native-community/slider": "^3.0.3",
@@ -28,6 +29,7 @@
       "lottie-react-native": "4.0.2",
       "react": "16.13.1",
       "react-dom": "16.13.1",
+      "react-geocode": "^0.2.3",
       "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
       "react-native-elements": "^3.4.2",
       "react-native-geolocation-service": "^5.3.0-beta.1",
@@ -43,6 +45,7 @@
       "react-native-safe-area-context": "3.2.0",
       "react-native-screens": "~3.4.0",
       "react-native-scroll-into-view": "^2.0.1",
+      "react-native-simple-select-button": "^0.0.6",
       "react-native-web": "~0.13.12",
       "react-redux": "^7.2.4",
       "react-router-dom": "^5.2.0",

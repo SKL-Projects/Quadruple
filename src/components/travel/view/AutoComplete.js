@@ -5,7 +5,7 @@ import { googleMapKey } from "../../../../env";
 
 const GOOGLE_API_KEY = googleMapKey; // never save your real api key in a snack!
 
-export default function AutoComplete({ setRegion }) {
+function AutoComplete({ setRegion }) {
    return (
       <View style={styles.autoCompleteContainer}>
          <GooglePlacesAutocomplete
@@ -17,6 +17,8 @@ export default function AutoComplete({ setRegion }) {
             }}
             onPress={(data, details = null) => {
                setRegion({
+                  formatted_address: details.formatted_address,
+                  name: details.name,
                   latitude: details.geometry.location.lat,
                   longitude: details.geometry.location.lng,
                   latitudeDelta: 0.01,
@@ -39,3 +41,4 @@ const styles = StyleSheet.create({
       width: "95%",
    },
 });
+export default React.memo(AutoComplete);

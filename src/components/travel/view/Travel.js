@@ -10,6 +10,8 @@ import {
    getSnapHeight,
    WINDOW_HEIGHT,
 } from "../elements/itemHeight";
+import AddBlock from "../container/AddBlock";
+import { FAB } from "react-native-elements";
 
 function Travel({
    sheetRef,
@@ -19,6 +21,9 @@ function Travel({
    region,
    setRegion,
    itemRefs,
+   onAddBlock,
+   onPressAddBlock,
+   onPressAddCancel,
 }) {
    const [curSnap, setCurSnap] = useState(0);
    const heightAim = useRef(
@@ -39,15 +44,50 @@ function Travel({
       }).start();
    }, []);
 
-   const renderContent = () => (
-      <Panel
-         plans={plans}
-         setRegion={setRegion}
-         curSnap={curSnap}
-         itemRefs={itemRefs}
-         length={length}
-      />
-   );
+   const renderContent = (onAddBlock) => {
+      return (
+         <View
+            style={[
+               styles.panel,
+               {
+                  height: getSnapHeight(curSnap),
+               },
+            ]}>
+            {onAddBlock ? (
+               <AddBlock
+                  plans={plans}
+                  region={region}
+                  height={getSnapHeight(curSnap)}
+               />
+            ) : (
+               <Panel plans={plans} setRegion={setRegion} itemRefs={itemRefs} />
+            )}
+            <View
+               style={{
+                  position: "absolute",
+                  bottom: 80,
+                  right: 20,
+                  zIndex: 100,
+               }}>
+               <FAB
+                  visible={true}
+                  raised
+                  icon={{
+                     name: onAddBlock ? "times" : "plus",
+                     type: "font-awesome",
+                  }}
+                  buttonStyle={{
+                     width: 60,
+                     height: 60,
+                     borderRadius: 30,
+                     backgroundColor: "white",
+                  }}
+                  onPress={onAddBlock ? onPressAddCancel : onPressAddBlock}
+               />
+            </View>
+         </View>
+      );
+   };
    const renderHeader = useCallback(
       () => (
          <View style={styles.header}>
@@ -67,7 +107,7 @@ function Travel({
          if (value < 0.2) {
             setCurSnap(0);
             if (curSnap !== 0) {
-               changeMapHeight(getMapHeight(length, 0));
+               changeMapHeight(getMapHeight(0));
             }
          } else if (value >= 0.5) {
             setCurSnap(2);
@@ -77,7 +117,7 @@ function Travel({
          } else {
             setCurSnap(1);
             if (curSnap !== 1) {
-               changeMapHeight(getMapHeight(length, 1));
+               changeMapHeight(getMapHeight(1));
             }
          }
       },
@@ -100,12 +140,8 @@ function Travel({
          </Animated.View>
          <BottomSheet
             ref={sheetRef}
-            snapPoints={[
-               getSnapHeight(length, 0),
-               getSnapHeight(length, 1),
-               50,
-            ]}
-            renderContent={renderContent}
+            snapPoints={[getSnapHeight(0), getSnapHeight(1), 50]}
+            renderContent={() => renderContent(onAddBlock)}
             renderHeader={renderHeader}
             initialSnap={0}
             enabledContentTapInteraction={false}
@@ -143,6 +179,10 @@ const styles = StyleSheet.create({
       borderRadius: 4,
       backgroundColor: "#00000040",
       marginBottom: 10,
+   },
+   panel: {
+      padding: 20,
+      backgroundColor: theme.color.white,
    },
 });
 

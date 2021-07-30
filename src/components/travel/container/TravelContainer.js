@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getAllTravelList } from "../../../lib/api/travelList";
 import Travel from "../view/Travel";
 import LottieView from "lottie-react-native";
@@ -17,6 +17,7 @@ function TravelContainer() {
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
    });
+   const [onAddBlock, setOnAddBlock] = useState(false);
    //마커 클릭시 스크롤를 위한 refs 배열
    const itemRefs = Array(100)
       .fill(0, 0, 100)
@@ -81,6 +82,13 @@ function TravelContainer() {
       getTravel();
    }, []);
 
+   const onPressAddBlock = useCallback(() => {
+      setOnAddBlock(true);
+   }, []);
+   const onPressAddCancel = useCallback(() => {
+      setOnAddBlock(false);
+   }, []);
+
    return (
       <>
          {loading ? (
@@ -108,6 +116,9 @@ function TravelContainer() {
                markers={markers}
                region={region}
                setRegion={setRegion}
+               onPressAddBlock={onPressAddBlock}
+               onAddBlock={onAddBlock}
+               onPressAddCancel={onPressAddCancel}
             />
          )}
       </>
