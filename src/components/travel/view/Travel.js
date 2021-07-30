@@ -43,7 +43,6 @@ function Travel({
          useNativeDriver: false,
       }).start();
    }, []);
-
    const renderContent = (onAddBlock) => {
       return (
          <View
@@ -54,11 +53,7 @@ function Travel({
                },
             ]}>
             {onAddBlock ? (
-               <AddBlock
-                  plans={plans}
-                  region={region}
-                  height={getSnapHeight(curSnap)}
-               />
+               <AddBlock plans={plans} region={region} setRegion={setRegion} />
             ) : (
                <Panel plans={plans} setRegion={setRegion} itemRefs={itemRefs} />
             )}

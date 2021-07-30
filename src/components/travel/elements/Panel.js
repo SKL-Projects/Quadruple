@@ -67,9 +67,11 @@ function Panel({ plans, setRegion, itemRefs }) {
                </View>
                <ListItem.Content>
                   <ListItem.Title style={{ fontSize: 20 }}>
-                     {hour < 10 ? `0${hour}` : hour}:
-                     {minute < 10 ? `0${minute}` : minute}
-                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     {item.type !== "transit"
+                        ? `${hour < 10 ? `0${hour}` : hour}:${
+                             minute < 10 ? `0${minute}` : minute
+                          }          `
+                        : ""}
                      {item.title}
                   </ListItem.Title>
                </ListItem.Content>

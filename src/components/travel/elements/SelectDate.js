@@ -1,19 +1,13 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Button } from "react-native-elements";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { hhmm, yyyymmdd } from "../../utils/DateString";
 
-function SelectDate({
-   showDatePicker,
-   setShowDatePicker,
-   showTimePicker,
-   setShowTimePicker,
-   date,
-   setDate,
-   errMsg,
-   setErrMsg,
-}) {
+function SelectDate({ date, setDate, errMsg, setErrMsg }) {
+   const [showDatePicker, setShowDatePicker] = useState(false);
+   const [showTimePicker, setShowTimePicker] = useState(false);
+
    const onChange = useCallback(
       (event, selectedDate) => {
          if (errMsg) {

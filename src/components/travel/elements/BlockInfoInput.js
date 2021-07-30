@@ -1,10 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import { Button, ButtonGroup, Input } from "react-native-elements";
 import { detailTypes, TRANSIT, WAYPOINT } from "../../../lib/types";
-import BlockSelect from "./BlockSelect";
-import SelectDate from "./SelectDate";
-import SelectLocation from "./SelectLocation";
 
 const detailTypesDate = [
    [
@@ -26,10 +23,6 @@ const detailTypesDate = [
 ];
 
 function BlockInfoInput({
-   onCompleteWaypoint,
-   onCompleteTransit,
-   date,
-   setDate,
    type,
    setType,
    detailType,
@@ -37,12 +30,7 @@ function BlockInfoInput({
    onChangeTitle,
    title,
    errMsg,
-   setErrMsg,
-   region,
 }) {
-   const [showDatePicker, setShowDatePicker] = useState(false);
-   const [showTimePicker, setShowTimePicker] = useState(false);
-
    const label = useCallback(
       (content) => <Text style={styles.label}>{content}</Text>,
       []
@@ -102,35 +90,6 @@ function BlockInfoInput({
                )}
             />
          </View>
-         {type === WAYPOINT ? (
-            <>
-               <SelectDate
-                  date={date}
-                  setDate={setDate}
-                  showDatePicker={showDatePicker}
-                  setShowDatePicker={setShowDatePicker}
-                  showTimePicker={showTimePicker}
-                  setShowTimePicker={setShowTimePicker}
-                  errMsg={errMsg.time}
-                  setErrMsg={setErrMsg}
-               />
-               <SelectLocation region={region} />
-            </>
-         ) : (
-            <BlockSelect />
-         )}
-
-         <View style={styles.completeButtonContainer}>
-            <Button
-               containerStyle={styles.buttonContainerStyle}
-               title="완료"
-               titleStyle={{ fontSize: 20 }}
-               type="clear"
-               onPress={
-                  type === WAYPOINT ? onCompleteWaypoint : onCompleteTransit
-               }
-            />
-         </View>
       </View>
    );
 }
@@ -149,13 +108,6 @@ const styles = StyleSheet.create({
    },
    detailType: {
       marginBottom: 10,
-   },
-   completeButtonContainer: {
-      width: "100%",
-      alignItems: "center",
-   },
-   buttonContainerStyle: {
-      width: 100,
    },
 });
 
