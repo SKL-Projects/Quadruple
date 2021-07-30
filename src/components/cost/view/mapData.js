@@ -5,6 +5,7 @@ const Images = [
   { image: require("../../../../assets/attraction4.jpg") },
   { image: require("../../../../assets/attraction5.jpg") },
 ];
+export const expected_price= 300000;
 
 export const markers = [
   {
@@ -18,7 +19,6 @@ export const markers = [
     title: "숙소",
     description: "This is the best place",
     image: Images[0].image,
-    expected_price: 187000,
     used_price: 189000,
     reviews: 99,
   },
@@ -33,7 +33,6 @@ export const markers = [
     title: "엠파이어 스테이트 빌딩",
     description: "This is the second best place",
     image: Images[1].image,
-    expected_price: 12000,
     used_price: 12300,
     reviews: 102,
   },
@@ -64,7 +63,6 @@ export const markers = [
     title: "자유의 여신상",
     description: "This is the fourth best place",
     image: Images[3].image,
-    expected_price: 3000,
     used_price: 2000,
     reviews: 48,
   },
@@ -79,7 +77,6 @@ export const markers = [
     title: "2일",
     description: "This is the fourth best place",
     image: Images[3].image,
-    expected_price: 8000,
     used_price: 7000,
     reviews: 48,
   },
@@ -94,7 +91,6 @@ export const markers = [
     title: "2일차",
     description: "This is the fourth best place",
     image: Images[3].image,
-    expected_price: 5000,
     used_price: 8000,
     reviews: 48,
   },

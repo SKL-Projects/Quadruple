@@ -10,34 +10,37 @@ import {
   Platform,
   ImageBackground,
 } from "react-native";
-import { markers} from './mapData';
-
+import {expected_price} from './mapData';
+import {markers} from './mapData';
 const { width } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 
-export default function Cost_map() {
+export default function Cost_map({fb_markers,fb_region,fb_plans}) {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
   const [x, setX] = useState(0);
   const [dis, setDis] = useState([]);
   const [dayCost, setDayCost] = useState(0);
+  const [leftCost, setLeftCost] = useState([expected_price-fb_plans[0].cost]);
+  
 
   const mapView = React.createRef();   
+  let mapIndex = 0;
   const _scrollView = React.useRef(null);
-
   let mapAnimation = new Animated.Value(0);
-  
+  let markers = fb_plans;
+
   const getLocation = async () => { 
     try {
       setRegion({
-        ...markers[0].coordinate,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
+        latitude:fb_region.latitude,
+        longitude:fb_region.longitude,
+        latitudeDelta: fb_region.latitudeDelta,
+        longitudeDelta: fb_region.longitudeDelta,
       })
-      
       setIsLoading(false);
     } catch (error) {
         alert("Can't find you.", "So sad");
@@ -49,9 +52,18 @@ export default function Cost_map() {
     if(bool)
       setDis([])
     {markers.map((marker) => {
-      let isVisibie = (markers[x].day == marker.day ? 1 : 0)
+      let isVisibie = (markers[x].time.getDate() == marker.time.getDate() ? 1 : 0)
       setDis(dis => [...dis,isVisibie])
     })};
+  }
+
+  const setcostPerLocation = () =>{
+    {markers.map((marker,i) => {
+      if(i != 0){ 
+        setLeftCost(leftCost => [...leftCost,leftCost[i-1]-marker.cost])
+      }
+    })};
+    
   }
 
   const scrollAnimate = (value) => {
@@ -62,7 +74,7 @@ export default function Cost_map() {
       if (index <= 0) 
         index = 0;
     
-      const { coordinate } = markers[index];
+      const { location } = markers[index];
     
       let pos;
       
@@ -70,7 +82,7 @@ export default function Cost_map() {
       //animateion 설정
       
       pos = {
-        ...coordinate,
+        ...location,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       }
@@ -83,8 +95,9 @@ export default function Cost_map() {
 
       setDayCost(0)
       markers.map((marker) => {
-        if(markers[x].day == marker.day) setDayCost(dayCost => dayCost+marker.used_price)
+        if(markers[x].time.getDate() == marker.time.getDate()) setDayCost(dayCost => dayCost+marker.cost)
       })
+
   }
 
   useEffect(() => {
@@ -93,8 +106,10 @@ export default function Cost_map() {
       getLocation();
     
     setMarkerVisible(0)
+    setcostPerLocation()
+
     markers.map((marker) => {
-      if(markers[x].day == marker.day) setDayCost(dayCost => dayCost+marker.used_price)
+      if(markers[x].time.getDate() == marker.time.getDate()) setDayCost(dayCost => dayCost+marker.cost)
     })
   }, []);
 
@@ -159,12 +174,12 @@ export default function Cost_map() {
               };
                 
               return (
-                <MapView.Marker key={index} coordinate={marker.coordinate} onPress={(e)=>onMarkerPress(e)} style={[{opacity:dis[index]},styles.markerWrap]} >
+                <MapView.Marker key={index} coordinate={marker.location} onPress={(e)=>onMarkerPress(e)} style={[{opacity:dis[index]},styles.markerWrap]} >
                   <Animated.View 
                     style={ scaleStyle}
                   >
                     <ImageBackground source={require('../../../../assets/map_marker.png')} resizeMode="contain" style={styles.marker}>
-                      <Text style={styles.markerText}>&nbsp;{makeComma(marker.used_price)}&nbsp;</Text>
+                      <Text style={styles.markerText}>&nbsp;{makeComma(marker.cost)}&nbsp;</Text>
                     </ImageBackground>
                   </Animated.View >
                 </MapView.Marker>
@@ -172,7 +187,7 @@ export default function Cost_map() {
             })}          
           </MapView>
           <View style={styles.scrollHeader}>
-            <Text>{markers[x].day}일차</Text>
+            <Text>{markers[x].time.getMonth() + 1}월 {markers[x].time.getDate()}일</Text>
             <Text>Total : {makeComma(dayCost)}원</Text>
           </View>
           <Animated.ScrollView
@@ -203,11 +218,11 @@ export default function Cost_map() {
                 <Text style={styles.edit}>편집</Text>
                 <View style={styles.textContent}>
                   <View style={styles.cardtitle}>
-                    <Text numberOfLines={1} style={styles.cardtitleText}>{makeComma(card.used_price)}원</Text>
+                    <Text numberOfLines={1} style={styles.cardtitleText}>{makeComma(card.cost)}원</Text>
                   </View>
                   <View style={styles.cardsubtitle}>
                     <View style={styles.cardsubtitle1}>
-                      <Text numberOfLines={1} style={styles.cardsubtitle1Text}>사용 예정 금액 : {makeComma(card.expected_price)}원</Text> 
+                      <Text numberOfLines={1} style={styles.cardsubtitle1Text}>남은 금액 : {makeComma(leftCost[index])}원</Text> 
                     </View>
                     <View style={styles.cardsubtitle2}>
                       <Text numberOfLines={1} style={styles.cardsubtitle2Text}>{card.title}</Text>

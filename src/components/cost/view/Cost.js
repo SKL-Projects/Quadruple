@@ -10,12 +10,20 @@ import {
 import Cost_list from './Cost_list'
 import Cost_map from './Cost_map'
 
-export default function Cost({navigation}) {
+export default function Cost({
+  navigation,
+  plans,
+  length,
+  markers,
+  region,
+  setRegion,
+  }
+){
   const [isLoading, setIsLoading] = useState(true);
   const [p, setP] = useState(true);
 
   useEffect(() => {
-    setIsLoading(false)    
+    setIsLoading(false)         
   }, []);
 
   return (
@@ -29,7 +37,11 @@ export default function Cost({navigation}) {
           {p ? (
             <Cost_list navigation={navigation}/>
           ) : (
-            <Cost_map/>
+            <Cost_map 
+              fb_markers={markers}
+              fb_region={region}              
+              fb_plans={plans}
+            />
           )}
           <View style={styles.selector}>
             <TouchableOpacity style={styles.selector_btn} onPress={()=>setP(false)}>
