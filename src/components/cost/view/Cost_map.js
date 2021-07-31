@@ -18,7 +18,7 @@ const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 
-export default function Cost_map({fb_markers,fb_region,fb_plans}) {
+export default function Cost_map({fb_region,fb_plans}) {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
   const [x, setX] = useState(0);

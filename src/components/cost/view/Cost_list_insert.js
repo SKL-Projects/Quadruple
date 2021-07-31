@@ -13,7 +13,7 @@ import {
   ScrollView
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
-import Cost_map_coordinates from './Cost_map_coordinates'
+import Cost_map_coordinates from '../elements/GoogleMap'
 
 export default function Cost_list_insert(props ) {
   

@@ -35,10 +35,12 @@ export default function Cost({
       ):(
         <>
           {p ? (
-            <Cost_list navigation={navigation}/>
+            <Cost_list
+              navigation={navigation}
+              fb_plans={plans}
+             />
           ) : (
-            <Cost_map 
-              fb_markers={markers}
+            <Cost_map               
               fb_region={region}              
               fb_plans={plans}
             />

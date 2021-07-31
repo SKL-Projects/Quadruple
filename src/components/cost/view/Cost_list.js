@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity  } from 'react-native';
-import { markers} from './mapData';
+import {expected_price} from './mapData';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function Cost_list({navigation}) {
+export default function Cost_list({navigation,fb_plans}) {
 
   const [cost, setCost] = useState(0);
-  const [expectedCost, setExpectedCost] = useState(0);
-  const images = [
-    'home-outline' ,
-    'fast-food-outline' ,
-    'gift-outline' ,
-    'camera-outline', 
-    'ellipsis-horizontal-outline' ,
-    'fast-food-outline' ,
-  ]
+  
+  const images = {
+    hotel:'home-outline' ,
+    airplane:'airplane-outline' ,
+    food:'fast-food-outline' ,
+    shopping:'cart-outline' ,
+    attraction:'camera-outline', 
+    activity:'body-outline', 
+    train:'train-outline',
+    subway:'subway-outline',
+    walking:'walk-outline',
+    boat:'boat-outline',
+    car:'car-outline',
+    taxi:'car-sport-outline',
+    etc:'ellipsis-horizontal-outline' ,
+  }
+  
   
 
   const makeComma = (num) => {
@@ -33,9 +41,8 @@ export default function Cost_list({navigation}) {
   }
 
   useEffect(() => {
-    {markers.map((data) => {
-      setCost((cost) => cost+data.used_price)
-      setExpectedCost((expectedCost) => expectedCost+data.expected_price)
+    {fb_plans.map((data) => {
+      setCost((cost) => cost+data.cost)      
     })}
   }, []);
 
@@ -49,37 +56,36 @@ export default function Cost_list({navigation}) {
           <View style={styles.headerCost}>
             <View style={styles.headerCost1}>
               <Text style={styles.headerCostText1_1}>{makeComma(cost)}원</Text>
-              {cost>expectedCost ? (
-                <Text style={[styles.headerCostText1_2,styles.text_red]}>+{makeComma(Math.abs(cost-expectedCost))}원</Text>
+              {cost>expected_price ? (
+                <Text style={[styles.headerCostText1_2,styles.text_blue]}>{makeComma(Math.abs(cost-expected_price))}원 초과</Text>
               ) : (
-                <Text style={[styles.headerCostText1_2,styles.text_blue]}>-{makeComma(Math.abs(cost-expectedCost))}원</Text>
+                <Text style={[styles.headerCostText1_2,styles.text_red]}>{makeComma(Math.abs(cost-expected_price))}원 남음</Text>
               )}
             </View>
-            <Text style={styles.headerCostText2}>사용 예정 금액 : {makeComma(expectedCost)}원</Text>
+            <Text style={styles.headerCostText2}>사용 예정 금액 : {makeComma(expected_price)}원</Text>
           </View>
         </View>
         <View style={styles.line}><Text>&nbsp;</Text></View>
         <View style={styles.list}>
-          {markers.map((item,i)=>(
+          {fb_plans.map((item,i)=>(
             <>
-              {item.day == 0 || markers[i]?.day != markers[i-1]?.day ? (
+              {item.day == 0 || fb_plans[i]?.time.getDate() != fb_plans[i-1]?.time.getDate() ? (
                 <View style={styles.itemDay} key={'day'+i}>
-                  <Text style={styles.itemDayText}>{item.day}일차</Text>
+                  <Text style={styles.itemDayText}>{item.time.getMonth() + 1}월 {item.time.getDate()}일</Text>
                 </View>  
               ) : (
                 <></>
               )}
               <TouchableOpacity style={styles.item} key={i} onPress={() => navigation.navigate("Cost_insert")}>
-                
                 <View style={styles.item_left}>
-                  <Icon name={images[i]} size={30} color="#753BBD" style={styles.icon}/>
+                  <Icon name={images[item.detailType]} size={30} color="#753BBD" style={styles.icon}/>
                 </View>
                 <View style={styles.item_right}>
                   <View style={styles.item1}>
                     <Text>{item.title}</Text>
                   </View>
                   <View style={styles.item2}>
-                    <Text style={styles.item2Text}>{makeComma(item.used_price)} 원</Text>
+                    <Text style={styles.item2Text}>{makeComma(item.cost)}원</Text>
                   </View>
                 </View>
               </TouchableOpacity>

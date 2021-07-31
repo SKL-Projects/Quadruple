@@ -90,7 +90,6 @@ function CostContainer({ navigation }) {
                length={length}
                markers={markers}
                region={region}
-               setRegion={setRegion}
             />
          )}
       </>

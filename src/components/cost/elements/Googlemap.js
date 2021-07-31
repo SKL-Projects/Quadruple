@@ -1,33 +1,29 @@
 import React, { useState, useEffect } from "react";
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
-import * as Location from "expo-location";
 import {
   StyleSheet,
   Text,
   View,
-  Animated,
-  Image,
   Dimensions,
-  Platform,
-  ImageBackground,
 } from "react-native";
+import AutoComplete from './AutoComplete'
+
 
 const mapView = React.createRef();   
 
-export default function Cost_map_coordinate() {
+export default function Cost_map(props) {
   
   const [region, setRegion] = useState('');  
   const [isLoading, setIsLoading] = useState(true);
+  const [visible, setVisible] = useState(0);
 
-  const getLocation = async () => { //위치 가져오기
+  const setLocation = async () => { //위치 가져오기
     try {
-      await Location.requestForegroundPermissionsAsync(); //퍼미션 받고
-      const { coords } = await Location.getCurrentPositionAsync();     //내위치 가져와서 coords에
-       
       setRegion({
-        ...coords,
-        latitudeDelta: 10,
-        longitudeDelta: 10,
+        latitude:40.74399,
+        longitude:-74.03236,
+        latitudeDelta: 1,
+        longitudeDelta: 1,
       })
       //setDirectionData( data.filter((x) => x.type=='transit') )
       setIsLoading(false);
@@ -37,9 +33,21 @@ export default function Cost_map_coordinate() {
     }
   }
 
+   const handleMapPress = (latlng) => {
+    
+    const pos = {
+      ...latlng,
+      latitudeDelta: region.latitudeDelta,
+      longitudeDelta: region.longitudeDelta,
+    }
+    setRegion(pos) 
+    setVisible(1)
+    props.setcoordinate(pos)
+  }
+
   useEffect(() => {
     if(isLoading)
-      getLocation();
+      setLocation();
   }, []);
 
   
@@ -51,13 +59,19 @@ export default function Cost_map_coordinate() {
           <Text>Loading...</Text>
         </View>
       ):(
+        <>
+        <AutoComplete setRegion={setRegion}/>
         <MapView 
           provider={PROVIDER_GOOGLE} 
           region={region}
           ref={mapView}
+          onPress={(e) =>handleMapPress(e.nativeEvent.coordinate)}
           key="Gmap"
-          style={styles.map}>       
+          style={styles.map}
+        > 
+          {visible ? (<MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }}/>) : (<></>)}
         </MapView>
+        </>
       )}
     </View>
    );
