@@ -2,6 +2,7 @@ import React from "react";
 import { Animated } from "react-native";
 import { StyleSheet, View, Text } from "react-native";
 import MapView from "react-native-maps";
+import { TRANSIT } from "../../../lib/types";
 
 function Markers({ markers, interpolations, onPressMarker }) {
    return (
@@ -18,8 +19,8 @@ function Markers({ markers, interpolations, onPressMarker }) {
                <MapView.Marker
                   key={`marker_${index}`}
                   coordinate={marker.location}
-                  onPress={() => onPressMarker(index)}>
-                  {marker.type !== "transit" ? (
+                  onPress={() => onPressMarker(marker.id)}>
+                  {marker.type !== TRANSIT ? (
                      <>
                         <Animated.View style={[styles.markerWrap]}>
                            <Animated.Image

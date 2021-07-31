@@ -8,10 +8,12 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 
 import { FlatList } from "react-native";
+import { useSelector } from "react-redux";
 
 const CustomScrollView = wrapScrollView(ScrollView);
 
 function Panel({ plans, setRegion, itemRefs }) {
+   const plansMap = useSelector(({ planMap }) => planMap);
    const onPressListItem = useCallback((location, id, direction) => {
       let deltas = {
          latitudeDelta: 0.01,
@@ -40,12 +42,11 @@ function Panel({ plans, setRegion, itemRefs }) {
          />
       </View>
    );
-   let count = 0;
    const renderItem = ({ item }) => {
       const hour = item.time.getHours();
       const minute = item.time.getMinutes();
       return (
-         <ScrollIntoView ref={itemRefs[count++]}>
+         <ScrollIntoView ref={itemRefs[plansMap.get(item.id).idx]}>
             <ListItem
                containerStyle={styles.listItem}
                underlayColor="white"

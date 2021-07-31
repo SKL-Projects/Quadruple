@@ -17,13 +17,13 @@ function Travel({
    sheetRef,
    plans,
    length,
-   markers,
    region,
    setRegion,
    itemRefs,
    onAddBlock,
    onPressAddBlock,
    onPressAddCancel,
+   setRefresh,
 }) {
    const [curSnap, setCurSnap] = useState(0);
    const heightAim = useRef(
@@ -53,7 +53,13 @@ function Travel({
                },
             ]}>
             {onAddBlock ? (
-               <AddBlock plans={plans} region={region} setRegion={setRegion} />
+               <AddBlock
+                  plans={plans}
+                  region={region}
+                  setRegion={setRegion}
+                  onPressAddCancel={onPressAddCancel}
+                  setRefresh={setRefresh}
+               />
             ) : (
                <Panel plans={plans} setRegion={setRegion} itemRefs={itemRefs} />
             )}
@@ -127,7 +133,6 @@ function Travel({
                height: heightAim,
             }}>
             <GoogleMapContainer
-               markersInput={markers}
                regionInput={region}
                setRegion={setRegion}
                itemRefs={itemRefs}

@@ -1,39 +1,27 @@
 import React from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
+import { useSelector } from "react-redux";
 import theme from "../../../lib/styles/theme";
 import { basicVetical, end, start } from "../../utils/Graph";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 
 function BlockSelect({ plans, flatPlans, selectedIds, setSelectedIds }) {
+   const plansMap = useSelector(({ planMap }) => planMap);
+
    const onPressListItem = (id) => {
-      let cur = 0,
-         isLast = false;
-      for (let i = 0; i < flatPlans.length; i++) {
-         if (id === flatPlans[i].id) {
-            cur = i;
-            isLast = i === flatPlans.length - 1;
-            break;
-         }
-      }
-      if (selectedIds[0]?.id === id || (isLast && selectedIds[1]?.id === id)) {
+      let { idx } = plansMap.get(id);
+      let isLast = idx === flatPlans.length - 1;
+
+      if (selectedIds[0] === id || (isLast && selectedIds[1] === id)) {
          setSelectedIds([]);
       } else if (isLast) {
-         setSelectedIds([
-            { id: flatPlans[cur - 1].id, idx: cur - 1 },
-            { id: flatPlans[cur].id, idx: cur },
-         ]);
+         setSelectedIds([flatPlans[idx - 1].id, id]);
       } else {
-         setSelectedIds([
-            { id: flatPlans[cur].id, idx: cur },
-            { id: flatPlans[cur + 1].id, idx: cur + 1 },
-         ]);
+         setSelectedIds([id, flatPlans[idx + 1].id]);
       }
    };
-   const checkId = (id) => {
-      if (selectedIds[0]?.id === id || selectedIds[1]?.id === id) return true;
-      return false;
-   };
+
    const renderDay = ({ item, index }) => (
       <View key={`day_${index}`} style={styles.dayContainer}>
          <FlatList
@@ -49,7 +37,7 @@ function BlockSelect({ plans, flatPlans, selectedIds, setSelectedIds }) {
       const minute = item.time.getMinutes();
       return (
          <ListItem
-            containerStyle={stylesFunc(checkId(item.id)).listItem}
+            containerStyle={stylesFunc(selectedIds.includes(item.id)).listItem}
             underlayColor="white"
             onPress={() => onPressListItem(item.id)}>
             <View

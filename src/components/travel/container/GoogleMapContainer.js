@@ -7,32 +7,35 @@ import React, {
 } from "react";
 import GoogleMap from "../view/GoogleMap";
 import { Animated } from "react-native";
+import { useSelector } from "react-redux";
 
-function GoogleMapContainer({
-   markersInput,
-   regionInput,
-   setRegion,
-   itemRefs,
-}) {
+function GoogleMapContainer({ regionInput, setRegion, itemRefs }) {
    const [markers, setMarkers] = useState([]);
    const [thisRegion, setThisRegion] = useState(regionInput);
    const mapViewRef = useRef();
+   const plansMap = useSelector(({ planMap }) => planMap);
 
    let mapAnimation = new Animated.Value(0);
 
    useEffect(() => {
-      setMarkers(markersInput);
-   }, [markersInput]);
+      let array = [];
+      plansMap.forEach((item) =>
+         array.push({
+            id: item.id,
+            location: item.location,
+            type: item.type,
+            cost: item.cost,
+            direction: item.direction,
+         })
+      );
+      setMarkers(array);
+   }, [plansMap]);
 
    useEffect(() => {
       mapViewRef.current?.animateToRegion(regionInput, 900);
-      for (let i = 0; i < markers.length; i++) {
-         if (regionInput.id === markers[i].id) {
-            mapAnimation.setValue(i);
-            break;
-         }
-      }
-   }, [regionInput, markers]);
+      const res = plansMap.get(regionInput.id);
+      mapAnimation.setValue(res.idx);
+   }, [regionInput, plansMap]);
 
    const interpolations = markers.map((marker, index) => {
       const inputRange = [index - 1, index, index + 1];
@@ -47,13 +50,14 @@ function GoogleMapContainer({
    });
 
    const onPressMarker = useCallback(
-      (index) => {
-         itemRefs[index].current?.scrollIntoView({ align: "top" });
+      (id) => {
+         const { idx } = plansMap.get(id);
+         itemRefs[idx].current?.scrollIntoView({ align: "top" });
 
          setRegion((prev) => ({
             ...prev,
-            ...markers[index].location,
-            id: markers[index].id,
+            ...markers[idx].location,
+            id: markers[idx].id,
          }));
       },
       [itemRefs, markers]

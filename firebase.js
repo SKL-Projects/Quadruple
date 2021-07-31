@@ -26,5 +26,6 @@ firebase.initializeApp(firebaseConfig);
 
 export const fbAuth = firebase.auth();
 export const fbStore = firebase.firestore();
+export const fbStoreObj = firebase.firestore;
 export const fbStorageRef = firebase.storage().ref();
 export const fbAuthObject = firebase.auth;

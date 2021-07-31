@@ -30,7 +30,7 @@ export default function GoogleMap({
                interpolations={interpolations}
                onPressMarker={onPressMarker}
             />
-            <Direction markers={markers} region={regionInput} />
+            <Direction region={regionInput} markers={markers} />
          </MapView>
       </View>
    );

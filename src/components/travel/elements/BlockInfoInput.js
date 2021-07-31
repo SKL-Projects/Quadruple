@@ -23,12 +23,12 @@ const detailTypesDate = [
 ];
 
 function BlockInfoInput({
+   title,
    type,
+   onChangeTitle,
    setType,
    detailType,
    setDetailType,
-   onChangeTitle,
-   title,
    errMsg,
 }) {
    const label = useCallback(
