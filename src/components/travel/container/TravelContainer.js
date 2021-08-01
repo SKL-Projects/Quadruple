@@ -4,7 +4,7 @@ import Travel from "../view/Travel";
 import LottieView from "lottie-react-native";
 import { View } from "react-native";
 import { useDispatch } from "react-redux";
-import { setPlanMap } from "../../../modules/plansMap";
+import { clearMap, setPlanMap } from "../../../modules/plansMap";
 
 function TravelContainer() {
    const sheetRef = useRef(null); // 바닥 시트 reference
@@ -83,6 +83,8 @@ function TravelContainer() {
          setLoading(false);
       };
       getTravel();
+
+      return () => dispatch(clearMap());
    }, [refresh]);
 
    const onPressAddBlock = useCallback(() => {

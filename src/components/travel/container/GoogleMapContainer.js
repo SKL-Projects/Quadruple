@@ -34,7 +34,9 @@ function GoogleMapContainer({ regionInput, setRegion, itemRefs }) {
    useEffect(() => {
       mapViewRef.current?.animateToRegion(regionInput, 900);
       const res = plansMap.get(regionInput.id);
-      mapAnimation.setValue(res.idx);
+      if (typeof res === "object") {
+         mapAnimation.setValue(res?.idx);
+      }
    }, [regionInput, plansMap]);
 
    const interpolations = markers.map((marker, index) => {

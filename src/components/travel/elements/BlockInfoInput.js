@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import { Button, ButtonGroup, Input } from "react-native-elements";
 import { detailTypes, TRANSIT, WAYPOINT } from "../../../lib/types";
+import { ThousandSeperator } from "../../utils/ThousandSeperator";
 
 const detailTypesDate = [
    [
@@ -30,6 +31,10 @@ function BlockInfoInput({
    detailType,
    setDetailType,
    errMsg,
+   cost,
+   memo,
+   onChangeMemo,
+   onChangeCost,
 }) {
    const label = useCallback(
       (content) => <Text style={styles.label}>{content}</Text>,
@@ -88,6 +93,29 @@ function BlockInfoInput({
                      onPress={() => setDetailType(item.value)}
                   />
                )}
+            />
+         </View>
+         <View
+            style={[
+               styles.line,
+               { flexDirection: "row", justifyContent: "space-between" },
+            ]}>
+            {label("예상 지출액")}
+            <Input
+               placeholder="금액을 입력해주세요."
+               value={ThousandSeperator(cost)}
+               onChangeText={onChangeCost}
+               errorMessage={errMsg.cost}
+               containerStyle={{ width: 200 }}
+            />
+         </View>
+         <View style={styles.line}>
+            {label("간단 메모")}
+            <Input
+               value={memo}
+               onChangeText={onChangeMemo}
+               multiline
+               maxLength={50}
             />
          </View>
       </View>

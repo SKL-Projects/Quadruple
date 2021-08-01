@@ -19,12 +19,13 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
    const [date, setDate] = useState(new Date());
    const [type, setType] = useState(WAYPOINT);
    const [detailType, setDetailType] = useState(0);
-   const [errMsg, setErrMsg] = useState({ title: "", time: "" });
+   const [cost, setCost] = useState("0");
+   const [memo, setMemo] = useState("");
    const [flatPlans, setFlatPlans] = useState([]);
    const [selectedIds, setSelectedIds] = useState([]);
+   const [errMsg, setErrMsg] = useState({ title: "", time: "" });
    const plansMap = useSelector(({ planMap }) => planMap);
 
-   console.log(flatPlans);
    useEffect(() => {
       const reg = region;
       let array = [];
@@ -40,13 +41,23 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
    const onChangeTitle = useCallback(
       (v) => {
          if (errMsg.title) {
-            console.log(errMsg.title);
             setErrMsg((prev) => ({ ...prev, title: "" }));
          }
          setTitle(v);
       },
       [errMsg.title]
    );
+   const onChangeMemo = useCallback((v) => {
+      setMemo(v);
+   }, []);
+   const onChangeCost = useCallback((v) => {
+      if (/[^0-9,]/g.test(v) && v.length !== 0) {
+         setErrMsg((prev) => ({ ...prev, cost: "숫자만 입력해주세요." }));
+      } else {
+         setErrMsg((prev) => ({ ...prev, cost: "" }));
+         setCost(v);
+      }
+   }, []);
 
    // 끝 다음, 시작 전에 못넣게 막기
    const onCompleteWaypoint = async () => {
@@ -90,6 +101,8 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          title: title,
          time: date,
          type: WAYPOINT,
+         cost: parseInt(cost.replace(/,/g, "")),
+         memo: memo,
          detailType: detailType,
          location: { latitude: region.latitude, longitude: region.longitude },
       };
@@ -134,6 +147,8 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          ),
          type: TRANSIT,
          detailType: detailType,
+         cost: parseInt(cost.replace(/,/g, "")),
+         memo: memo,
          location: transit
             ? flatPlans[transit].location
             : {
@@ -166,6 +181,10 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
             setType={setType}
             detailType={detailType}
             setDetailType={setDetailType}
+            cost={cost}
+            memo={memo}
+            onChangeMemo={onChangeMemo}
+            onChangeCost={onChangeCost}
             errMsg={errMsg}
          />
 

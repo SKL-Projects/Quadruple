@@ -67,7 +67,7 @@ function Travel({
                style={{
                   position: "absolute",
                   bottom: 80,
-                  right: 20,
+                  left: 20,
                   zIndex: 100,
                }}>
                <FAB

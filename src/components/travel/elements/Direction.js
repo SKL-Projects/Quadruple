@@ -20,11 +20,12 @@ function Direction({ region, markers }) {
       setLoading(true);
       setShowPoly(false);
       const res = plansMap.get(region.id);
-      if (res.idx === plansMap.size - 1) {
+      if (typeof res !== "object") return;
+      if (res?.idx === plansMap.size - 1) {
          setLast(true);
          return;
       }
-      if (res.type === TRANSIT) {
+      if (res?.type === TRANSIT) {
          setCoords(res.direction);
       } else {
          const next = markers[res.idx + 1];

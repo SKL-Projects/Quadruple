@@ -3,6 +3,7 @@ import { Animated } from "react-native";
 import { StyleSheet, View, Text } from "react-native";
 import MapView from "react-native-maps";
 import { TRANSIT } from "../../../lib/types";
+import { ThousandSeperatorNum } from "../../utils/ThousandSeperator";
 
 function Markers({ markers, interpolations, onPressMarker }) {
    return (
@@ -30,7 +31,10 @@ function Markers({ markers, interpolations, onPressMarker }) {
                            />
                         </Animated.View>
                         <View style={styles.price}>
-                           <Text>&nbsp;&#8361;{marker.cost}&nbsp;</Text>
+                           <Text>
+                              &nbsp;&#8361;{ThousandSeperatorNum(marker.cost)}
+                              &nbsp;
+                           </Text>
                         </View>
                      </>
                   ) : (
