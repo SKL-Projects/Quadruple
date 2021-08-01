@@ -9,7 +9,7 @@ import GoogleMap from "../view/GoogleMap";
 import { Animated } from "react-native";
 import { useSelector } from "react-redux";
 
-function GoogleMapContainer({ regionInput, setRegion, itemRefs }) {
+function GoogleMapContainer({ regionInput, setRegion, listRef }) {
    const [markers, setMarkers] = useState([]);
    const [thisRegion, setThisRegion] = useState(regionInput);
    const mapViewRef = useRef();
@@ -53,8 +53,11 @@ function GoogleMapContainer({ regionInput, setRegion, itemRefs }) {
 
    const onPressMarker = useCallback(
       (id) => {
-         const { idx } = plansMap.get(id);
-         itemRefs[idx].current?.scrollIntoView({ align: "top" });
+         const { idx, sIdx } = plansMap.get(id);
+         listRef.current?.scrollToLocation({
+            itemIndex: idx,
+            sectionIndex: sIdx,
+         });
 
          setRegion((prev) => ({
             ...prev,
@@ -62,7 +65,7 @@ function GoogleMapContainer({ regionInput, setRegion, itemRefs }) {
             id: markers[idx].id,
          }));
       },
-      [itemRefs, markers]
+      [markers, plansMap]
    );
 
    const onAnimateRegion = () => {

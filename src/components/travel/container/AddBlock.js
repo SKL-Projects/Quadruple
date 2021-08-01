@@ -227,7 +227,6 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
 const styles = StyleSheet.create({
    container: {
       width: "100%",
-      height: 100,
       marginBottom: 60,
       backgroundColor: theme.color.white,
    },

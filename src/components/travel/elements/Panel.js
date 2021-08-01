@@ -1,19 +1,11 @@
 import React, { useCallback } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, SectionList } from "react-native";
 import { basicVetical, end, start } from "../../utils/Graph";
 import { ListItem } from "react-native-elements";
 import theme from "../../../lib/styles/theme";
-import { ScrollIntoView, wrapScrollView } from "react-native-scroll-into-view";
-import { ScrollView } from "react-native-gesture-handler";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 
-import { FlatList } from "react-native";
-import { useSelector } from "react-redux";
-
-const CustomScrollView = wrapScrollView(ScrollView);
-
-function Panel({ plans, setRegion, itemRefs }) {
-   const plansMap = useSelector(({ planMap }) => planMap);
+function Panel({ plans, setRegion, listRef }) {
    const onPressListItem = useCallback((location, id, direction) => {
       let deltas = {
          latitudeDelta: 0.01,
@@ -32,64 +24,55 @@ function Panel({ plans, setRegion, itemRefs }) {
       });
    }, []);
 
-   const renderDay = ({ item, index }) => (
-      <View key={`day_${index}`} style={styles.dayContainer}>
-         <FlatList
-            data={plans[item]}
-            keyExtractor={(item, idx) => `${item.time}_${idx}`}
-            renderItem={renderItem}
-            ListHeaderComponent={<Text style={styles.dayHeader}>{item}</Text>}
-         />
-      </View>
-   );
    const renderItem = ({ item }) => {
       const hour = item.time.getHours();
       const minute = item.time.getMinutes();
       return (
-         <ScrollIntoView ref={itemRefs[plansMap.get(item.id).idx]}>
-            <ListItem
-               containerStyle={styles.listItem}
-               underlayColor="white"
-               onPress={() =>
-                  onPressListItem(item.location, item.id, item.direction)
-               }>
-               <View
-                  style={{
-                     width: 60,
-                     justifyContent: "center",
-                     alignItems: "center",
-                     padding: 0,
-                  }}>
-                  {item.type !== "start"
-                     ? item.type !== "end"
-                        ? basicVetical(LIST_ITEM_HEIGHT, item.type)
-                        : end(LIST_ITEM_HEIGHT)
-                     : start(LIST_ITEM_HEIGHT)}
-               </View>
-               <ListItem.Content>
-                  <ListItem.Title style={{ fontSize: 20 }}>
-                     {item.type !== "transit"
-                        ? `${hour < 10 ? `0${hour}` : hour}:${
-                             minute < 10 ? `0${minute}` : minute
-                          }          `
-                        : ""}
-                     {item.title}
-                  </ListItem.Title>
-               </ListItem.Content>
-               <ListItem.Chevron />
-            </ListItem>
-         </ScrollIntoView>
+         <ListItem
+            containerStyle={styles.listItem}
+            underlayColor="white"
+            onPress={() =>
+               onPressListItem(item.location, item.id, item.direction)
+            }>
+            <View
+               style={{
+                  width: 60,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: 0,
+               }}>
+               {item.type !== "start"
+                  ? item.type !== "end"
+                     ? basicVetical(LIST_ITEM_HEIGHT, item.type)
+                     : end(LIST_ITEM_HEIGHT)
+                  : start(LIST_ITEM_HEIGHT)}
+            </View>
+            <ListItem.Content>
+               <ListItem.Title style={{ fontSize: 20 }}>
+                  {item.type !== "transit"
+                     ? `${hour < 10 ? `0${hour}` : hour}:${
+                          minute < 10 ? `0${minute}` : minute
+                       }          `
+                     : ""}
+                  {item.title}
+               </ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+         </ListItem>
       );
    };
 
    return (
-      <CustomScrollView keyboardShouldPersistTaps="always">
-         <FlatList
-            data={Object.keys(plans)}
-            renderItem={renderDay}
-            nestedScrollEnabled={false}
-         />
-      </CustomScrollView>
+      <SectionList
+         ref={listRef}
+         sections={plans}
+         keyExtractor={(item, idx) => `dayGroup_${item.title}_${idx}`}
+         renderItem={renderItem}
+         renderSectionHeader={({ section: { title } }) => {
+            return <Text style={styles.dayHeader}>{title}</Text>;
+         }}
+         renderSectionFooter={() => <View style={styles.dayContainer} />}
+      />
    );
 }
 

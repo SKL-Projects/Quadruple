@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import { StyleSheet, View, Text, SectionList } from "react-native";
 import { ListItem } from "react-native-elements";
 import { useSelector } from "react-redux";
 import theme from "../../../lib/styles/theme";
@@ -22,16 +22,6 @@ function BlockSelect({ plans, flatPlans, selectedIds, setSelectedIds }) {
       }
    };
 
-   const renderDay = ({ item, index }) => (
-      <View key={`day_${index}`} style={styles.dayContainer}>
-         <FlatList
-            data={plans[item]}
-            keyExtractor={(item, idx) => `${item.time}_${idx}`}
-            renderItem={renderItem}
-            ListHeaderComponent={<Text style={styles.dayHeader}>{item}</Text>}
-         />
-      </View>
-   );
    const renderItem = ({ item }) => {
       const hour = item.time.getHours();
       const minute = item.time.getMinutes();
@@ -69,7 +59,15 @@ function BlockSelect({ plans, flatPlans, selectedIds, setSelectedIds }) {
    };
    return (
       <View style={styles.container}>
-         <FlatList data={Object.keys(plans)} renderItem={renderDay} />
+         <SectionList
+            sections={plans}
+            keyExtractor={(item, idx) => `dayGroup_${item.title}_${idx}`}
+            renderItem={renderItem}
+            renderSectionHeader={({ section: { title } }) => {
+               return <Text style={styles.dayHeader}>{title}</Text>;
+            }}
+            renderSectionFooter={() => <View style={styles.dayContainer} />}
+         />
       </View>
    );
 }

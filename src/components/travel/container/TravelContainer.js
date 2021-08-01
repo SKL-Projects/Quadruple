@@ -8,7 +8,7 @@ import { clearMap, setPlanMap } from "../../../modules/plansMap";
 
 function TravelContainer() {
    const sheetRef = useRef(null); // 바닥 시트 reference
-   const [plans, setPlans] = useState({}); // 날짜별로 그룹지어진 블록등
+   const [plans, setPlans] = useState([]); // 날짜별로 그룹지어진 블록등
    const [loading, setLoading] = useState(true);
    const [length, setLength] = useState(0); // 전체 블록 개수
    const [region, setRegion] = useState({
@@ -20,10 +20,7 @@ function TravelContainer() {
    });
    const [onAddBlock, setOnAddBlock] = useState(false);
    const [refresh, setRefresh] = useState(0);
-   //마커 클릭시 스크롤를 위한 refs 배열
-   const itemRefs = Array(100)
-      .fill(0, 0, 100)
-      .map(() => useRef());
+
    const dispatch = useDispatch();
 
    useEffect(() => {
@@ -53,11 +50,33 @@ function TravelContainer() {
             return a.time.valueOf() < b.time.valueOf() ? -1 : 1;
          });
 
+         // 같은 날짜로 그룹핑
+         let prevDate = "",
+            idx = -1;
+         const groups = sortedPlans.reduce((groups, plan) => {
+            const date = `${plan.time.getFullYear()}/${
+               plan.time.getMonth() + 1
+            }/${plan.time.getDate()}`;
+
+            if (date !== prevDate) {
+               prevDate = date;
+               groups.push({ title: date, data: [] });
+               idx++;
+            }
+            groups[idx].data.push(plan);
+            return groups;
+         }, []);
+         setPlans(groups);
+
          // 아이디 - 리스트 맵 리덕스에 저장
          const map = new Map();
-         for (let i = 0; i < sortedPlans.length; i++) {
-            map.set(sortedPlans[i].id, { ...sortedPlans[i], idx: i });
-         }
+         let cnt = 0;
+         groups.forEach((day, sIdx) => {
+            day.data.forEach((item) => {
+               map.set(item.id, { ...item, idx: cnt, sIdx: sIdx });
+               cnt++;
+            });
+         });
          dispatch(setPlanMap(map));
 
          // 리전 등록
@@ -66,19 +85,6 @@ function TravelContainer() {
             ...sortedPlans[0].location,
             id: sortedPlans[0].id,
          }));
-
-         // 같은 날짜로 그룹핑
-         const groups = sortedPlans.reduce((groups, plan) => {
-            const date = `${plan.time.getFullYear()}/${
-               plan.time.getMonth() + 1
-            }/${plan.time.getDate()}`;
-            if (!groups[date]) {
-               groups[date] = [];
-            }
-            groups[date].push(plan);
-            return groups;
-         }, {});
-         setPlans(groups);
 
          setLoading(false);
       };
@@ -117,7 +123,6 @@ function TravelContainer() {
                sheetRef={sheetRef}
                plans={plans}
                length={length}
-               itemRefs={itemRefs}
                region={region}
                setRegion={setRegion}
                onPressAddBlock={onPressAddBlock}

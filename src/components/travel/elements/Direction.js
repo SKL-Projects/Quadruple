@@ -21,17 +21,16 @@ function Direction({ region, markers }) {
       setShowPoly(false);
       const res = plansMap.get(region.id);
       if (typeof res !== "object") return;
-      if (res?.idx === plansMap.size - 1) {
+      if (res.idx === plansMap.size - 1) {
          setLast(true);
          return;
       }
-      if (res?.type === TRANSIT) {
+      if (res.type === TRANSIT) {
          setCoords(res.direction);
       } else {
          const next = markers[res.idx + 1];
          const origin = res.location;
-         const dest =
-            next.type === TRANSIT ? next?.direction[1] : next?.location;
+         const dest = next.type === TRANSIT ? next.direction[1] : next.location;
          setCoords([origin, dest]);
       }
       setLoading(false);
@@ -42,20 +41,16 @@ function Direction({ region, markers }) {
          {!last || !loading ? (
             showPoly ? (
                <Polyline
-                  coordinates={
-                     coords[0].latitude
-                        ? coords
-                        : [
-                             {
-                                latitude: 0,
-                                longitude: 0,
-                             },
-                             {
-                                latitude: 0,
-                                longitude: 0,
-                             },
-                          ]
-                  }
+                  coordinates={[
+                     {
+                        latitude: coords[0].latitude,
+                        longitude: coords[0].longitude,
+                     },
+                     {
+                        latitude: coords[1].latitude,
+                        longitude: coords[1].longitude,
+                     },
+                  ]}
                   lineDashPattern={[1]}
                   strokeColor="red" // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={5}
@@ -84,14 +79,5 @@ function Direction({ region, markers }) {
       </>
    );
 }
-
-const styles = StyleSheet.create({
-   container: {
-      flex: 1,
-      backgroundColor: "#fff",
-      alignItems: "center",
-      justifyContent: "center",
-   },
-});
 
 export default Direction;

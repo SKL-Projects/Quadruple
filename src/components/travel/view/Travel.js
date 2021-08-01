@@ -19,7 +19,6 @@ function Travel({
    length,
    region,
    setRegion,
-   itemRefs,
    onAddBlock,
    onPressAddBlock,
    onPressAddCancel,
@@ -29,6 +28,7 @@ function Travel({
    const heightAim = useRef(
       new Animated.Value(getMapHeight(length, curSnap))
    ).current;
+   const listRef = useRef();
 
    // 리스트 길이 변경시, 현재 snap에 맞춰서 맵 높이 변경
    useEffect(() => {
@@ -61,7 +61,7 @@ function Travel({
                   setRefresh={setRefresh}
                />
             ) : (
-               <Panel plans={plans} setRegion={setRegion} itemRefs={itemRefs} />
+               <Panel plans={plans} setRegion={setRegion} listRef={listRef} />
             )}
             <View
                style={{
@@ -105,6 +105,7 @@ function Travel({
    let drawerCallbackNode = new Reanimated.Value(0);
    const onCallback = useCallback(
       ([value]) => {
+         console.log("change");
          if (value < 0.2) {
             setCurSnap(0);
             if (curSnap !== 0) {
@@ -135,7 +136,7 @@ function Travel({
             <GoogleMapContainer
                regionInput={region}
                setRegion={setRegion}
-               itemRefs={itemRefs}
+               listRef={listRef}
             />
          </Animated.View>
          <BottomSheet
@@ -144,7 +145,7 @@ function Travel({
             renderContent={() => renderContent(onAddBlock)}
             renderHeader={renderHeader}
             initialSnap={0}
-            enabledContentTapInteraction={false}
+            enabledContentGestureInteraction={false}
             callbackNode={drawerCallbackNode}
          />
          <Reanimated.Code
