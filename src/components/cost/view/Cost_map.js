@@ -11,7 +11,6 @@ import {
   ImageBackground,
 } from "react-native";
 import {expected_price} from './mapData';
-import {markers} from './mapData';
 const { width } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;

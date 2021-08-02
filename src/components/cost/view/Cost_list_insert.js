@@ -5,26 +5,27 @@ import {
   View,
   TextInput,
   Dimensions,
-  Picker,
   TouchableOpacity,
   Modal,
   Pressable,
   Alert,
   ScrollView
 } from "react-native";
+import {Picker} from '@react-native-community/picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Cost_map_coordinates from '../elements/GoogleMap'
 
-export default function Cost_list_insert(props ) {
+export default function Cost_list_insert({item}) {
   
-  const [cost, setCost] = useState("");
+  const [cost, setCost] = useState(item.cost);
   const [day, setDay] = useState("");
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState(item.title);
   const [type, setType] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [coordinate, setcoordinate] = useState("");
 
   useEffect(() => { 
+  
   }, []);
 
   return (
@@ -36,6 +37,8 @@ export default function Cost_list_insert(props ) {
             style={styles.input}
             onChangeText={setCost}
             placeholder="금액을 입력하세요"
+            value={String(cost)}
+            keyboardType="numeric"
           />
         </View>
         <View style={[styles.box,styles.box2]}>
@@ -57,6 +60,7 @@ export default function Cost_list_insert(props ) {
             style={styles.input}
             onChangeText={setLocation}
             placeholder="장소명을 입력하세요"
+            value={location}
           />
         </View>
         <View style={[styles.box,styles.box4]}>
@@ -147,14 +151,11 @@ export default function Cost_list_insert(props ) {
         </View>
         <Text>cost:{cost}{"\n"}day:{day}{"\n"}location:{location}{"\n"}type:{type}{"\n"}coordinate:{coordinate.latitude}</Text>
         <Pressable
-            style={styles.pressableBtn}
-            onPress={() => console.log('hi')}
-          >
-            
-              <Text style={styles.pressableBtnText}>저장</Text>
-             
-            
-          </Pressable>
+          style={styles.pressableBtn}
+          onPress={() => console.log('hi')}
+        >
+            <Text style={styles.pressableBtnText}>저장</Text>
+        </Pressable>
       </ScrollView>
     </View>
    );

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity  } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal, Pressable  } from 'react-native';
 import {expected_price} from './mapData';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Cost_list_insert from './Cost_list_insert'
 
 export default function Cost_list({navigation,fb_plans}) {
 
   const [cost, setCost] = useState(0);
-  
+  const [currentItem, setCurrentItem] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+
   const images = {
     hotel:'home-outline' ,
     airplane:'airplane-outline' ,
@@ -76,7 +79,12 @@ export default function Cost_list({navigation,fb_plans}) {
               ) : (
                 <></>
               )}
-              <TouchableOpacity style={styles.item} key={i} onPress={() => navigation.navigate("Cost_insert")}>
+              <TouchableOpacity
+                style={styles.pressableBtn}
+                onPress={() =>[setCurrentItem(item),setModalVisible(true)]}
+                key={i}
+                style={styles.item}
+              >       
                 <View style={styles.item_left}>
                   <Icon name={images[item.detailType]} size={30} color="#753BBD" style={styles.icon}/>
                 </View>
@@ -91,7 +99,20 @@ export default function Cost_list({navigation,fb_plans}) {
               </TouchableOpacity>
             </>
           ))}
-          
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View>
+              <View style={styles.modalView}>
+                <Cost_list_insert item={currentItem}/>
+              </View>
+            </View>
+          </Modal>
         </View>
       </ScrollView >
     </View>
@@ -201,5 +222,22 @@ const styles = StyleSheet.create({
   },
   item2Text:{
     fontWeight:'bold'
+  },
+  modalView: {
+    height: Dimensions.get('window').height,
+    width:Dimensions.get('window').width,
+    zIndex:2,
+    backgroundColor:'#ffffff'
+  },
+  pressableBtn_hide: {
+    zIndex:2,
+    position:'absolute',
+    bottom:30,
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  pressableBtn_hide1: {
+    left:20
   },
 });
