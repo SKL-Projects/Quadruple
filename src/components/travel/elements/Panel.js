@@ -1,11 +1,13 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View, Text, SectionList } from "react-native";
 import { basicVetical, end, start } from "../../utils/Graph";
-import { ListItem } from "react-native-elements";
+import { Button, ListItem } from "react-native-elements";
 import theme from "../../../lib/styles/theme";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
+import { Dimensions } from "react-native";
+import { removeTravelBlock } from "../../../lib/api/travelBlock";
 
-function Panel({ plans, setRegion, listRef }) {
+function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
    const onPressListItem = useCallback((location, id, direction) => {
       let deltas = {
          latitudeDelta: 0.01,
@@ -24,16 +26,46 @@ function Panel({ plans, setRegion, listRef }) {
       });
    }, []);
 
+   const removeBlock = useCallback(async (obj) => {
+      await removeTravelBlock(
+         "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+         1627379541738,
+         obj
+      );
+      setRefresh((prev) => prev + 1);
+   }, []);
+
    const renderItem = ({ item }) => {
       const hour = item.time.getHours();
       const minute = item.time.getMinutes();
       return (
-         <ListItem
+         <ListItem.Swipeable
             containerStyle={styles.listItem}
             underlayColor="white"
             onPress={() =>
                onPressListItem(item.location, item.id, item.direction)
-            }>
+            }
+            leftWidth={Math.floor(Dimensions.get("window").width * 0.4)}
+            rightWidth={Math.floor(Dimensions.get("window").width * 0.4)}
+            leftContent={
+               <Button
+                  title="수정"
+                  icon={{ name: "edit", color: "white" }}
+                  buttonStyle={styles.leftButton}
+                  onPress={() => openEditModal(item)}
+               />
+            }
+            {...(item.type !== "start" &&
+               item.type !== "end" && {
+                  rightContent: (
+                     <Button
+                        title="삭제"
+                        icon={{ name: "delete", color: "white" }}
+                        buttonStyle={styles.rightButton}
+                        onPress={() => removeBlock(item)}
+                     />
+                  ),
+               })}>
             <View
                style={{
                   width: 60,
@@ -58,7 +90,7 @@ function Panel({ plans, setRegion, listRef }) {
                </ListItem.Title>
             </ListItem.Content>
             <ListItem.Chevron />
-         </ListItem>
+         </ListItem.Swipeable>
       );
    };
 
@@ -108,6 +140,24 @@ const styles = StyleSheet.create({
       shadowRadius: 3.84,
 
       elevation: 3,
+   },
+   leftButton: {
+      height: LIST_ITEM_HEIGHT,
+      margin: 10,
+      borderWidth: 1,
+      borderColor: theme.color.white,
+      borderBottomLeftRadius: 30,
+      borderTopLeftRadius: 30,
+   },
+   rightButton: {
+      height: LIST_ITEM_HEIGHT,
+      backgroundColor: "red",
+      margin: 10,
+      marginRight: 20,
+      borderWidth: 1,
+      borderColor: theme.color.white,
+      borderBottomRightRadius: 30,
+      borderTopRightRadius: 30,
    },
 });
 

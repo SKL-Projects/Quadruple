@@ -5,6 +5,7 @@ import LottieView from "lottie-react-native";
 import { View } from "react-native";
 import { useDispatch } from "react-redux";
 import { clearMap, setPlanMap } from "../../../modules/plansMap";
+import EditModalContainer from "./EditModalContainer";
 
 function TravelContainer() {
    const sheetRef = useRef(null); // 바닥 시트 reference
@@ -20,6 +21,8 @@ function TravelContainer() {
    });
    const [onAddBlock, setOnAddBlock] = useState(false);
    const [refresh, setRefresh] = useState(0);
+   const [visibleEditModal, setVisibleEditModal] = useState(false);
+   const [editElement, setEditElement] = useState({});
 
    const dispatch = useDispatch();
 
@@ -99,6 +102,10 @@ function TravelContainer() {
    const onPressAddCancel = useCallback(() => {
       setOnAddBlock(false);
    }, []);
+   const openEditModal = useCallback((element) => {
+      setVisibleEditModal(true);
+      setEditElement(element);
+   }, []);
 
    return (
       <>
@@ -119,17 +126,28 @@ function TravelContainer() {
                />
             </View>
          ) : (
-            <Travel
-               sheetRef={sheetRef}
-               plans={plans}
-               length={length}
-               region={region}
-               setRegion={setRegion}
-               onPressAddBlock={onPressAddBlock}
-               onAddBlock={onAddBlock}
-               onPressAddCancel={onPressAddCancel}
-               setRefresh={setRefresh}
-            />
+            <>
+               <Travel
+                  sheetRef={sheetRef}
+                  plans={plans}
+                  length={length}
+                  region={region}
+                  setRegion={setRegion}
+                  onPressAddBlock={onPressAddBlock}
+                  onAddBlock={onAddBlock}
+                  onPressAddCancel={onPressAddCancel}
+                  setRefresh={setRefresh}
+                  openEditModal={openEditModal}
+               />
+               {visibleEditModal && (
+                  <EditModalContainer
+                     visible={visibleEditModal}
+                     setVisible={setVisibleEditModal}
+                     editElement={editElement}
+                     setRefresh={setRefresh}
+                  />
+               )}
+            </>
          )}
       </>
    );

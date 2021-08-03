@@ -11,3 +11,25 @@ export const addTravelBlock = async (uid, planId, obj) => {
       console.log(err);
    }
 };
+
+export const removeTravelBlock = async (uid, planId, obj) => {
+   try {
+      console.log(obj);
+      const res = await fbStore
+         .collection(`${uid}/travelList/${planId}`)
+         .doc("plans")
+         .update({ plans: fbStoreObj.FieldValue.arrayRemove(obj) });
+      return res;
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+export const editTravelBlock = async (uid, planId, prevBlock, newBlock) => {
+   try {
+      await removeTravelBlock(uid, planId, prevBlock);
+      await addTravelBlock(uid, planId, newBlock);
+   } catch (err) {
+      console.log(err);
+   }
+};

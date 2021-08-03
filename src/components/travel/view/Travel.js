@@ -23,8 +23,9 @@ function Travel({
    onPressAddBlock,
    onPressAddCancel,
    setRefresh,
+   openEditModal,
 }) {
-   const [curSnap, setCurSnap] = useState(0);
+   const [curSnap, setCurSnap] = useState(1);
    const heightAim = useRef(
       new Animated.Value(getMapHeight(length, curSnap))
    ).current;
@@ -61,7 +62,13 @@ function Travel({
                   setRefresh={setRefresh}
                />
             ) : (
-               <Panel plans={plans} setRegion={setRegion} listRef={listRef} />
+               <Panel
+                  plans={plans}
+                  setRegion={setRegion}
+                  listRef={listRef}
+                  setRefresh={setRefresh}
+                  openEditModal={openEditModal}
+               />
             )}
             <View
                style={{
@@ -105,7 +112,6 @@ function Travel({
    let drawerCallbackNode = new Reanimated.Value(0);
    const onCallback = useCallback(
       ([value]) => {
-         console.log("change");
          if (value < 0.2) {
             setCurSnap(0);
             if (curSnap !== 0) {
@@ -144,7 +150,7 @@ function Travel({
             snapPoints={[getSnapHeight(0), getSnapHeight(1), 50]}
             renderContent={() => renderContent(onAddBlock)}
             renderHeader={renderHeader}
-            initialSnap={0}
+            initialSnap={1}
             enabledContentGestureInteraction={false}
             callbackNode={drawerCallbackNode}
          />

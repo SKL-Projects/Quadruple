@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Modal, ModalContent, SlideAnimation } from "react-native-modals";
 function CustomModal({ children, visible, title, footer }) {
