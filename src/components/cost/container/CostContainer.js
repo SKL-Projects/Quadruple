@@ -6,10 +6,9 @@ import { getAllTravelList } from "../../../lib/api/travelList";
 
 function CostContainer({ navigation }) {
 
+   const [infos, setInfos] = useState({}); // 날짜별로 그룹지어진 블록등
    const [plans, setPlans] = useState({}); // 날짜별로 그룹지어진 블록등
    const [loading, setLoading] = useState(true);
-   const [length, setLength] = useState(0); // 전체 블록 개수
-   const [markers, setMarkers] = useState([]); // 마커들
    const [region, setRegion] = useState({
       // 현재 보여주는 지역
       latitude: 0,
@@ -32,8 +31,6 @@ function CostContainer({ navigation }) {
             },
          };
       });
-      
-      setLength(datas.length);
 
       let sortedPlans = datas.sort((a, b) => {
          if (a.time.valueOf() === b.time.valueOf()) {
@@ -42,14 +39,6 @@ function CostContainer({ navigation }) {
          return a.time.valueOf() < b.time.valueOf() ? -1 : 1;
       });
 
-      setMarkers(
-         sortedPlans.map((item) => ({
-            id: item.id,
-            cost: item?.cost,
-            location: item.location,
-            type: item.type,
-         }))
-      );
       setRegion((prev) => ({
          ...prev,
          ...sortedPlans[0].location,
@@ -60,8 +49,20 @@ function CostContainer({ navigation }) {
       setLoading(false);
    };
 
+   const getInfo = async () => {
+      const info = await getAllTravelList("aT1JPMs3GXg7SrkRE1C6KZPJupu1");
+
+      // timeStamp, geoPoint 데이터 preprocessing
+      setInfos({
+         ...info[0].info,
+         departTime: info[0].info.departTime.toDate(),
+         arrivalTime: info[0].info.arrivalTime.toDate(),
+      })
+   }
+
    useEffect(() => {
       getTravel();
+      getInfo()
    }, []);
 
 
@@ -87,9 +88,8 @@ function CostContainer({ navigation }) {
             <Cost 
                navigation={navigation} 
                plans={plans}
-               length={length}
-               markers={markers}
                region={region}
+               infos={infos}
             />
          )}
       </>

@@ -4,7 +4,7 @@ import {expected_price} from './mapData';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Cost_list_insert from './Cost_list_insert'
 
-export default function Cost_list({navigation,fb_plans}) {
+export default function Cost_list({fb_plans,fb_infos}) {
 
   const [cost, setCost] = useState(0);
   const [currentItem, setCurrentItem] = useState();
@@ -60,12 +60,12 @@ export default function Cost_list({navigation,fb_plans}) {
             <View style={styles.headerCost1}>
               <Text style={styles.headerCostText1_1}>{makeComma(cost)}원</Text>
               {cost>expected_price ? (
-                <Text style={[styles.headerCostText1_2,styles.text_blue]}>{makeComma(Math.abs(cost-expected_price))}원 초과</Text>
+                <Text style={[styles.headerCostText1_2,styles.text_blue]}>{makeComma(Math.abs(cost-fb_infos.expectedCost))}원 초과</Text>
               ) : (
-                <Text style={[styles.headerCostText1_2,styles.text_red]}>{makeComma(Math.abs(cost-expected_price))}원 남음</Text>
+                <Text style={[styles.headerCostText1_2,styles.text_red]}>{makeComma(Math.abs(cost-fb_infos.expectedCost))}원 남음</Text>
               )}
             </View>
-            <Text style={styles.headerCostText2}>사용 예정 금액 : {makeComma(expected_price)}원</Text>
+            <Text style={styles.headerCostText2}>사용 예정 금액 : {makeComma(fb_infos.expectedCost)}원</Text>
           </View>
         </View>
         <View style={styles.line}><Text>&nbsp;</Text></View>

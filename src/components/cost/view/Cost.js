@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
   TouchableOpacity,
 } from "react-native";
 
@@ -13,10 +12,8 @@ import Cost_map from './Cost_map'
 export default function Cost({
   navigation,
   plans,
-  length,
-  markers,
   region,
-  setRegion,
+  infos
   }
 ){
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +35,7 @@ export default function Cost({
             <Cost_list
               navigation={navigation}
               fb_plans={plans}
+              fb_infos={infos}
              />
           ) : (
             <Cost_map               

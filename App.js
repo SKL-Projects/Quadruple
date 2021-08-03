@@ -20,7 +20,6 @@ import HomeScreen from "./src/screens/Home";
 import Auth from './src/screens/Auth'
 import { fbAuth } from "./firebase";
 import CostScreen from "./src/screens/Cost";
-import Cost_insertScreen from "./src/screens/Cost_insert";
 import ProfileScreen from "./src/screens/Profile";
 
 import Template from './src/screens/Template'
@@ -56,11 +55,6 @@ export default function App() {
                   <Stack.Screen
                      name="Cost"
                      component={CostScreen}
-                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                     name="Cost_insert"
-                     component={Cost_insertScreen}
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen

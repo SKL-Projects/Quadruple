@@ -14,18 +14,38 @@ import {
 import {Picker} from '@react-native-community/picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Cost_map_coordinates from '../elements/GoogleMap'
+import { getAllTravelList } from "../../../lib/api/travelList";
 
 export default function Cost_list_insert({item}) {
   
   const [cost, setCost] = useState(item.cost);
+  const [dayList, setDayList] = useState([]);
   const [day, setDay] = useState("");
   const [location, setLocation] = useState(item.title);
   const [type, setType] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [coordinate, setcoordinate] = useState("");
+    
+
+  const getInfo = async () => {
+    const info = await getAllTravelList("aT1JPMs3GXg7SrkRE1C6KZPJupu1");
+
+    let startDate = info[0].info.departTime.toDate()
+    let endDate = info[0].info.arrivalTime.toDate()
+    while(startDate <= endDate){
+      const day = startDate.toISOString().split("T")[0]
+      setDayList(dayList => [...dayList,day.substring(5,7)+'월 '+day.substring(8,10)+'일']);
+		  startDate.setDate(startDate.getDate() + 1);
+    }
+ }
 
   useEffect(() => { 
-  
+    getInfo();
+    {dayList.map((x,i) =>{
+      console.log(x+'그리고'+i)
+    })}
+    
+
   }, []);
 
   return (
@@ -50,10 +70,12 @@ export default function Cost_list_insert({item}) {
           >
             <Picker.Item label="날짜 선택" value="" />
             <Picker.Item label="출발 전" value="0" />
-            <Picker.Item label="day1" value="1" />
-            <Picker.Item label="day2" value="2" />
+            
           </Picker>
         </View>
+        {dayList.map((x,i) =>{
+              <Text style={styles.boxText}>장소명</Text>
+            })}
         <View style={[styles.box,styles.box3]}>
           <Text style={styles.boxText}>장소명</Text>
           <TextInput
@@ -168,12 +190,11 @@ const styles = StyleSheet.create({
    paddingTop: 22,
    alignItems: "center",
    justifyContent: "center",
+   height: Dimensions.get('window').height-10,
+    width:Dimensions.get('window').width,
   },
   content: {
-    height: Dimensions.get('window').height-90,
-    width:Dimensions.get('window').width,
-    position:"absolute",
-    bottom:5,    
+    
   },
   box:{
     
