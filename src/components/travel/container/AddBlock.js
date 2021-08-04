@@ -4,13 +4,14 @@ import { Button } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import theme from "../../../lib/styles/theme";
-import { TRANSIT, WAYPOINT } from "../../../lib/types";
+import { END, START, TRANSIT, WAYPOINT } from "../../../lib/types";
 import BlockInfoInput from "../elements/BlockInfoInput";
 import BlockSelect from "../elements/BlockSelect";
 import SelectDate from "../elements/SelectDate";
 import SelectLocation from "../elements/SelectLocation";
 import uuid from "react-native-uuid";
 import { addTravelBlock } from "../../../lib/api/travelBlock";
+import { binarySearch } from "../../utils/lower_bound";
 
 // 메모, 예산 안함
 
@@ -83,17 +84,14 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          }));
          return;
       }
-      flatPlans.forEach((item) => {
-         if (item.time.getTime() === dateTime) {
-            setErrMsg((prev) => ({
-               ...prev,
-               time: "이미 같은 시간대의 경유지 블록이 있습니다!",
-            }));
-            check = true;
-            return;
-         }
-      });
-      if (check) return;
+      const idx = binarySearch(flatPlans, dateTime);
+      if (flatPlans[idx].time.getTime() === dateTime) {
+         setErrMsg((prev) => ({
+            ...prev,
+            time: "이미 같은 시간대의 경유지 블록이 있습니다!",
+         }));
+         return;
+      }
 
       let obj = {
          id: uuid.v4(), // uuid로
@@ -106,6 +104,7 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          detailType: detailType,
          location: { latitude: region.latitude, longitude: region.longitude },
       };
+
       //파이어베이스 추가 + 로딩
       await addTravelBlock(
          "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
@@ -128,43 +127,36 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
 
       // 둘 중 하나가 이동 -> 이동에 맞춰서
       // 둘 다 경유지 -> 사이로
-      const first = plansMap.get(selectedIds[0]).idx,
-         second = plansMap.get(selectedIds[1]).idx;
-      const transit =
-         flatPlans[first].type !== TRANSIT
-            ? flatPlans[second].type !== TRANSIT
-               ? null
-               : second
-            : first;
+      const first = plansMap.get(selectedIds[0]),
+         second = plansMap.get(selectedIds[1]);
+
+      let priority = 0;
+      if (
+         (first.type === WAYPOINT || first.type === START) &&
+         second.type === TRANSIT
+      ) {
+         priority = -2147483648;
+      } else if (
+         first.type === TRANSIT &&
+         (second.type === WAYPOINT || second.type === END)
+      ) {
+         priority = 2147483647;
+      } else if (first.type === TRANSIT && second.type === TRANSIT) {
+         priority = (first.priority + second.priority) / 2;
+      }
+
       let obj = {
          id: uuid.v4(), // uuid로
          createdWhere: "travel",
          title: title,
-         time: new Date(
-            (flatPlans[first].time.getTime() +
-               flatPlans[second].time.getTime()) /
-               2
-         ),
+         time: new Date(first.time.getTime()),
          type: TRANSIT,
          detailType: detailType,
          cost: parseInt(cost.replace(/,/g, "")),
          memo: memo,
-         location: transit
-            ? flatPlans[transit].location
-            : {
-                 latitude:
-                    (flatPlans[first].location.latitude +
-                       flatPlans[second].location.latitude) /
-                    2,
-                 longitude:
-                    (flatPlans[first].location.longitude +
-                       flatPlans[second].location.longitude) /
-                    2,
-              },
-         direction: transit
-            ? flatPlans[transit].direction
-            : [flatPlans[first].location, flatPlans[second].location],
+         priority: priority,
       };
+
       //파이어베이스 추가 + 로딩
       await addTravelBlock("aT1JPMs3GXg7SrkRE1C6KZPJupu1", 1627379541738, obj);
       //리프레시

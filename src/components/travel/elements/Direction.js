@@ -14,7 +14,6 @@ function Direction({ region, markers }) {
    const [showPoly, setShowPoly] = useState(false);
    const [coords, setCoords] = useState([]);
    const plansMap = useSelector(({ planMap }) => planMap);
-
    useEffect(() => {
       setLast(false);
       setLoading(true);
@@ -28,8 +27,10 @@ function Direction({ region, markers }) {
       if (res.type === TRANSIT) {
          setCoords(res.direction);
       } else {
+         //다음이 transit이면 가까운 다음 waypoint
          const next = markers[res.idx + 1];
          const origin = res.location;
+
          const dest = next.type === TRANSIT ? next.direction[1] : next.location;
          setCoords([origin, dest]);
       }

@@ -6,6 +6,7 @@ import { View } from "react-native";
 import { useDispatch } from "react-redux";
 import { clearMap, setPlanMap } from "../../../modules/plansMap";
 import EditModalContainer from "./EditModalContainer";
+import { TRANSIT, WAYPOINT } from "../../../lib/types";
 
 function TravelContainer() {
    const sheetRef = useRef(null); // 바닥 시트 reference
@@ -37,8 +38,8 @@ function TravelContainer() {
                ...item,
                time: item.time.toDate(),
                location: {
-                  latitude: item.location.latitude,
-                  longitude: item.location.longitude,
+                  latitude: item.location?.latitude,
+                  longitude: item.location?.longitude,
                },
             };
          });
@@ -48,9 +49,36 @@ function TravelContainer() {
          // 시간순으로 정렬. transit 은 같은 시간의 뒤로
          let sortedPlans = datas.sort((a, b) => {
             if (a.time.valueOf() === b.time.valueOf()) {
+               if (a.type === TRANSIT && b.type === TRANSIT) {
+                  return a.priority < b.priority ? -1 : 1;
+               }
                return a.type === "transit" ? 1 : -1;
             }
             return a.time.valueOf() < b.time.valueOf() ? -1 : 1;
+         });
+
+         // transit 위치, 경로
+         let transitIdx = -1,
+            startPoint;
+         sortedPlans.forEach((item, idx) => {
+            if (transitIdx === -1) {
+               if (item.type === TRANSIT) {
+                  transitIdx = idx;
+               } else {
+                  startPoint = item.location;
+               }
+            } else if (item.type === WAYPOINT) {
+               let location = {
+                  latitude: (startPoint.latitude + item.location.latitude) / 2,
+                  longitude:
+                     (startPoint.longitude + item.location.longitude) / 2,
+               };
+               for (let i = transitIdx; i < idx; i++) {
+                  sortedPlans[i].location = location;
+                  sortedPlans[i].direction = [startPoint, item.location];
+               }
+               transitIdx = -1;
+            }
          });
 
          // 같은 날짜로 그룹핑
