@@ -18,14 +18,30 @@ import { getAllTravelList } from "../../../lib/api/travelList";
 
 export default function Cost_list_insert({item}) {
   
+  const [isLoading,setIsLoading] = useState(true);
   const [cost, setCost] = useState(item.cost);
-  const [dayList, setDayList] = useState([]);
-  const [day, setDay] = useState("");
+  const [dayList, setDayList] = useState(['출발 전']);
+  const [day, setDay] = useState();
   const [location, setLocation] = useState(item.title);
-  const [type, setType] = useState("");
+  const [type, setType] = useState(item.detailType);
   const [modalVisible, setModalVisible] = useState(false);
-  const [coordinate, setcoordinate] = useState("");
+  const [coordinate, setcoordinate] = useState(item.location);
     
+  const images = [
+    {label:'home-outline',value:'hotel',text:'숙소'},
+    {label:'airplane-outline',value:'airplane',text:'비행'},
+    {label:'fast-food-outline',value:'food',text:'식당'},
+    {label:'cart-outline',value:'shopping',text:'쇼핑'},
+    {label:'camera-outline',value:'attraction',text:'관광'},
+    {label:'body-outline',value:'activity',text:'액티비티'},
+    {label:'train-outline',value:'train',text:'기차'},
+    {label:'subway-outline',value:'subway',text:'지하철'},
+    {label:'walk-outline',value:'walking',text:'걷기'},
+    {label:'boat-outline',value:'boat',text:'배'},
+    {label:'car-outline',value:'car',text:'자동차'},
+    {label:'car-sport-outline',value:'taxi',text:'택시'},
+    {label:'ellipsis-horizontal-outline',value:'etc',text:'기타'},
+  ]
 
   const getInfo = async () => {
     const info = await getAllTravelList("aT1JPMs3GXg7SrkRE1C6KZPJupu1");
@@ -34,22 +50,25 @@ export default function Cost_list_insert({item}) {
     let endDate = info[0].info.arrivalTime.toDate()
     while(startDate <= endDate){
       const day = startDate.toISOString().split("T")[0]
-      setDayList(dayList => [...dayList,day.substring(5,7)+'월 '+day.substring(8,10)+'일']);
+      setDayList(dayList => [...dayList,(day[5]=='0' ? day.substring(6,7) : day.substring(5,7)) +'월 '+day.substring(8,10)+'일']);
 		  startDate.setDate(startDate.getDate() + 1);
     }
+    setIsLoading(false)
  }
 
   useEffect(() => { 
     getInfo();
-    {dayList.map((x,i) =>{
-      console.log(x+'그리고'+i)
-    })}
-    
-
+    console.log(item)
+    setDay((item.time.getMonth() + 1)+'월 '+item.time.getDate()+'일')
   }, []);
 
   return (
     <View style={styles.container}>
+      {isLoading ? (
+        <Text>loading...</Text>
+      ):(
+
+      
       <ScrollView style={styles.content}>
         <View style={[styles.box,styles.box1]}> 
           <Text style={styles.boxText}>금액</Text>
@@ -69,13 +88,11 @@ export default function Cost_list_insert({item}) {
             onValueChange={(x, i) => setDay(x)}
           >
             <Picker.Item label="날짜 선택" value="" />
-            <Picker.Item label="출발 전" value="0" />
-            
+            {dayList.map((x,i) =>(
+              <Picker.Item label={x} value={x}/>
+            ))}
           </Picker>
         </View>
-        {dayList.map((x,i) =>{
-              <Text style={styles.boxText}>장소명</Text>
-            })}
         <View style={[styles.box,styles.box3]}>
           <Text style={styles.boxText}>장소명</Text>
           <TextInput
@@ -88,48 +105,22 @@ export default function Cost_list_insert({item}) {
         <View style={[styles.box,styles.box4]}>
           <Text style={styles.boxText}>카테고리</Text>
           <View style={styles.icons}>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={()=> setType('rm')}
-            >
-              <Icon name='home-outline' size={30} color="violet"/>
-              <Text>숙소</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={()=> setType('mv')}
-            >
-              <Icon name='airplane-outline' size={30} color="violet"/>
-              <Text>이동</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={()=> setType('fd')}
-            >
-              <Icon name='fast-food-outline' size={30} color="violet"/>
-              <Text>식당</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={()=> setType('sp')}
-            >
-              <Icon name='gift-outline' size={30} color="violet"/>
-              <Text>쇼핑</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={()=> setType('tr')}
-            >
-              <Icon name='camera-outline' size={30} color="violet"/>
-              <Text>관광</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={()=> setType('etc')}
-            >
-              <Icon name='ellipsis-horizontal-outline' size={30} color="violet"/>
-              <Text>기타</Text>
-            </TouchableOpacity>
+            {images.map((arr,i) => (
+              <TouchableOpacity
+                style={[styles.icon,{backgroundColor:type == arr.value ? '#753BBD' : '#ffffff'}]}
+                onPress={()=> setType(arr.value)}
+              >
+                {type == arr.value ? (
+                  <Icon name={arr.label} size={30} color="#ffffff"/>
+                ) : (
+                  <Icon name={arr.label} size={30} color="#753BBD"/>
+                )}
+                
+                <Text style={{color:type == arr.value ? '#ffffff' : '#753BBD'}}>
+                  {arr.text}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
         <View style={[styles.box,styles.box5]}>
@@ -165,7 +156,7 @@ export default function Cost_list_insert({item}) {
             onPress={() => setModalVisible(true)}
           >
             {coordinate ? 
-              <Text style={styles.pressableBtnText}>설정 완료</Text> :
+              <Text style={styles.pressableBtnText}>재설정하기</Text> :
               <Text style={styles.pressableBtnText}>지도에서 설정하기</Text> 
             }
             
@@ -179,6 +170,7 @@ export default function Cost_list_insert({item}) {
             <Text style={styles.pressableBtnText}>저장</Text>
         </Pressable>
       </ScrollView>
+      )}
     </View>
    );
 }
@@ -209,12 +201,17 @@ const styles = StyleSheet.create({
   },
   icons: {
     flexDirection: 'row',
+    flexWrap:'wrap',
+    alignItems: "center",
+    justifyContent: "center",
     
   },
   icon:{
-    flex:1,
     alignItems: "center",
     justifyContent: "center",
+    width:55,
+    height:70,
+    borderRadius:10,
   },
   modalView: {
     height: Dimensions.get('window').height,

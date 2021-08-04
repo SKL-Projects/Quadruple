@@ -25,10 +25,7 @@ function CostContainer({ navigation }) {
          return {
             ...item,
             time: item.time.toDate(),
-            location: {
-               latitude: item.location.latitude,
-               longitude: item.location.longitude,
-            },
+            
          };
       });
 
