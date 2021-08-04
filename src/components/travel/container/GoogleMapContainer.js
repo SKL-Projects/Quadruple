@@ -1,25 +1,17 @@
-import React, {
-   useCallback,
-   useEffect,
-   useMemo,
-   useRef,
-   useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import GoogleMap from "../view/GoogleMap";
 import { Animated } from "react-native";
-import { useSelector } from "react-redux";
 
-function GoogleMapContainer({ regionInput, setRegion, listRef }) {
+function GoogleMapContainer({ regionInput, setRegion, listRef, plans }) {
    const [markers, setMarkers] = useState([]);
    const [thisRegion, setThisRegion] = useState(regionInput);
    const mapViewRef = useRef();
-   const plansMap = useSelector(({ planMap }) => planMap);
 
    let mapAnimation = new Animated.Value(0);
 
    useEffect(() => {
       let array = [];
-      plansMap.forEach((item) =>
+      plans.forEach((item) =>
          array.push({
             id: item.id,
             location: item.location,
@@ -29,15 +21,14 @@ function GoogleMapContainer({ regionInput, setRegion, listRef }) {
          })
       );
       setMarkers(array);
-   }, [plansMap]);
+   }, [plans]);
 
    useEffect(() => {
       mapViewRef.current?.animateToRegion(regionInput, 900);
-      const res = plansMap.get(regionInput.id);
-      if (typeof res === "object") {
-         mapAnimation.setValue(res?.idx);
+      if (regionInput.idx) {
+         mapAnimation.setValue(regionInput.idx);
       }
-   }, [regionInput, plansMap]);
+   }, [regionInput]);
 
    const interpolations = markers.map((marker, index) => {
       const inputRange = [index - 1, index, index + 1];
@@ -52,8 +43,7 @@ function GoogleMapContainer({ regionInput, setRegion, listRef }) {
    });
 
    const onPressMarker = useCallback(
-      (id) => {
-         const { idx } = plansMap.get(id);
+      (idx) => {
          listRef.current?.scrollToIndex({
             index: idx,
          });
@@ -64,7 +54,7 @@ function GoogleMapContainer({ regionInput, setRegion, listRef }) {
             id: markers[idx].id,
          }));
       },
-      [markers, plansMap]
+      [markers]
    );
 
    const onAnimateRegion = () => {

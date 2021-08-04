@@ -24,7 +24,6 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
    const [memo, setMemo] = useState("");
    const [selectedIds, setSelectedIds] = useState([]);
    const [errMsg, setErrMsg] = useState({ title: "", time: "" });
-   const plansMap = useSelector(({ planMap }) => planMap);
 
    useEffect(() => {
       const reg = region;
@@ -135,8 +134,8 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
 
       // 둘 중 하나가 이동 -> 이동에 맞춰서
       // 둘 다 경유지 -> 사이로
-      const first = plansMap.get(selectedIds[0]),
-         second = plansMap.get(selectedIds[1]);
+      const first = plans[selectedIds[0]],
+         second = plans[selectedIds[1]];
 
       let priority = 0;
       if (

@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import AutoCompleteContainer from "../container/AutoCompleteContainer";
 import Markers from "../elements/Markers";
 import Direction from "../elements/Direction";

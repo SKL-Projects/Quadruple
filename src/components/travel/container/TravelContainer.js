@@ -3,14 +3,12 @@ import { getAllTravelList } from "../../../lib/api/travelList";
 import Travel from "../view/Travel";
 import LottieView from "lottie-react-native";
 import { View } from "react-native";
-import { useDispatch } from "react-redux";
-import { clearMap, setPlanMap } from "../../../modules/plansMap";
 import EditModalContainer from "./EditModalContainer";
-import { TRANSIT, WAYPOINT } from "../../../lib/types";
+import { END, TRANSIT, WAYPOINT } from "../../../lib/types";
 
 function TravelContainer() {
    const sheetRef = useRef(null); // 바닥 시트 reference
-   const [plans, setPlans] = useState([]); // 날짜별로 그룹지어진 블록등
+   const [plans, setPlans] = useState([]); // 정렬된 블록들
    const [loading, setLoading] = useState(true);
    const [length, setLength] = useState(0); // 전체 블록 개수
    const [region, setRegion] = useState({
@@ -24,8 +22,6 @@ function TravelContainer() {
    const [refresh, setRefresh] = useState(0);
    const [visibleEditModal, setVisibleEditModal] = useState(false);
    const [editElement, setEditElement] = useState({});
-
-   const dispatch = useDispatch();
 
    useEffect(() => {
       const getTravel = async () => {
@@ -64,6 +60,7 @@ function TravelContainer() {
          // transit 위치, 경로
          let transitIdx = -1,
             startPoint;
+         console.log(sortedPlans);
          sortedPlans.forEach((item, idx) => {
             if (transitIdx === -1) {
                if (item.type === TRANSIT) {
@@ -71,7 +68,7 @@ function TravelContainer() {
                } else {
                   startPoint = item.location;
                }
-            } else if (item.type === WAYPOINT) {
+            } else if (item.type === WAYPOINT || item.type === END) {
                let location = {
                   latitude: (startPoint.latitude + item.location.latitude) / 2,
                   longitude:
@@ -87,27 +84,17 @@ function TravelContainer() {
 
          setPlans(sortedPlans);
 
-         // 아이디 - 리스트 맵 리덕스에 저장
-         const map = new Map();
-         let cnt = 0;
-         sortedPlans.forEach((item) => {
-            map.set(item.id, { ...item, idx: cnt });
-            cnt++;
-         });
-         dispatch(setPlanMap(map));
-
          // 리전 등록
          setRegion((prev) => ({
             ...prev,
             ...sortedPlans[0].location,
             id: sortedPlans[0].id,
+            idx: 0,
          }));
 
          setLoading(false);
       };
       getTravel();
-
-      return () => dispatch(clearMap());
    }, [refresh]);
 
    const onPressAddBlock = useCallback(() => {

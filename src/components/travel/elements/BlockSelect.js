@@ -1,29 +1,25 @@
 import React from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
-import { useSelector } from "react-redux";
 import theme from "../../../lib/styles/theme";
 import { basicVetical, end, start } from "../../utils/Graph";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 
 function BlockSelect({ plans, selectedIds, setSelectedIds }) {
-   const plansMap = useSelector(({ planMap }) => planMap);
-
-   const onPressListItem = (id) => {
-      let { idx } = plansMap.get(id);
+   const onPressListItem = (idx) => {
       let isLast = idx === plans.length - 1;
 
-      if (selectedIds[0] === id || (isLast && selectedIds[1] === id)) {
+      if (selectedIds[0] === idx || (isLast && selectedIds[1] === idx)) {
          setSelectedIds([]);
       } else if (isLast) {
-         setSelectedIds([plans[idx - 1].id, id]);
+         setSelectedIds([idx - 1, idx]);
       } else {
-         setSelectedIds([id, plans[idx + 1].id]);
+         setSelectedIds([idx, idx + 1]);
       }
    };
 
    let dateHeader = plans[0].date;
-   const renderItem = ({ item }) => {
+   const renderItem = ({ item, index }) => {
       const isDifferent = dateHeader !== item.date;
       dateHeader = item.date;
       const hour = item.time.getHours();
@@ -37,11 +33,9 @@ function BlockSelect({ plans, selectedIds, setSelectedIds }) {
                </>
             )}
             <ListItem
-               containerStyle={
-                  stylesFunc(selectedIds.includes(item.id)).listItem
-               }
+               containerStyle={stylesFunc(selectedIds.includes(index)).listItem}
                underlayColor="white"
-               onPress={() => onPressListItem(item.id)}>
+               onPress={() => onPressListItem(index)}>
                <View
                   style={{
                      width: 60,

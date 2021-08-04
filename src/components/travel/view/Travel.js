@@ -143,6 +143,7 @@ function Travel({
                regionInput={region}
                setRegion={setRegion}
                listRef={listRef}
+               plans={plans}
             />
          </Animated.View>
          <BottomSheet

@@ -20,7 +20,7 @@ function Markers({ markers, interpolations, onPressMarker }) {
                <MapView.Marker
                   key={`marker_${index}`}
                   coordinate={marker.location}
-                  onPress={() => onPressMarker(marker.id)}>
+                  onPress={() => onPressMarker(index)}>
                   {marker.type !== TRANSIT ? (
                      <>
                         <Animated.View style={[styles.markerWrap]}>
@@ -32,7 +32,8 @@ function Markers({ markers, interpolations, onPressMarker }) {
                         </Animated.View>
                         <View style={styles.price}>
                            <Text>
-                              &nbsp;&#8361;{ThousandSeperatorNum(marker.cost)}
+                              &nbsp;&#8361;
+                              {ThousandSeperatorNum(marker.cost)}
                               &nbsp;
                            </Text>
                         </View>

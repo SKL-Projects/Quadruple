@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
 import { Polyline } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { useSelector } from "react-redux";
 import { googleMapKey } from "../../../../env";
 import { TRANSIT } from "../../../lib/types";
 
@@ -13,29 +11,30 @@ function Direction({ region, markers }) {
    const [last, setLast] = useState(false);
    const [showPoly, setShowPoly] = useState(false);
    const [coords, setCoords] = useState([]);
-   const plansMap = useSelector(({ planMap }) => planMap);
+
    useEffect(() => {
       setLast(false);
       setLoading(true);
       setShowPoly(false);
-      const res = plansMap.get(region.id);
-      if (typeof res !== "object") return;
-      if (res.idx === plansMap.size - 1) {
-         setLast(true);
-         return;
-      }
-      if (res.type === TRANSIT) {
-         setCoords(res.direction);
-      } else {
-         //다음이 transit이면 가까운 다음 waypoint
-         const next = markers[res.idx + 1];
-         const origin = res.location;
+      if (region.idx) {
+         if (region.idx === markers.length - 1) {
+            setLast(true);
+            return;
+         }
+         if (markers[region.idx].type === TRANSIT) {
+            setCoords(markers[region.idx].direction);
+         } else {
+            //다음이 transit이면 가까운 다음 waypoint
+            const next = markers[region.idx + 1];
+            const origin = markers[region.idx].location;
 
-         const dest = next.type === TRANSIT ? next.direction[1] : next.location;
-         setCoords([origin, dest]);
+            const dest =
+               next.type === TRANSIT ? next.direction[1] : next.location;
+            setCoords([origin, dest]);
+         }
       }
       setLoading(false);
-   }, [region, plansMap, markers]);
+   }, [region, markers]);
 
    return (
       <>

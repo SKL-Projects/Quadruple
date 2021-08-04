@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { Button, ButtonGroup, Input } from "react-native-elements";
+import { Button, Input } from "react-native-elements";
 import { FlatList } from "react-native-gesture-handler";
 import { detailTypes, TRANSIT, WAYPOINT } from "../../../lib/types";
 import { ThousandSeperator } from "../../utils/ThousandSeperator";

@@ -8,7 +8,7 @@ import { Dimensions } from "react-native";
 import { removeTravelBlock } from "../../../lib/api/travelBlock";
 
 function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
-   const onPressListItem = useCallback((location, id, direction) => {
+   const onPressListItem = useCallback((location, id, index, direction) => {
       let deltas = {
          latitudeDelta: 0.01,
          longitudeDelta: 0.01,
@@ -23,6 +23,7 @@ function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
          ...deltas,
          ...location,
          id: id,
+         idx: index,
       });
    }, []);
 
@@ -36,7 +37,7 @@ function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
    }, []);
 
    let dateHeader = plans[0].date;
-   const renderItem = ({ item }) => {
+   const renderItem = ({ item, index }) => {
       const isDifferent = dateHeader !== item.date;
       dateHeader = item.date;
       const hour = item.time.getHours();
@@ -53,7 +54,7 @@ function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
                containerStyle={styles.listItem}
                underlayColor="white"
                onPress={() =>
-                  onPressListItem(item.location, item.id, item.direction)
+                  onPressListItem(item.location, item.id, index, item.direction)
                }
                leftWidth={Math.floor(Dimensions.get("window").width * 0.4)}
                rightWidth={Math.floor(Dimensions.get("window").width * 0.4)}
