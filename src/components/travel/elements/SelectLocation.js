@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-elements";
-function SelectLocation({ region }) {
+function SelectLocation({ region, errMsg }) {
    return (
       <View style={styles.container}>
          <View style={styles.headerContaier}>
@@ -19,6 +19,7 @@ function SelectLocation({ region }) {
                <Text style={styles.addressText}>{region.name}</Text>
             </View>
          </View>
+         {errMsg ? <Text style={styles.errMsg}>{errMsg}</Text> : <></>}
       </View>
    );
 }
@@ -52,6 +53,10 @@ const styles = StyleSheet.create({
    },
    addressText: {
       fontSize: 15,
+   },
+   errMsg: {
+      fontSize: 15,
+      color: "red",
    },
 });
 

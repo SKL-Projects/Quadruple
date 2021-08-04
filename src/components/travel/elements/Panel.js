@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { StyleSheet, View, Text, SectionList } from "react-native";
+import { StyleSheet, View, Text, FlatList } from "react-native";
 import { basicVetical, end, start } from "../../utils/Graph";
 import { Button, ListItem } from "react-native-elements";
 import theme from "../../../lib/styles/theme";
@@ -35,75 +35,86 @@ function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
       setRefresh((prev) => prev + 1);
    }, []);
 
+   let dateHeader = plans[0].date;
    const renderItem = ({ item }) => {
+      const isDifferent = dateHeader !== item.date;
+      dateHeader = item.date;
       const hour = item.time.getHours();
       const minute = item.time.getMinutes();
       return (
-         <ListItem.Swipeable
-            containerStyle={styles.listItem}
-            underlayColor="white"
-            onPress={() =>
-               onPressListItem(item.location, item.id, item.direction)
-            }
-            leftWidth={Math.floor(Dimensions.get("window").width * 0.4)}
-            rightWidth={Math.floor(Dimensions.get("window").width * 0.4)}
-            leftContent={
-               <Button
-                  title="수정"
-                  icon={{ name: "edit", color: "white" }}
-                  buttonStyle={styles.leftButton}
-                  onPress={() => openEditModal(item)}
-               />
-            }
-            {...(item.type !== "start" &&
-               item.type !== "end" && {
-                  rightContent: (
-                     <Button
-                        title="삭제"
-                        icon={{ name: "delete", color: "white" }}
-                        buttonStyle={styles.rightButton}
-                        onPress={() => removeBlock(item)}
-                     />
-                  ),
-               })}>
-            <View
-               style={{
-                  width: 60,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 0,
-               }}>
-               {item.type !== "start"
-                  ? item.type !== "end"
-                     ? basicVetical(LIST_ITEM_HEIGHT, item.type)
-                     : end(LIST_ITEM_HEIGHT)
-                  : start(LIST_ITEM_HEIGHT)}
-            </View>
-            <ListItem.Content>
-               <ListItem.Title style={{ fontSize: 20 }}>
-                  {item.type !== "transit"
-                     ? `${hour < 10 ? `0${hour}` : hour}:${
-                          minute < 10 ? `0${minute}` : minute
-                       }          `
-                     : ""}
-                  {item.title}
-               </ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-         </ListItem.Swipeable>
+         <>
+            {isDifferent && (
+               <>
+                  <View style={styles.dayContainer} />
+                  <Text style={styles.dayHeader}>{item.date}</Text>
+               </>
+            )}
+            <ListItem.Swipeable
+               containerStyle={styles.listItem}
+               underlayColor="white"
+               onPress={() =>
+                  onPressListItem(item.location, item.id, item.direction)
+               }
+               leftWidth={Math.floor(Dimensions.get("window").width * 0.4)}
+               rightWidth={Math.floor(Dimensions.get("window").width * 0.4)}
+               leftContent={
+                  <Button
+                     title="수정"
+                     icon={{ name: "edit", color: "white" }}
+                     buttonStyle={styles.leftButton}
+                     onPress={() => openEditModal(item)}
+                  />
+               }
+               {...(item.type !== "start" &&
+                  item.type !== "end" && {
+                     rightContent: (
+                        <Button
+                           title="삭제"
+                           icon={{ name: "delete", color: "white" }}
+                           buttonStyle={styles.rightButton}
+                           onPress={() => removeBlock(item)}
+                        />
+                     ),
+                  })}>
+               <View
+                  style={{
+                     width: 60,
+                     justifyContent: "center",
+                     alignItems: "center",
+                     padding: 0,
+                  }}>
+                  {item.type !== "start"
+                     ? item.type !== "end"
+                        ? basicVetical(LIST_ITEM_HEIGHT, item.type)
+                        : end(LIST_ITEM_HEIGHT)
+                     : start(LIST_ITEM_HEIGHT)}
+               </View>
+               <ListItem.Content>
+                  <ListItem.Title style={{ fontSize: 20 }}>
+                     {item.type !== "transit"
+                        ? `${hour < 10 ? `0${hour}` : hour}:${
+                             minute < 10 ? `0${minute}` : minute
+                          }          `
+                        : ""}
+                     {item.title}
+                  </ListItem.Title>
+               </ListItem.Content>
+               <ListItem.Chevron />
+            </ListItem.Swipeable>
+         </>
       );
    };
 
    return (
-      <SectionList
+      <FlatList
          ref={listRef}
-         sections={plans}
+         data={plans}
          keyExtractor={(item, idx) => `dayGroup_${item.title}_${idx}`}
          renderItem={renderItem}
-         renderSectionHeader={({ section: { title } }) => {
-            return <Text style={styles.dayHeader}>{title}</Text>;
-         }}
-         renderSectionFooter={() => <View style={styles.dayContainer} />}
+         ListHeaderComponent={
+            <Text style={styles.dayHeader}>{dateHeader}</Text>
+         }
+         ListFooterComponent={<View style={styles.dayContainer} />}
       />
    );
 }
@@ -114,7 +125,7 @@ const styles = StyleSheet.create({
       backgroundColor: theme.color.white,
    },
    dayContainer: {
-      marginBottom: 80,
+      height: 80,
    },
    dayHeader: {
       fontSize: 20,

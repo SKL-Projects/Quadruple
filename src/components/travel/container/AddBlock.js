@@ -22,18 +22,18 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
    const [detailType, setDetailType] = useState(0);
    const [cost, setCost] = useState("0");
    const [memo, setMemo] = useState("");
-   const [flatPlans, setFlatPlans] = useState([]);
    const [selectedIds, setSelectedIds] = useState([]);
    const [errMsg, setErrMsg] = useState({ title: "", time: "" });
    const plansMap = useSelector(({ planMap }) => planMap);
 
    useEffect(() => {
       const reg = region;
-      let array = [];
-      plansMap.forEach((item) => array.push(item));
-      setFlatPlans(array);
       return () => setRegion(reg);
-   }, [plansMap]);
+   }, []);
+
+   useEffect(() => {
+      setErrMsg((prev) => ({ ...prev, region: "" }));
+   }, [region]);
 
    const label = useCallback(
       (content) => <Text style={styles.label}>{content}</Text>,
@@ -60,7 +60,6 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
       }
    }, []);
 
-   // 끝 다음, 시작 전에 못넣게 막기
    const onCompleteWaypoint = async () => {
       if (title.length === 0) {
          setErrMsg((prev) => ({
@@ -69,14 +68,23 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          }));
          return;
       }
+
+      //지역은 넣었는지
+      if (!region.formatted_address) {
+         setErrMsg((prev) => ({
+            ...prev,
+            region: "상단의 검색 탭에서 해당하는 위치를 검색해주세요.",
+         }));
+         return;
+      }
+
+      // 시작 전, 끝 후, 겹치는 시간 있는지 확인
       date.setSeconds(0);
       date.setMilliseconds(0);
-      // 겹치는 시간 있는지 확인
-      let check = false,
-         dateTime = date.getTime();
+      let dateTime = date.getTime();
       if (
-         dateTime < flatPlans[0].time.getTime() ||
-         flatPlans[flatPlans.length - 1].time.getTime() < dateTime
+         dateTime < plans[0].time.getTime() ||
+         plans[plans.length - 1].time.getTime() < dateTime
       ) {
          setErrMsg((prev) => ({
             ...prev,
@@ -84,8 +92,8 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          }));
          return;
       }
-      const idx = binarySearch(flatPlans, dateTime);
-      if (flatPlans[idx].time.getTime() === dateTime) {
+      const idx = binarySearch(plans, dateTime);
+      if (plans[idx].time.getTime() === dateTime) {
          setErrMsg((prev) => ({
             ...prev,
             time: "이미 같은 시간대의 경유지 블록이 있습니다!",
@@ -188,14 +196,13 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
                   errMsg={errMsg.time}
                   setErrMsg={setErrMsg}
                />
-               <SelectLocation region={region} />
+               <SelectLocation region={region} errMsg={errMsg.region} />
             </>
          ) : (
             <View style={styles.line}>
                {label("연결시킬 블록을 선택해주세요.")}
                <BlockSelect
                   plans={plans}
-                  flatPlans={flatPlans}
                   selectedIds={selectedIds}
                   setSelectedIds={setSelectedIds}
                />

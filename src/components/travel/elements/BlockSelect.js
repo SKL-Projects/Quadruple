@@ -1,72 +1,83 @@
 import React from "react";
-import { StyleSheet, View, Text, SectionList } from "react-native";
+import { StyleSheet, View, Text, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
 import { useSelector } from "react-redux";
 import theme from "../../../lib/styles/theme";
 import { basicVetical, end, start } from "../../utils/Graph";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 
-function BlockSelect({ plans, flatPlans, selectedIds, setSelectedIds }) {
+function BlockSelect({ plans, selectedIds, setSelectedIds }) {
    const plansMap = useSelector(({ planMap }) => planMap);
 
    const onPressListItem = (id) => {
       let { idx } = plansMap.get(id);
-      let isLast = idx === flatPlans.length - 1;
+      let isLast = idx === plans.length - 1;
 
       if (selectedIds[0] === id || (isLast && selectedIds[1] === id)) {
          setSelectedIds([]);
       } else if (isLast) {
-         setSelectedIds([flatPlans[idx - 1].id, id]);
+         setSelectedIds([plans[idx - 1].id, id]);
       } else {
-         setSelectedIds([id, flatPlans[idx + 1].id]);
+         setSelectedIds([id, plans[idx + 1].id]);
       }
    };
 
+   let dateHeader = plans[0].date;
    const renderItem = ({ item }) => {
+      const isDifferent = dateHeader !== item.date;
+      dateHeader = item.date;
       const hour = item.time.getHours();
       const minute = item.time.getMinutes();
       return (
-         <ListItem
-            containerStyle={stylesFunc(selectedIds.includes(item.id)).listItem}
-            underlayColor="white"
-            onPress={() => onPressListItem(item.id)}>
-            <View
-               style={{
-                  width: 60,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 0,
-               }}>
-               {item.type !== "start"
-                  ? item.type !== "end"
-                     ? basicVetical(LIST_ITEM_HEIGHT, item.type)
-                     : end(LIST_ITEM_HEIGHT)
-                  : start(LIST_ITEM_HEIGHT)}
-            </View>
-            <ListItem.Content>
-               <ListItem.Title style={{ fontSize: 20 }}>
-                  {item.type !== "transit"
-                     ? `${hour < 10 ? `0${hour}` : hour}:${
-                          minute < 10 ? `0${minute}` : minute
-                       }          `
-                     : ""}
-                  {item.title}
-               </ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-         </ListItem>
+         <>
+            {isDifferent && (
+               <>
+                  <View style={styles.dayContainer} />
+                  <Text style={styles.dayHeader}>{item.date}</Text>
+               </>
+            )}
+            <ListItem
+               containerStyle={
+                  stylesFunc(selectedIds.includes(item.id)).listItem
+               }
+               underlayColor="white"
+               onPress={() => onPressListItem(item.id)}>
+               <View
+                  style={{
+                     width: 60,
+                     justifyContent: "center",
+                     alignItems: "center",
+                     padding: 0,
+                  }}>
+                  {item.type !== "start"
+                     ? item.type !== "end"
+                        ? basicVetical(LIST_ITEM_HEIGHT, item.type)
+                        : end(LIST_ITEM_HEIGHT)
+                     : start(LIST_ITEM_HEIGHT)}
+               </View>
+               <ListItem.Content>
+                  <ListItem.Title style={{ fontSize: 20 }}>
+                     {item.type !== "transit"
+                        ? `${hour < 10 ? `0${hour}` : hour}:${
+                             minute < 10 ? `0${minute}` : minute
+                          }          `
+                        : ""}
+                     {item.title}
+                  </ListItem.Title>
+               </ListItem.Content>
+            </ListItem>
+         </>
       );
    };
    return (
       <View style={styles.container}>
-         <SectionList
-            sections={plans}
+         <FlatList
+            data={plans}
             keyExtractor={(item, idx) => `dayGroup_${item.title}_${idx}`}
             renderItem={renderItem}
-            renderSectionHeader={({ section: { title } }) => {
-               return <Text style={styles.dayHeader}>{title}</Text>;
-            }}
-            renderSectionFooter={() => <View style={styles.dayContainer} />}
+            ListHeaderComponent={
+               <Text style={styles.dayHeader}>{dateHeader}</Text>
+            }
          />
       </View>
    );

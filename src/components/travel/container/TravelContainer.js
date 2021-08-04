@@ -34,9 +34,13 @@ function TravelContainer() {
 
          // timeStamp, geoPoint 데이터 preprocessing
          const datas = travel[0].plans.plans.map((item) => {
+            const todate = item.time.toDate();
             return {
                ...item,
-               time: item.time.toDate(),
+               time: todate,
+               date: `${todate.getFullYear()}/${
+                  todate.getMonth() + 1
+               }/${todate.getDate()}`,
                location: {
                   latitude: item.location?.latitude,
                   longitude: item.location?.longitude,
@@ -81,32 +85,14 @@ function TravelContainer() {
             }
          });
 
-         // 같은 날짜로 그룹핑
-         let prevDate = "",
-            idx = -1;
-         const groups = sortedPlans.reduce((groups, plan) => {
-            const date = `${plan.time.getFullYear()}/${
-               plan.time.getMonth() + 1
-            }/${plan.time.getDate()}`;
-
-            if (date !== prevDate) {
-               prevDate = date;
-               groups.push({ title: date, data: [] });
-               idx++;
-            }
-            groups[idx].data.push(plan);
-            return groups;
-         }, []);
-         setPlans(groups);
+         setPlans(sortedPlans);
 
          // 아이디 - 리스트 맵 리덕스에 저장
          const map = new Map();
          let cnt = 0;
-         groups.forEach((day, sIdx) => {
-            day.data.forEach((item) => {
-               map.set(item.id, { ...item, idx: cnt, sIdx: sIdx });
-               cnt++;
-            });
+         sortedPlans.forEach((item) => {
+            map.set(item.id, { ...item, idx: cnt });
+            cnt++;
          });
          dispatch(setPlanMap(map));
 
