@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c364a6a2-2ec5-4445-806d-09bfd17bfa79" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/travel/container/PlanDatas.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/travel/container/TravelContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/travel/container/TravelContainer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/travel/elements/Panel.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/travel/elements/Panel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,10 +40,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="92" y="92" width="1736" height="856" key="AVDManager" timestamp="1627992823813">
+    <state x="92" y="92" width="1736" height="856" key="AVDManager" timestamp="1628139580577">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1627992823813" />
+    <state x="92" y="92" width="1736" height="856" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1628139580577" />
     <state x="616" y="242" key="run.anything.popup" timestamp="1627546786729">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

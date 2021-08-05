@@ -44,7 +44,7 @@ function GoogleMapContainer({ regionInput, setRegion, listRef, plans }) {
 
    const onPressMarker = useCallback(
       (idx) => {
-         listRef.current?.scrollToIndex({
+         listRef.current?.current?.scrollToIndex({
             index: idx,
          });
 

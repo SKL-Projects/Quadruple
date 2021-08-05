@@ -5,6 +5,7 @@ import LottieView from "lottie-react-native";
 import { View } from "react-native";
 import EditModalContainer from "./EditModalContainer";
 import { END, TRANSIT, WAYPOINT } from "../../../lib/types";
+import { changeSequence } from "../../../lib/api/travelBlock";
 
 function TravelContainer() {
    const sheetRef = useRef(null); // 바닥 시트 reference
@@ -60,7 +61,6 @@ function TravelContainer() {
          // transit 위치, 경로
          let transitIdx = -1,
             startPoint;
-         console.log(sortedPlans);
          sortedPlans.forEach((item, idx) => {
             if (transitIdx === -1) {
                if (item.type === TRANSIT) {
@@ -108,6 +108,27 @@ function TravelContainer() {
       setEditElement(element);
    }, []);
 
+   const onDragEnd = useCallback(async ({ data, from, to }) => {
+      if (plans[from].type === plans[to].type && from !== to) {
+         data[from] = {
+            ...data[from],
+            date: plans[from].date,
+            priority: plans[from].priority,
+         };
+         data[to] = {
+            ...data[to],
+            date: plans[to].date,
+            priority: plans[to].priority,
+         };
+         await changeSequence(
+            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+            1627379541738,
+            data
+         );
+         setRefresh((prev) => prev + 1);
+      }
+   }, []);
+
    return (
       <>
          {loading ? (
@@ -139,6 +160,7 @@ function TravelContainer() {
                   onPressAddCancel={onPressAddCancel}
                   setRefresh={setRefresh}
                   openEditModal={openEditModal}
+                  onDragEnd={onDragEnd}
                />
                {visibleEditModal && (
                   <EditModalContainer

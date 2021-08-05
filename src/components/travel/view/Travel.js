@@ -24,6 +24,7 @@ function Travel({
    onPressAddCancel,
    setRefresh,
    openEditModal,
+   onDragEnd,
 }) {
    const [curSnap, setCurSnap] = useState(1);
    const heightAim = useRef(
@@ -68,6 +69,7 @@ function Travel({
                   listRef={listRef}
                   setRefresh={setRefresh}
                   openEditModal={openEditModal}
+                  onDragEnd={onDragEnd}
                />
             )}
             <View

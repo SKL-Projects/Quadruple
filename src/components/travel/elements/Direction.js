@@ -16,7 +16,7 @@ function Direction({ region, markers }) {
       setLast(false);
       setLoading(true);
       setShowPoly(false);
-      if (region.idx) {
+      if (region.idx !== null) {
          if (region.idx === markers.length - 1) {
             setLast(true);
             return;

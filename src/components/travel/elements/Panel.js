@@ -6,8 +6,16 @@ import theme from "../../../lib/styles/theme";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 import { Dimensions } from "react-native";
 import { removeTravelBlock } from "../../../lib/api/travelBlock";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
-function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
+function Panel({
+   plans,
+   setRegion,
+   listRef,
+   setRefresh,
+   openEditModal,
+   onDragEnd,
+}) {
    const onPressListItem = useCallback((location, id, index, direction) => {
       let deltas = {
          latitudeDelta: 0.01,
@@ -37,25 +45,29 @@ function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
    }, []);
 
    let dateHeader = plans[0].date;
-   const renderItem = ({ item, index }) => {
+   const renderItem = ({ item, index, drag, isActive }) => {
       const isDifferent = dateHeader !== item.date;
       dateHeader = item.date;
       const hour = item.time.getHours();
       const minute = item.time.getMinutes();
       return (
          <>
-            {isDifferent && (
+            {isDifferent && !isActive && (
                <>
                   <View style={styles.dayContainer} />
                   <Text style={styles.dayHeader}>{item.date}</Text>
                </>
             )}
             <ListItem.Swipeable
-               containerStyle={styles.listItem}
+               containerStyle={[
+                  styles.listItem,
+                  stylesFunc(isActive).listItemElevation,
+               ]}
                underlayColor="white"
                onPress={() =>
                   onPressListItem(item.location, item.id, index, item.direction)
                }
+               onLongPress={drag}
                leftWidth={Math.floor(Dimensions.get("window").width * 0.4)}
                rightWidth={Math.floor(Dimensions.get("window").width * 0.4)}
                leftContent={
@@ -107,11 +119,14 @@ function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
    };
 
    return (
-      <FlatList
-         ref={listRef}
+      <DraggableFlatList
+         onRef={(ref) => {
+            listRef.current = ref;
+         }}
          data={plans}
          keyExtractor={(item, idx) => `dayGroup_${item.title}_${idx}`}
          renderItem={renderItem}
+         onDragEnd={onDragEnd}
          ListHeaderComponent={
             <Text style={styles.dayHeader}>{dateHeader}</Text>
          }
@@ -119,6 +134,13 @@ function Panel({ plans, setRegion, listRef, setRefresh, openEditModal }) {
       />
    );
 }
+
+const stylesFunc = (isActive) =>
+   StyleSheet.create({
+      listItemElevation: {
+         elevation: isActive ? 10 : 3,
+      },
+   });
 
 const styles = StyleSheet.create({
    panel: {
