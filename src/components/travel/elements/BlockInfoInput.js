@@ -2,27 +2,8 @@ import React, { useCallback } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { FlatList } from "react-native-gesture-handler";
-import { detailTypes, TRANSIT, WAYPOINT } from "../../../lib/types";
+import { bindDetailTypes, TRANSIT, WAYPOINT } from "../../../lib/types";
 import { ThousandSeperator } from "../../utils/ThousandSeperator";
-
-const detailTypesDate = [
-   [
-      { name: "숙소", value: detailTypes.HOTEL },
-      { name: "음식점", value: detailTypes.FOOD },
-      { name: "쇼핑", value: detailTypes.SHOPPING },
-      { name: "관광", value: detailTypes.SIGHTSEE },
-      { name: "액티비티", value: detailTypes.ACTIVITY },
-      { name: "기타", value: detailTypes.ETC_WAYPOINT },
-   ],
-   [
-      { name: "자차", value: detailTypes.MY_CAR },
-      { name: "기차", value: detailTypes.TRAIN },
-      { name: "항공", value: detailTypes.AIRLINE },
-      { name: "버스", value: detailTypes.BUS },
-      { name: "도보", value: detailTypes.WALKING },
-      { name: "기타", value: detailTypes.ETC_TRANSIT },
-   ],
-];
 
 function BlockInfoInput({
    title,
@@ -77,7 +58,7 @@ function BlockInfoInput({
          <View style={styles.line}>
             {label("세부타입")}
             <FlatList
-               data={detailTypesDate[type === WAYPOINT ? 0 : 1]}
+               data={bindDetailTypes[type === WAYPOINT ? 0 : 1]}
                keyExtractor={(item) => item.value}
                numColumns={3}
                columnWrapperStyle={{

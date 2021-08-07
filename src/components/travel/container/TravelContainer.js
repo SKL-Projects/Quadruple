@@ -5,7 +5,10 @@ import LottieView from "lottie-react-native";
 import { View } from "react-native";
 import EditModalContainer from "./EditModalContainer";
 import { END, TRANSIT, WAYPOINT } from "../../../lib/types";
-import { changeSequence } from "../../../lib/api/travelBlock";
+import {
+   changeSequence,
+   removeTravelBlock,
+} from "../../../lib/api/travelBlock";
 
 function TravelContainer() {
    const sheetRef = useRef(null); // 바닥 시트 reference
@@ -19,10 +22,10 @@ function TravelContainer() {
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
    });
-   const [onAddBlock, setOnAddBlock] = useState(false);
-   const [refresh, setRefresh] = useState(0);
-   const [visibleEditModal, setVisibleEditModal] = useState(false);
-   const [editElement, setEditElement] = useState({});
+   const [onAddBlock, setOnAddBlock] = useState(false); // 블록 추가 화면인지
+   const [refresh, setRefresh] = useState(0); // 블록 다시 받아오기
+   const [visibleEditModal, setVisibleEditModal] = useState(false); // 수정 모달 띄우기
+   const [editElement, setEditElement] = useState({}); // 수정하는 아이템 객체
 
    useEffect(() => {
       const getTravel = async () => {
@@ -53,21 +56,19 @@ function TravelContainer() {
                if (a.type === TRANSIT && b.type === TRANSIT) {
                   return a.priority < b.priority ? -1 : 1;
                }
-               return a.type === "transit" ? 1 : -1;
+               return a.type === TRANSIT ? 1 : -1;
             }
             return a.time.valueOf() < b.time.valueOf() ? -1 : 1;
          });
 
-         // transit 위치, 경로
+         // 이동블록 location, direction 생성
          let transitIdx = -1,
             startPoint;
          sortedPlans.forEach((item, idx) => {
             if (transitIdx === -1) {
-               if (item.type === TRANSIT) {
-                  transitIdx = idx;
-               } else {
-                  startPoint = item.location;
-               }
+               item.type === TRANSIT
+                  ? (transitIdx = idx)
+                  : (startPoint = item.location);
             } else if (item.type === WAYPOINT || item.type === END) {
                let location = {
                   latitude: (startPoint.latitude + item.location.latitude) / 2,
@@ -108,6 +109,10 @@ function TravelContainer() {
       setEditElement(element);
    }, []);
 
+   // 순서변경 드래그.
+   // 순서 변경시 다시 블록을 불러들이도록 함.
+   // 이떄 경유지 블록 - 이동블록은 안되고, 서로 date와 priority만 바꾼다.
+   // 두개의 타입이 같아야하기에, 출발-도착 블록도 어떠한 블록과 교환 불가능하다
    const onDragEnd = useCallback(async ({ data, from, to }) => {
       if (plans[from].type === plans[to].type && from !== to) {
          data[from] = {
@@ -127,6 +132,37 @@ function TravelContainer() {
          );
          setRefresh((prev) => prev + 1);
       }
+   }, []);
+
+   // 블록 삭제
+   const onRemoveBlock = useCallback(async (item) => {
+      await removeTravelBlock(
+         "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+         1627379541738,
+         item
+      );
+      setRefresh((prev) => prev + 1);
+   }, []);
+
+   // 블록 클릭시, region을 누른 블록으로 지정함.
+   // 단, 이동블록일 경우 delta를 경로가 최대한 다 보이도록 설정함.
+   const onPressListItem = useCallback((location, id, index, direction) => {
+      let deltas = {
+         latitudeDelta: 0.01,
+         longitudeDelta: 0.01,
+      };
+      if (direction) {
+         deltas["latitudeDelta"] =
+            Math.abs(direction[0]?.latitude - direction[1]?.latitude) * 2;
+         deltas["longitudeDelta"] =
+            Math.abs(direction[0]?.longitude - direction[1]?.longitude) * 2;
+      }
+      setRegion({
+         ...deltas,
+         ...location,
+         id: id,
+         idx: index,
+      });
    }, []);
 
    return (
@@ -161,6 +197,8 @@ function TravelContainer() {
                   setRefresh={setRefresh}
                   openEditModal={openEditModal}
                   onDragEnd={onDragEnd}
+                  onRemoveBlock={onRemoveBlock}
+                  onPressListItem={onPressListItem}
                />
                {visibleEditModal && (
                   <EditModalContainer

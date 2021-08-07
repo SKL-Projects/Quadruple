@@ -48,11 +48,16 @@ function GoogleMapContainer({ regionInput, setRegion, listRef, plans }) {
             index: idx,
          });
 
-         setRegion((prev) => ({
-            ...prev,
+         let deltas = {
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+         };
+         setRegion({
+            ...deltas,
             ...markers[idx].location,
             id: markers[idx].id,
-         }));
+            idx: idx,
+         });
       },
       [markers]
    );

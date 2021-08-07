@@ -4,7 +4,7 @@ import { Button } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import theme from "../../../lib/styles/theme";
-import { END, START, TRANSIT, WAYPOINT } from "../../../lib/types";
+import { END, START, TRANSIT, TRAVEL, WAYPOINT } from "../../../lib/types";
 import BlockInfoInput from "../elements/BlockInfoInput";
 import BlockSelect from "../elements/BlockSelect";
 import SelectDate from "../elements/SelectDate";
@@ -25,6 +25,7 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
    const [selectedIds, setSelectedIds] = useState([]);
    const [errMsg, setErrMsg] = useState({ title: "", time: "" });
 
+   // 수정 취소시, 이전 region으로 가기 위한 코드
    useEffect(() => {
       const reg = region;
       return () => setRegion(reg);
@@ -34,10 +35,6 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
       setErrMsg((prev) => ({ ...prev, region: "" }));
    }, [region]);
 
-   const label = useCallback(
-      (content) => <Text style={styles.label}>{content}</Text>,
-      []
-   );
    const onChangeTitle = useCallback(
       (v) => {
          if (errMsg.title) {
@@ -50,6 +47,7 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
    const onChangeMemo = useCallback((v) => {
       setMemo(v);
    }, []);
+
    const onChangeCost = useCallback((v) => {
       if (/[^0-9,]/g.test(v) && v.length !== 0) {
          setErrMsg((prev) => ({ ...prev, cost: "숫자만 입력해주세요." }));
@@ -59,6 +57,7 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
       }
    }, []);
 
+   // 경유지 추가
    const onCompleteWaypoint = async () => {
       if (title.length === 0) {
          setErrMsg((prev) => ({
@@ -102,7 +101,7 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
 
       let obj = {
          id: uuid.v4(), // uuid로
-         createdWhere: "travel",
+         createdWhere: TRAVEL,
          title: title,
          time: date,
          type: WAYPOINT,
@@ -119,10 +118,11 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          obj
       );
       //리프레시
-      setRefresh((prev) => prev + 1);
       onPressAddCancel();
+      setRefresh((prev) => prev + 1);
    };
 
+   // 이동 블록 추가
    const onCompleteTransit = async () => {
       if (title.length === 0) {
          setErrMsg((prev) => ({
@@ -154,7 +154,7 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
 
       let obj = {
          id: uuid.v4(), // uuid로
-         createdWhere: "travel",
+         createdWhere: TRAVEL,
          title: title,
          time: new Date(first.time.getTime()),
          type: TRANSIT,
@@ -167,8 +167,8 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
       //파이어베이스 추가 + 로딩
       await addTravelBlock("aT1JPMs3GXg7SrkRE1C6KZPJupu1", 1627379541738, obj);
       //리프레시
-      setRefresh((prev) => prev + 1);
       onPressAddCancel();
+      setRefresh((prev) => prev + 1);
    };
 
    return (
@@ -199,7 +199,7 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
             </>
          ) : (
             <View style={styles.line}>
-               {label("연결시킬 블록을 선택해주세요.")}
+               <Text style={styles.label}>연결시킬 블록을 선택해주세요.</Text>
                <BlockSelect
                   plans={plans}
                   selectedIds={selectedIds}

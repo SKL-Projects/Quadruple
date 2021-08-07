@@ -5,13 +5,10 @@ import BottomSheet from "reanimated-bottom-sheet";
 import theme from "../../../lib/styles/theme";
 import Panel from "../elements/Panel";
 import Reanimated from "react-native-reanimated";
-import {
-   getMapHeight,
-   getSnapHeight,
-   WINDOW_HEIGHT,
-} from "../elements/itemHeight";
+import { getMapHeight, getSnapHeight } from "../elements/itemHeight";
 import AddBlock from "../container/AddBlock";
 import { FAB } from "react-native-elements";
+import { WINDOW_HEIGHT } from "../../../lib/styles/pixels";
 
 function Travel({
    sheetRef,
@@ -25,12 +22,14 @@ function Travel({
    setRefresh,
    openEditModal,
    onDragEnd,
+   onRemoveBlock,
+   onPressListItem,
 }) {
    const [curSnap, setCurSnap] = useState(1);
    const heightAim = useRef(
       new Animated.Value(getMapHeight(length, curSnap))
    ).current;
-   const listRef = useRef();
+   const listRef = useRef(); // 마커 클릭시 블록목록 스크롤을 위한 ref
 
    // 리스트 길이 변경시, 현재 snap에 맞춰서 맵 높이 변경
    useEffect(() => {
@@ -45,6 +44,9 @@ function Travel({
          useNativeDriver: false,
       }).start();
    }, []);
+
+   // 바텀 시트 안 내용.
+   // 수정모드일때는 AddBlock이 렌더됨.
    const renderContent = (onAddBlock) => {
       return (
          <View
@@ -65,20 +67,14 @@ function Travel({
             ) : (
                <Panel
                   plans={plans}
-                  setRegion={setRegion}
                   listRef={listRef}
-                  setRefresh={setRefresh}
                   openEditModal={openEditModal}
                   onDragEnd={onDragEnd}
+                  onRemoveBlock={onRemoveBlock}
+                  onPressListItem={onPressListItem}
                />
             )}
-            <View
-               style={{
-                  position: "absolute",
-                  bottom: 80,
-                  left: 20,
-                  zIndex: 100,
-               }}>
+            <View style={styles.fabView}>
                <FAB
                   visible={true}
                   raised
@@ -86,12 +82,7 @@ function Travel({
                      name: onAddBlock ? "times" : "plus",
                      type: "font-awesome",
                   }}
-                  buttonStyle={{
-                     width: 60,
-                     height: 60,
-                     borderRadius: 30,
-                     backgroundColor: "white",
-                  }}
+                  buttonStyle={styles.fabButton}
                   onPress={onAddBlock ? onPressAddCancel : onPressAddBlock}
                />
             </View>
@@ -193,6 +184,18 @@ const styles = StyleSheet.create({
    panel: {
       padding: 20,
       backgroundColor: theme.color.white,
+   },
+   fabView: {
+      position: "absolute",
+      bottom: 80,
+      left: 20,
+      zIndex: 100,
+   },
+   fabButton: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: "white",
    },
 });
 

@@ -2,7 +2,9 @@ import React from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
 import theme from "../../../lib/styles/theme";
-import { basicVetical, end, start } from "../../utils/Graph";
+import { TRANSIT } from "../../../lib/types";
+import { hhmm } from "../../utils/DateString";
+import { graph } from "../../utils/Graph";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 
 function BlockSelect({ plans, selectedIds, setSelectedIds }) {
@@ -22,8 +24,6 @@ function BlockSelect({ plans, selectedIds, setSelectedIds }) {
    const renderItem = ({ item, index }) => {
       const isDifferent = dateHeader !== item.date;
       dateHeader = item.date;
-      const hour = item.time.getHours();
-      const minute = item.time.getMinutes();
       return (
          <>
             {isDifferent && (
@@ -36,25 +36,11 @@ function BlockSelect({ plans, selectedIds, setSelectedIds }) {
                containerStyle={stylesFunc(selectedIds.includes(index)).listItem}
                underlayColor="white"
                onPress={() => onPressListItem(index)}>
-               <View
-                  style={{
-                     width: 60,
-                     justifyContent: "center",
-                     alignItems: "center",
-                     padding: 0,
-                  }}>
-                  {item.type !== "start"
-                     ? item.type !== "end"
-                        ? basicVetical(LIST_ITEM_HEIGHT, item.type)
-                        : end(LIST_ITEM_HEIGHT)
-                     : start(LIST_ITEM_HEIGHT)}
-               </View>
+               {graph(item.type)}
                <ListItem.Content>
                   <ListItem.Title style={{ fontSize: 20 }}>
-                     {item.type !== "transit"
-                        ? `${hour < 10 ? `0${hour}` : hour}:${
-                             minute < 10 ? `0${minute}` : minute
-                          }          `
+                     {item.type !== TRANSIT
+                        ? `${hhmm(item.time)}          `
                         : ""}
                      {item.title}
                   </ListItem.Title>
@@ -118,6 +104,7 @@ const styles = StyleSheet.create({
    dayHeader: {
       fontSize: 20,
    },
+   graphContainer: {},
 });
 
 export default BlockSelect;

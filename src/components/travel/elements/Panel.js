@@ -1,55 +1,27 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
-import { basicVetical, end, start } from "../../utils/Graph";
+import { basicVetical, end, graph, start } from "../../utils/Graph";
 import { Button, ListItem } from "react-native-elements";
 import theme from "../../../lib/styles/theme";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 import { Dimensions } from "react-native";
-import { removeTravelBlock } from "../../../lib/api/travelBlock";
 import DraggableFlatList from "react-native-draggable-flatlist";
+import { WINDOW_WIDTH } from "../../../lib/styles/pixels";
+import { END, START, TRANSIT } from "../../../lib/types";
+import { hhmm } from "../../utils/DateString";
 
 function Panel({
    plans,
-   setRegion,
    listRef,
-   setRefresh,
    openEditModal,
    onDragEnd,
+   onRemoveBlock,
+   onPressListItem,
 }) {
-   const onPressListItem = useCallback((location, id, index, direction) => {
-      let deltas = {
-         latitudeDelta: 0.01,
-         longitudeDelta: 0.01,
-      };
-      if (direction) {
-         deltas["latitudeDelta"] =
-            Math.abs(direction[0]?.latitude - direction[1]?.latitude) * 2;
-         deltas["longitudeDelta"] =
-            Math.abs(direction[0]?.longitude - direction[1]?.longitude) * 2;
-      }
-      setRegion({
-         ...deltas,
-         ...location,
-         id: id,
-         idx: index,
-      });
-   }, []);
-
-   const removeBlock = useCallback(async (obj) => {
-      await removeTravelBlock(
-         "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-         1627379541738,
-         obj
-      );
-      setRefresh((prev) => prev + 1);
-   }, []);
-
    let dateHeader = plans[0].date;
    const renderItem = ({ item, index, drag, isActive }) => {
       const isDifferent = dateHeader !== item.date;
       dateHeader = item.date;
-      const hour = item.time.getHours();
-      const minute = item.time.getMinutes();
       return (
          <>
             {isDifferent && !isActive && (
@@ -68,8 +40,8 @@ function Panel({
                   onPressListItem(item.location, item.id, index, item.direction)
                }
                onLongPress={drag}
-               leftWidth={Math.floor(Dimensions.get("window").width * 0.4)}
-               rightWidth={Math.floor(Dimensions.get("window").width * 0.4)}
+               leftWidth={Math.floor(WINDOW_WIDTH * 0.4)}
+               rightWidth={Math.floor(WINDOW_WIDTH * 0.4)}
                leftContent={
                   <Button
                      title="수정"
@@ -78,36 +50,22 @@ function Panel({
                      onPress={() => openEditModal(item)}
                   />
                }
-               {...(item.type !== "start" &&
-                  item.type !== "end" && {
+               {...(item.type !== START &&
+                  item.type !== END && {
                      rightContent: (
                         <Button
                            title="삭제"
                            icon={{ name: "delete", color: "white" }}
                            buttonStyle={styles.rightButton}
-                           onPress={() => removeBlock(item)}
+                           onPress={() => onRemoveBlock(item)}
                         />
                      ),
                   })}>
-               <View
-                  style={{
-                     width: 60,
-                     justifyContent: "center",
-                     alignItems: "center",
-                     padding: 0,
-                  }}>
-                  {item.type !== "start"
-                     ? item.type !== "end"
-                        ? basicVetical(LIST_ITEM_HEIGHT, item.type)
-                        : end(LIST_ITEM_HEIGHT)
-                     : start(LIST_ITEM_HEIGHT)}
-               </View>
+               {graph(item.type)}
                <ListItem.Content>
                   <ListItem.Title style={{ fontSize: 20 }}>
-                     {item.type !== "transit"
-                        ? `${hour < 10 ? `0${hour}` : hour}:${
-                             minute < 10 ? `0${minute}` : minute
-                          }          `
+                     {item.type !== TRANSIT
+                        ? `${hhmm(item.time)}          `
                         : ""}
                      {item.title}
                   </ListItem.Title>
