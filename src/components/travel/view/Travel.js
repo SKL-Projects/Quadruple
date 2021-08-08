@@ -182,7 +182,9 @@ const styles = StyleSheet.create({
       marginBottom: 10,
    },
    panel: {
-      padding: 20,
+      padding: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
       backgroundColor: theme.color.white,
    },
    fabView: {

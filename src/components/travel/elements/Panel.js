@@ -9,6 +9,7 @@ import DraggableFlatList from "react-native-draggable-flatlist";
 import { WINDOW_WIDTH } from "../../../lib/styles/pixels";
 import { END, START, TRANSIT } from "../../../lib/types";
 import { hhmm } from "../../utils/DateString";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 function Panel({
    plans,
@@ -64,9 +65,7 @@ function Panel({
                {graph(item.type)}
                <ListItem.Content>
                   <ListItem.Title style={{ fontSize: 20 }}>
-                     {item.type !== TRANSIT
-                        ? `${hhmm(item.time)}          `
-                        : ""}
+                     {item.type !== TRANSIT ? `${hhmm(item.time)}   ` : ""}
                      {item.title}
                   </ListItem.Title>
                </ListItem.Content>

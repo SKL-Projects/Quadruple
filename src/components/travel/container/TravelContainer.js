@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getAllTravelList } from "../../../lib/api/travelList";
 import Travel from "../view/Travel";
 import LottieView from "lottie-react-native";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import EditModalContainer from "./EditModalContainer";
 import { END, TRANSIT, WAYPOINT } from "../../../lib/types";
 import {
@@ -26,6 +26,23 @@ function TravelContainer() {
    const [refresh, setRefresh] = useState(0); // 블록 다시 받아오기
    const [visibleEditModal, setVisibleEditModal] = useState(false); // 수정 모달 띄우기
    const [editElement, setEditElement] = useState({}); // 수정하는 아이템 객체
+
+   // 키보드 켰을땐 중간 사이즈, 껐을땐 큰사이즈로 자동조정
+   useEffect(() => {
+      const keyboardShowCallback = () => {
+         sheetRef.current?.snapTo(1);
+      };
+      const keyboardHideCallback = () => {
+         sheetRef.current?.snapTo(0);
+      };
+
+      Keyboard.addListener("keyboardDidShow", keyboardShowCallback);
+      Keyboard.addListener("keyboardDidHide", keyboardHideCallback);
+      return () => {
+         Keyboard.removeAllListeners("keyboardDidShow");
+         Keyboard.removeAllListeners("keyboardDidHide");
+      };
+   }, []);
 
    useEffect(() => {
       const getTravel = async () => {
