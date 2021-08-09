@@ -54,18 +54,13 @@ export default function App() {
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen
-<<<<<<< HEAD
-                     name="GoogleMap"
-                     component={GoogleMap}
+                     name="Cost"
+                     component={CostScreen}
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen
                      name="Travel"
                      component={TravelScreen}
-=======
-                     name="Cost"
-                     component={CostScreen}
->>>>>>> feature/11
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen
