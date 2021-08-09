@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import {Picker} from '@react-native-community/picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Cost_map_coordinates from '../elements/GoogleMap'
+import Cost_map_coordinates from '../elements/Googlemap';
 import { getAllTravelList } from "../../../lib/api/travelList";
 
 export default function Cost_list_insert({item}) {

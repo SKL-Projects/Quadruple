@@ -77,7 +77,7 @@ export default function Cost_list({fb_plans,fb_infos}) {
                   <Text style={styles.itemDayText}>{item.time.getMonth() + 1}월 {item.time.getDate()}일</Text>
                 </View>  
               ) : (
-                <></>
+                <View></View>
               )}
               <TouchableOpacity
                 style={styles.pressableBtn}

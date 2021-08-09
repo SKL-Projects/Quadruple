@@ -3,7 +3,6 @@ import { StyleSheet, View, Text } from "react-native";
 import { ListItem } from "react-native-elements";
 import { Button } from "react-native-elements";
 import Header from "./Header";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 const styles = StyleSheet.create({
    container: {
       flex: 1,

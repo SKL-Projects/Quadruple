@@ -9,7 +9,6 @@ import DraggableFlatList from "react-native-draggable-flatlist";
 import { WINDOW_WIDTH } from "../../../lib/styles/pixels";
 import { END, START, TRANSIT } from "../../../lib/types";
 import { hhmm } from "../../utils/DateString";
-import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 function Panel({
    plans,
