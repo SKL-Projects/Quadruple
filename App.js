@@ -17,8 +17,9 @@ import rootReducer, { rootSaga } from "./src/modules";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
-import Auth from "./src/screens/Auth";
-import GoogleMap from "./src/screens/GoogleMap";
+import Auth from './src/screens/Auth'
+import { fbAuth } from "./firebase";
+import CostScreen from "./src/screens/Cost";
 import ProfileScreen from "./src/screens/Profile";
 
 import Template from "./src/screens/Template";
@@ -53,6 +54,7 @@ export default function App() {
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen
+<<<<<<< HEAD
                      name="GoogleMap"
                      component={GoogleMap}
                      options={{ headerShown: false }}
@@ -60,6 +62,10 @@ export default function App() {
                   <Stack.Screen
                      name="Travel"
                      component={TravelScreen}
+=======
+                     name="Cost"
+                     component={CostScreen}
+>>>>>>> feature/11
                      options={{ headerShown: false }}
                   />
                   <Stack.Screen

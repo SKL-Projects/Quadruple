@@ -34,8 +34,8 @@ function Home({ navigation }) {
          </View>
          <View style={styles.login}>
             <Button
-               title="Show Map"
-               onPress={() => navigation.navigate("GoogleMap")}
+               title="Show cost Map"
+               onPress={() => navigation.navigate("Cost")}
             />
          </View>
          <View style={styles.login}>
