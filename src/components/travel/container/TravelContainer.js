@@ -7,14 +7,14 @@ import EditModalContainer from "./EditModalContainer";
 import { END, TRANSIT, WAYPOINT } from "../../../lib/types";
 import {
    changeSequence,
+   getPlans,
    removeTravelBlock,
 } from "../../../lib/api/travelBlock";
 
-function TravelContainer() {
+function TravelContainer({ route }) {
    const sheetRef = useRef(null); // 바닥 시트 reference
    const [plans, setPlans] = useState([]); // 정렬된 블록들
    const [loading, setLoading] = useState(true);
-   const [length, setLength] = useState(0); // 전체 블록 개수
    const [region, setRegion] = useState({
       // 현재 보여주는 지역
       latitude: 0,
@@ -43,14 +43,22 @@ function TravelContainer() {
          Keyboard.removeAllListeners("keyboardDidHide");
       };
    }, []);
+   useEffect(() => {
+      if (route?.params) {
+         setRegion({ ...route.params });
+         setOnAddBlock(true);
+      }
+   }, [route.params]);
 
    useEffect(() => {
       const getTravel = async () => {
          setLoading(true);
-         const travel = await getAllTravelList("aT1JPMs3GXg7SrkRE1C6KZPJupu1");
-
+         const res = await getPlans(
+            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+            1627379541738
+         );
          // timeStamp, geoPoint 데이터 preprocessing
-         const datas = travel[0].plans.plans.map((item) => {
+         const datas = res.plans.map((item) => {
             const todate = item.time.toDate();
             return {
                ...item,
@@ -64,8 +72,6 @@ function TravelContainer() {
                },
             };
          });
-
-         setLength(datas.length);
 
          // 시간순으로 정렬. transit 은 같은 시간의 뒤로
          let sortedPlans = datas.sort((a, b) => {
@@ -130,26 +136,29 @@ function TravelContainer() {
    // 순서 변경시 다시 블록을 불러들이도록 함.
    // 이떄 경유지 블록 - 이동블록은 안되고, 서로 date와 priority만 바꾼다.
    // 두개의 타입이 같아야하기에, 출발-도착 블록도 어떠한 블록과 교환 불가능하다
-   const onDragEnd = useCallback(async ({ data, from, to }) => {
-      if (plans[from].type === plans[to].type && from !== to) {
-         data[from] = {
-            ...data[from],
-            date: plans[from].date,
-            priority: plans[from].priority,
-         };
-         data[to] = {
-            ...data[to],
-            date: plans[to].date,
-            priority: plans[to].priority,
-         };
-         await changeSequence(
-            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-            1627379541738,
-            data
-         );
-         setRefresh((prev) => prev + 1);
-      }
-   }, []);
+   const onDragEnd = useCallback(
+      async ({ data, from, to }) => {
+         if (plans[from].type === plans[to].type && from !== to) {
+            data[from] = {
+               ...data[from],
+               date: plans[from].date,
+               priority: plans[from].priority,
+            };
+            data[to] = {
+               ...data[to],
+               date: plans[to].date,
+               priority: plans[to].priority,
+            };
+            await changeSequence(
+               "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+               1627379541738,
+               data
+            );
+            setRefresh((prev) => prev + 1);
+         }
+      },
+      [plans]
+   );
 
    // 블록 삭제
    const onRemoveBlock = useCallback(async (item) => {
@@ -205,7 +214,6 @@ function TravelContainer() {
                <Travel
                   sheetRef={sheetRef}
                   plans={plans}
-                  length={length}
                   region={region}
                   setRegion={setRegion}
                   onPressAddBlock={onPressAddBlock}

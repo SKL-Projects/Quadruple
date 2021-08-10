@@ -1,5 +1,17 @@
 import { fbStore, fbStoreObj } from "../../../firebase";
 
+export const getPlans = async (uid, planId) => {
+   try {
+      const res = await fbStore
+         .collection(`${uid}/travelList/${planId}`)
+         .doc("plans")
+         .get();
+      return res.data();
+   } catch (err) {
+      console.log(err);
+   }
+};
+
 export const addTravelBlock = async (uid, planId, obj) => {
    try {
       const res = await fbStore

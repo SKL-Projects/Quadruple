@@ -1,18 +1,13 @@
 import React from "react";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, View, Dimensions } from "react-native";
 import AutoCompleteContainer from "../container/AutoCompleteContainer";
-import Markers from "../elements/Markers";
-import Direction from "../elements/Direction";
+import { Image } from "react-native";
 
 export default function GoogleMap({
    setRegion,
    region,
-   regionInput,
    mapViewRef,
-   interpolations,
-   markers,
-   onPressMarker,
    onAnimateRegion,
 }) {
    return (
@@ -25,12 +20,17 @@ export default function GoogleMap({
             key="Gmap"
             style={styles.map}
             onRegionChangeComplete={onAnimateRegion}>
-            <Markers
-               markers={markers}
-               interpolations={interpolations}
-               onPressMarker={onPressMarker}
-            />
-            <Direction region={regionInput} markers={markers} />
+            {region && (
+               <Marker coordinate={region}>
+                  <View style={[styles.markerWrap]}>
+                     <Image
+                        source={require("../../../../assets/map_marker.png")}
+                        style={[styles.marker]}
+                        resizeMode="cover"
+                     />
+                  </View>
+               </Marker>
+            )}
          </MapView>
       </View>
    );
@@ -47,5 +47,15 @@ const styles = StyleSheet.create({
       width: Dimensions.get("window").width,
       height: "100%",
       zIndex: 1,
+   },
+   markerWrap: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: 50,
+      height: 50,
+   },
+   marker: {
+      width: 45,
+      height: 45,
    },
 });

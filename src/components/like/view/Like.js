@@ -10,28 +10,28 @@ import AddBlock from "../container/AddBlock";
 import { FAB } from "react-native-elements";
 import { WINDOW_HEIGHT } from "../../../lib/styles/pixels";
 
-function Travel({
+function Like({
+   loading,
    sheetRef,
-   plans,
+   likeList,
+   length,
    region,
    setRegion,
    onAddBlock,
    onPressAddBlock,
    onPressAddCancel,
    setRefresh,
-   openEditModal,
-   onDragEnd,
    onRemoveBlock,
    onPressListItem,
+   addTravelBlock,
 }) {
    const [curSnap, setCurSnap] = useState(1);
    const heightAim = useRef(new Animated.Value(getMapHeight(curSnap))).current;
-   const listRef = useRef(); // 마커 클릭시 블록목록 스크롤을 위한 ref
 
    // 리스트 길이 변경시, 현재 snap에 맞춰서 맵 높이 변경
    useEffect(() => {
       changeMapHeight(getMapHeight(curSnap));
-   }, []);
+   }, [length]);
 
    // 맵 높이 변경 함수
    const changeMapHeight = useCallback((height) => {
@@ -53,23 +53,24 @@ function Travel({
                   height: getSnapHeight(curSnap),
                },
             ]}>
-            {onAddBlock ? (
-               <AddBlock
-                  plans={plans}
-                  region={region}
-                  setRegion={setRegion}
-                  onPressAddCancel={onPressAddCancel}
-                  setRefresh={setRefresh}
-               />
+            {!loading ? (
+               onAddBlock ? (
+                  <AddBlock
+                     region={region}
+                     setRegion={setRegion}
+                     onPressAddCancel={onPressAddCancel}
+                     setRefresh={setRefresh}
+                  />
+               ) : (
+                  <Panel
+                     likeList={likeList}
+                     onRemoveBlock={onRemoveBlock}
+                     onPressListItem={onPressListItem}
+                     addTravelBlock={addTravelBlock}
+                  />
+               )
             ) : (
-               <Panel
-                  plans={plans}
-                  listRef={listRef}
-                  openEditModal={openEditModal}
-                  onDragEnd={onDragEnd}
-                  onRemoveBlock={onRemoveBlock}
-                  onPressListItem={onPressListItem}
-               />
+               <></>
             )}
             <View style={styles.fabView}>
                <FAB
@@ -96,7 +97,6 @@ function Travel({
       ),
       []
    );
-
    // 바텀시트에 따른 높이 변경
    const { call, onChange } = Reanimated;
    let drawerCallbackNode = new Reanimated.Value(0);
@@ -129,12 +129,7 @@ function Travel({
                position: "absolute",
                height: heightAim,
             }}>
-            <GoogleMapContainer
-               regionInput={region}
-               setRegion={setRegion}
-               listRef={listRef}
-               plans={plans}
-            />
+            <GoogleMapContainer region={region} setRegion={setRegion} />
          </Animated.View>
          <BottomSheet
             ref={sheetRef}
@@ -198,4 +193,4 @@ const styles = StyleSheet.create({
    },
 });
 
-export default Travel;
+export default Like;

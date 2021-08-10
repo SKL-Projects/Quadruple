@@ -27,7 +27,8 @@
          "config": {
             "googleMaps": {}
          },
-         "package": "com.quadruple.android"
+         "package": "com.quadruple.android",
+         "permissions": ["ACCESS_BACKGROUND_LOCATION"]
       },
       "web": {
          "favicon": "./assets/favicon.png"

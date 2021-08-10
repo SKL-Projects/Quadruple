@@ -17,7 +17,7 @@ import rootReducer, { rootSaga } from "./src/modules";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
-import Auth from './src/screens/Auth'
+import Auth from "./src/screens/Auth";
 import { fbAuth } from "./firebase";
 import CostScreen from "./src/screens/Cost";
 import ProfileScreen from "./src/screens/Profile";
@@ -32,6 +32,16 @@ const store = createStore(
    composeWithDevTools(applyMiddleware(sagaMiddleware, logger))
 );
 sagaMiddleware.run(rootSaga);
+
+/* logbox */
+import { LogBox, Platform } from "react-native";
+
+if (Platform.OS !== "web") {
+   LogBox.ignoreLogs([
+      "ReactNativeFiberHostComponent: Calling getNode() on the ref of an Animated component is no longer necessary. You can now directly use the ref instead. This method will be removed in a future release.",
+      "%s: Calling %s on the ref of an Animated component is no longer necessary. You can now directly use the ref instead. This method will be removed in a future release.",
+   ]);
+}
 
 /* 네비게이션 관련 */
 const Stack = createStackNavigator();

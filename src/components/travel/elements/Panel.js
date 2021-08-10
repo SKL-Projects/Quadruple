@@ -1,10 +1,9 @@
-import React, { useCallback } from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
-import { basicVetical, end, graph, start } from "../../utils/Graph";
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { graph } from "../../utils/Graph";
 import { Button, ListItem } from "react-native-elements";
 import theme from "../../../lib/styles/theme";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
-import { Dimensions } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { WINDOW_WIDTH } from "../../../lib/styles/pixels";
 import { END, START, TRANSIT } from "../../../lib/types";
@@ -99,10 +98,6 @@ const stylesFunc = (isActive) =>
    });
 
 const styles = StyleSheet.create({
-   panel: {
-      padding: 20,
-      backgroundColor: theme.color.white,
-   },
    dayContainer: {
       height: 80,
    },
