@@ -85,6 +85,7 @@ function LikeContainer({ navigation }) {
 
    // 블록 삭제
    const onRemoveBlock = useCallback(async (item) => {
+      setLoading(true);
       await removeLikeBlock(
          "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
          1627379541738,
@@ -113,6 +114,7 @@ function LikeContainer({ navigation }) {
    return (
       <Like
          loading={loading}
+         setLoading={setLoading}
          sheetRef={sheetRef}
          likeList={likeList}
          region={region}

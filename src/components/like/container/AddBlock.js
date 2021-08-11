@@ -1,13 +1,18 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import theme from "../../../lib/styles/theme";
 import SelectLocation from "../elements/SelectLocation";
-import uuid from "react-native-uuid";
 import { addLikeBlock } from "../../../lib/api/Like";
 
-function AddBlock({ region, setRegion, onPressAddCancel, setRefresh }) {
+function AddBlock({
+   region,
+   setRegion,
+   onPressAddCancel,
+   setRefresh,
+   setLoading,
+}) {
    // 수정 취소시, 이전 region으로 가기 위한 코드
    useEffect(() => {
       const reg = region;
@@ -16,6 +21,7 @@ function AddBlock({ region, setRegion, onPressAddCancel, setRefresh }) {
 
    // 이동 블록 추가
    const onCompleteLike = async () => {
+      setLoading(true);
       const obj = {
          location: { ...region },
       };

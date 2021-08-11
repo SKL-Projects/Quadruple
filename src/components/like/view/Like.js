@@ -8,10 +8,12 @@ import Reanimated from "react-native-reanimated";
 import { getMapHeight, getSnapHeight } from "../elements/itemHeight";
 import AddBlock from "../container/AddBlock";
 import { FAB } from "react-native-elements";
+import LottieView from "lottie-react-native";
 import { WINDOW_HEIGHT } from "../../../lib/styles/pixels";
 
 function Like({
    loading,
+   setLoading,
    sheetRef,
    likeList,
    length,
@@ -60,6 +62,7 @@ function Like({
                      setRegion={setRegion}
                      onPressAddCancel={onPressAddCancel}
                      setRefresh={setRefresh}
+                     setLoading={setLoading}
                   />
                ) : (
                   <Panel
@@ -70,7 +73,21 @@ function Like({
                   />
                )
             ) : (
-               <></>
+               <View
+                  style={{
+                     flex: 1,
+                     alignItems: "center",
+                     marginTop: 50,
+                  }}>
+                  <LottieView
+                     style={{
+                        width: 100,
+                        height: 100,
+                     }}
+                     autoPlay
+                     source={require("../../../lib/styles/lottie/loading-circle.json")}
+                  />
+               </View>
             )}
             <View style={styles.fabView}>
                <FAB

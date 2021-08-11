@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getAllTravelList } from "../../../lib/api/travelList";
 import Travel from "../view/Travel";
 import LottieView from "lottie-react-native";
 import { Keyboard, View } from "react-native";
@@ -43,6 +42,7 @@ function TravelContainer({ route }) {
          Keyboard.removeAllListeners("keyboardDidHide");
       };
    }, []);
+
    useEffect(() => {
       if (route?.params) {
          setRegion({ ...route.params });
