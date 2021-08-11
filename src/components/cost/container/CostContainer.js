@@ -19,7 +19,6 @@ function CostContainer({ navigation }) {
    LogBox.ignoreLogs(['Setting a timer']);
    const getTravel = async () => {
       const travel = await getAllTravelList("aT1JPMs3GXg7SrkRE1C6KZPJupu1");
-
       // timeStamp, geoPoint 데이터 preprocessing
       const datas = travel[0].plans.plans.map((item) => {
          return {

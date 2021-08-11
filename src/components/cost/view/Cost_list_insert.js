@@ -29,7 +29,7 @@ export default function Cost_list_insert({item}) {
     
   const images = [
     {label:'home-outline',value:'hotel',text:'숙소'},
-    {label:'airplane-outline',value:'airplane',text:'비행'},
+    {label:'airplane-outline',value:'airline',text:'비행'},
     {label:'fast-food-outline',value:'food',text:'식당'},
     {label:'cart-outline',value:'shopping',text:'쇼핑'},
     {label:'camera-outline',value:'attraction',text:'관광'},
@@ -41,6 +41,7 @@ export default function Cost_list_insert({item}) {
     {label:'car-outline',value:'car',text:'자동차'},
     {label:'car-sport-outline',value:'taxi',text:'택시'},
     {label:'ellipsis-horizontal-outline',value:'etc',text:'기타'},
+    {label:'ellipsis-horizontal-outline',value:'etc_waypoint',text:'기타'},
   ]
 
   const getInfo = async () => {

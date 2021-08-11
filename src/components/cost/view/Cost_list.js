@@ -12,7 +12,7 @@ export default function Cost_list({fb_plans,fb_infos}) {
 
   const images = {
     hotel:'home-outline' ,
-    airplane:'airplane-outline' ,
+    airline:'airplane-outline' ,
     food:'fast-food-outline' ,
     shopping:'cart-outline' ,
     attraction:'camera-outline', 
@@ -24,8 +24,9 @@ export default function Cost_list({fb_plans,fb_infos}) {
     car:'car-outline',
     taxi:'car-sport-outline',
     etc:'ellipsis-horizontal-outline' ,
+    etc_waypoint:'ellipsis-horizontal-outline' ,
   }
-  
+ 
   
 
   const makeComma = (num) => {
