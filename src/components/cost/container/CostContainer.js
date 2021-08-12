@@ -9,6 +9,7 @@ function CostContainer({ navigation }) {
    const [infos, setInfos] = useState({}); // 날짜별로 그룹지어진 블록등
    const [plans, setPlans] = useState({}); // 날짜별로 그룹지어진 블록등
    const [loading, setLoading] = useState(true);
+   const [refresh, setRefresh] = useState(0); // 블록 다시 받아오기
    const [region, setRegion] = useState({
       // 현재 보여주는 지역
       latitude: 0,
