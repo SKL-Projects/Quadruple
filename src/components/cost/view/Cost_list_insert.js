@@ -16,16 +16,16 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Cost_map_coordinates from '../elements/Googlemap';
 import { getAllTravelList } from "../../../lib/api/travelList";
 
-export default function Cost_list_insert({item}) {
+export default function Cost_list_insert() {
   
   const [isLoading,setIsLoading] = useState(true);
-  const [cost, setCost] = useState(item.cost);
+  const [cost, setCost] = useState();
   const [dayList, setDayList] = useState(['출발 전']);
   const [day, setDay] = useState();
-  const [location, setLocation] = useState(item.title);
-  const [type, setType] = useState(item.detailType);
+  const [location, setLocation] = useState();
+  const [type, setType] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-  const [coordinate, setcoordinate] = useState(item.location);
+  const [coordinate, setcoordinate] = useState();
     
   const images = [
     {label:'arrow-forward-outline',value:'start',text:'출발점'},
@@ -59,9 +59,7 @@ export default function Cost_list_insert({item}) {
  }
 
   useEffect(() => { 
-    getInfo();
-    console.log(item)
-    setDay((item.time.getMonth() + 1)+'월 '+item.time.getDate()+'일')
+    getInfo();    
   }, []);
 
   return (
@@ -78,7 +76,6 @@ export default function Cost_list_insert({item}) {
             style={styles.input}
             onChangeText={setCost}
             placeholder="금액을 입력하세요"
-            value={String(cost)}
             keyboardType="numeric"
           />
         </View>
@@ -164,7 +161,6 @@ export default function Cost_list_insert({item}) {
             
           </Pressable>
         </View>
-        <Text>cost:{cost}{"\n"}day:{day}{"\n"}location:{location}{"\n"}type:{type}{"\n"}coordinate:{coordinate.latitude}</Text>
         <Pressable
           style={styles.pressableBtn}
           onPress={() => console.log('hi')}

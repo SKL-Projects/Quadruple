@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput  } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Cost_list_insert from './Cost_list_insert'
 import { editTravelBlock } from "../../../lib/api/travelBlock";
 import { Snackbar } from 'react-native-paper';
 
@@ -9,8 +8,6 @@ export default function Cost_list({fb_plans,fb_infos}) {
 
   const [cost, setCost] = useState(0);
   const [snackVisible, setSnackVisible] = useState(false);
-  const [currentItem, setCurrentItem] = useState();
-  const [modalVisible, setModalVisible] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
 
   const images = {
@@ -117,9 +114,8 @@ export default function Cost_list({fb_plans,fb_infos}) {
               ) : (
                 <View></View>
               )}
-              <TouchableOpacity
+              <View
                 style={styles.pressableBtn}
-                onPress={() =>[setCurrentItem(item),setModalVisible(true)]}
                 key={i}
                 style={styles.item}
               >       
@@ -127,9 +123,11 @@ export default function Cost_list({fb_plans,fb_infos}) {
                   <Icon name={images[item.detailType]} size={35} color="#753BBD" style={styles.icon}/>
                 </View>
                 <View style={styles.item_right}>
-                  <View style={styles.item1}>
-                    <Text>{item.title}</Text>
-                  </View>
+                  {!isEditable && (
+                    <View style={styles.item1}>
+                      <Text style={styles.item1Text}>{item.title}</Text>
+                    </View>
+                  )}
                   <View style={styles.item2}>
                     {isEditable ?
                       <TextInput 
@@ -150,25 +148,9 @@ export default function Cost_list({fb_plans,fb_infos}) {
                     <Text style={styles.item2Text}>&nbsp;원</Text>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </View>
             </>
           ))}
-          {/* 
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View>
-              <View style={styles.modalView}>
-                <Cost_list_insert item={currentItem}/>
-              </View>
-            </View>
-          </Modal>
-          */}
         </View>
       </ScrollView >
       <Snackbar
@@ -184,149 +166,160 @@ export default function Cost_list({fb_plans,fb_infos}) {
 
 const styles = StyleSheet.create({
   container: {
-   flex: 1,
-   paddingTop: 22,
-   alignItems: "center",
-   justifyContent: "center",
+    flex: 1,
+    paddingTop: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
-    height: Dimensions.get('window').height-90,
-    width:Dimensions.get('window').width,
-    position:"absolute",
-    bottom:5
+    height: Dimensions.get('window').height - 90,
+    width: Dimensions.get('window').width,
+    position: 'absolute',
+    bottom: 5,
+    backgroundColor: '#e9e9e9',
   },
-  header:{
-    flex:1,
-    padding:10,
-    
+  header: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.84,
+    elevation: 10,
   },
-  headerTitle:{
-    flex:1,
+  headerTitle: {
+    flex: 1,
     flexDirection: 'row',
   },
-  itemEdit:{
-    flex:1,
-    justifyContent: "center",
-    paddingRight:10
+  itemEdit: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingRight: 10,
   },
-  headerTitleText:{
-    fontSize:25,
-    fontWeight:'bold',
+  headerTitleText: {
+    fontSize: 25,
+    fontFamily: 'Font',
   },
-  headerCost:{
-    flex:2,
-    marginLeft:10,
-    paddingTop:5,
-    paddingBottom:5,
+  headerCost: {
+    flex: 2,
+    marginLeft: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
-  headerCost1:{
+  headerCost1: {
     flexDirection: 'row',
-    alignItems: "center",
+    alignItems: 'center',
   },
-  headerCostText1_1:{
-    fontSize:30,
-    fontWeight:'bold',
-    flex:1.5,
+  headerCostText1_1: {
+    fontSize: 30,
+    flex: 1.5,
+    fontFamily: 'Font',
   },
-  headerCostText1_2:{
-    fontSize:20,
-    fontWeight:'bold',
-    flex:1,
+  headerCostText1_2: {
+    fontSize: 20,
+    fontFamily: 'Font',
+    flex: 1,
   },
-  text_red:{
-    color:'red'
+  text_red: {
+    color: 'red',
   },
-  text_blue:{
-    color:'blue'
+  text_blue: {
+    color: 'blue',
   },
-  headerCostText2:{
-    fontSize:15,
-    color:'#753BBD',
+  headerCostText2: {
+    fontSize: 15,
+    color: '#753BBD',
+    fontFamily: 'Font',
   },
-  line:{
-    flex:0.1,
-    backgroundColor:"#c8c8c8"
+  line: {
+    flex: 0.1,
+    backgroundColor: '#e9e9e9',
   },
-  list:{
-    flex:3,
-    paddingTop:20,
-    padding:10
+  list: {
+    flex: 3,
+    paddingTop: 20,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.84,
+    elevation: 10,
   },
-  itemDay:{
+  itemDay: {
     padding: 10,
   },
-  itemDayText:{
+  itemDayText: {
     fontSize: 20,
-    fontWeight:'bold',
+    fontFamily: 'Font',
   },
-  itemDayText2:{
-    fontSize: 15,
-    fontWeight:'bold',
-    textAlign:'right',
-    color:'#bdbdbd',
+  itemDayText2: {
+    fontSize: 18,
+    fontFamily: 'Font',
+    textAlign: 'right',
+    color: '#a0a0a0',
   },
-  item:{
-    height:75,
-    paddingTop:10,
-    paddingBottom:10,
-    marginLeft:10,
+  item: {
+    height: 85,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginLeft: 10,
     flexDirection: 'row',
   },
-  item_left:{
-    flex:1,
-    alignItems: "center",
-   justifyContent: "center",
+  item_left: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  item_right:{
-    flex:9
+  item_right: {
+    flex: 9,
   },
-  icon:{
-    position:"relative",
-    right:5
+  icon: {
+    position: 'relative',
+    right: 5,
   },
   item1: {
-    flex:1,
+    flex: 1.3,
     padding: 5,
+    height:25,
     fontSize: 18,
-    textAlign:'left',
-    fontWeight:'bold'
+    textAlign: 'left',
+    fontWeight: 'bold',
+  },
+  item1Text: {
+    fontFamily: 'Font',
+    fontSize: 20,
   },
   item2: {
-    flex:1,
+    flex: 1,
     padding: 5,
     flexDirection: 'row',
-    alignItems: "center",
-    
+    alignItems: 'center',
   },
-  item2Text:{
-    fontWeight:'bold',
-    fontSize:15
+  item2Text: {
+    fontFamily: 'Font',
+    fontSize: 15,
   },
-  item2InputTextType1:{
-    width:80,
-    height:40,
-    paddingLeft:5,
-    borderWidth:1, 
-    color:'#bdbdbd'
+  item2InputTextType1: {
+    width: 80,
+    height: 40,
+    paddingLeft: 5,
+    borderWidth: 1,
+    color: '#bdbdbd',
   },
-  item2InputTextType2:{
-    borderWidth:0, color:'#000000'
-  },
-  modalView: {
-    height: Dimensions.get('window').height,
-    width:Dimensions.get('window').width,
-    zIndex:2,
-    backgroundColor:'#ffffff'
-  },
-  pressableBtn_hide: {
-    zIndex:2,
-    position:'absolute',
-    bottom:30,
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  pressableBtn_hide1: {
-    left:20
+  item2InputTextType2: {
+    borderWidth: 0,
+    color: '#000000',
   },
 });
