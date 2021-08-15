@@ -12,6 +12,7 @@ import {
 
 function TravelContainer({ route }) {
    const sheetRef = useRef(null); // 바닥 시트 reference
+   const [original, setOriginal] = useState([]);
    const [plans, setPlans] = useState([]); // 정렬된 블록들
    const [loading, setLoading] = useState(true);
    const [region, setRegion] = useState({
@@ -26,20 +27,14 @@ function TravelContainer({ route }) {
    const [visibleEditModal, setVisibleEditModal] = useState(false); // 수정 모달 띄우기
    const [editElement, setEditElement] = useState({}); // 수정하는 아이템 객체
 
-   // 키보드 켰을땐 중간 사이즈, 껐을땐 큰사이즈로 자동조정
+   // 키보드 켰을땐 중간 사이즈로 자동조정
    useEffect(() => {
       const keyboardShowCallback = () => {
          sheetRef.current?.snapTo(1);
       };
-      const keyboardHideCallback = () => {
-         sheetRef.current?.snapTo(0);
-      };
-
       Keyboard.addListener("keyboardDidShow", keyboardShowCallback);
-      Keyboard.addListener("keyboardDidHide", keyboardHideCallback);
       return () => {
          Keyboard.removeAllListeners("keyboardDidShow");
-         Keyboard.removeAllListeners("keyboardDidHide");
       };
    }, []);
 
@@ -57,24 +52,16 @@ function TravelContainer({ route }) {
             "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
             1627379541738
          );
+
          // timeStamp, geoPoint 데이터 preprocessing
-         const datas = res.plans.map((item) => {
+         const processedDatas = res.plans.map((item) => {
             const todate = item.time.toDate();
-            return {
-               ...item,
-               time: todate,
-               date: `${todate.getFullYear()}/${
-                  todate.getMonth() + 1
-               }/${todate.getDate()}`,
-               location: {
-                  latitude: item.location?.latitude,
-                  longitude: item.location?.longitude,
-               },
-            };
+            item.time = todate;
+            return item;
          });
 
          // 시간순으로 정렬. transit 은 같은 시간의 뒤로
-         let sortedPlans = datas.sort((a, b) => {
+         const sortedPlans = processedDatas.sort((a, b) => {
             if (a.time.valueOf() === b.time.valueOf()) {
                if (a.type === TRANSIT && b.type === TRANSIT) {
                   return a.priority < b.priority ? -1 : 1;
@@ -84,10 +71,25 @@ function TravelContainer({ route }) {
             return a.time.valueOf() < b.time.valueOf() ? -1 : 1;
          });
 
+         setOriginal([...sortedPlans]);
+
+         let bridgePlans = sortedPlans.map((item) => {
+            return {
+               ...item,
+               date: `${item.time.getFullYear()}/${
+                  item.time.getMonth() + 1
+               }/${item.time.getDate()}`,
+               location: {
+                  latitude: item.location?.latitude,
+                  longitude: item.location?.longitude,
+               },
+            };
+         });
+
          // 이동블록 location, direction 생성
          let transitIdx = -1,
             startPoint;
-         sortedPlans.forEach((item, idx) => {
+         bridgePlans.forEach((item, idx) => {
             if (transitIdx === -1) {
                item.type === TRANSIT
                   ? (transitIdx = idx)
@@ -99,20 +101,20 @@ function TravelContainer({ route }) {
                      (startPoint.longitude + item.location.longitude) / 2,
                };
                for (let i = transitIdx; i < idx; i++) {
-                  sortedPlans[i].location = location;
-                  sortedPlans[i].direction = [startPoint, item.location];
+                  bridgePlans[i].location = location;
+                  bridgePlans[i].direction = [startPoint, item.location];
                }
                transitIdx = -1;
             }
          });
 
-         setPlans(sortedPlans);
+         setPlans(bridgePlans);
 
          // 리전 등록
          setRegion((prev) => ({
             ...prev,
-            ...sortedPlans[0].location,
-            id: sortedPlans[0].id,
+            ...bridgePlans[0].location,
+            id: bridgePlans[0].id,
             idx: 0,
          }));
 
@@ -138,37 +140,50 @@ function TravelContainer({ route }) {
    // 두개의 타입이 같아야하기에, 출발-도착 블록도 어떠한 블록과 교환 불가능하다
    const onDragEnd = useCallback(
       async ({ data, from, to }) => {
-         if (plans[from].type === plans[to].type && from !== to) {
-            data[from] = {
-               ...data[from],
-               date: plans[from].date,
-               priority: plans[from].priority,
+         if (original[from].type === original[to].type && from !== to) {
+            setLoading(true);
+            let originalData = [...original];
+
+            originalData[from] = {
+               ...originalData[from],
+               time: original[to].time,
+               priority: original[to].priority || 0,
             };
-            data[to] = {
-               ...data[to],
-               date: plans[to].date,
-               priority: plans[to].priority,
+            originalData[to] = {
+               ...originalData[to],
+               time: original[from].time,
+               priority: original[from].priority || 0,
             };
+
+            //date, location,
             await changeSequence(
                "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
                1627379541738,
-               data
+               originalData
             );
+            setLoading(false);
             setRefresh((prev) => prev + 1);
          }
       },
-      [plans]
+      [original]
    );
 
    // 블록 삭제
-   const onRemoveBlock = useCallback(async (item) => {
-      await removeTravelBlock(
-         "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-         1627379541738,
-         item
-      );
-      setRefresh((prev) => prev + 1);
-   }, []);
+   const onRemoveBlock = useCallback(
+      async (id, index) => {
+         if (original[index].id === id) {
+            setLoading(true);
+            await removeTravelBlock(
+               "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+               1627379541738,
+               original[index]
+            );
+            setLoading(false);
+            setRefresh((prev) => prev + 1);
+         }
+      },
+      [original]
+   );
 
    // 블록 클릭시, region을 누른 블록으로 지정함.
    // 단, 이동블록일 경우 delta를 경로가 최대한 다 보이도록 설정함.
@@ -227,6 +242,7 @@ function TravelContainer({ route }) {
                />
                {visibleEditModal && (
                   <EditModalContainer
+                     setLoading={setLoading}
                      visible={visibleEditModal}
                      setVisible={setVisibleEditModal}
                      editElement={editElement}

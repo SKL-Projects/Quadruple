@@ -10,11 +10,9 @@ function EditModal({
    visible,
    close,
    editElement,
-   title,
    onChangeTitle,
    detailType,
    setDetailType,
-   memo,
    onChangeMemo,
    errMsg,
    editSubmit,
@@ -44,8 +42,8 @@ function EditModal({
             <View style={styles.line}>
                {label("제목")}
                <Input
+                  defaultValue={editElement.title}
                   placeholder="블록의 제목을 입력해주세요."
-                  value={title}
                   onChangeText={onChangeTitle}
                   errorMessage={errMsg}
                />
@@ -75,7 +73,7 @@ function EditModal({
             <View style={styles.line}>
                {label("간단 메모")}
                <Input
-                  value={memo}
+                  defaultValue={editElement.memo}
                   onChangeText={onChangeMemo}
                   multiline
                   maxLength={50}

@@ -56,7 +56,7 @@ function Panel({
                            title="삭제"
                            icon={{ name: "delete", color: "white" }}
                            buttonStyle={styles.rightButton}
-                           onPress={() => onRemoveBlock(item)}
+                           onPress={() => onRemoveBlock(item.id, index)}
                         />
                      ),
                   })}>
@@ -86,6 +86,7 @@ function Panel({
             <Text style={styles.dayHeader}>{dateHeader}</Text>
          }
          ListFooterComponent={<View style={styles.dayContainer} />}
+         activationDistance={30}
       />
    );
 }
