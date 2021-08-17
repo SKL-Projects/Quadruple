@@ -20,10 +20,10 @@ export default function Cost_map(props) {
   const setLocation = async () => { //위치 가져오기
     try {
       setRegion({
-        latitude:40.74399,
-        longitude:-74.03236,
-        latitudeDelta: 1,
-        longitudeDelta: 1,
+        latitude:33,
+        longitude:127,
+        latitudeDelta: 40,
+        longitudeDelta: 40,
       })
       //setDirectionData( data.filter((x) => x.type=='transit') )
       setIsLoading(false);
@@ -60,17 +60,18 @@ export default function Cost_map(props) {
         </View>
       ):(
         <>
-        <AutoComplete setRegion={setRegion}/>
-        <MapView 
-          provider={PROVIDER_GOOGLE} 
-          region={region}
-          ref={mapView}
-          onPress={(e) =>handleMapPress(e.nativeEvent.coordinate)}
-          key="Gmap"
-          style={styles.map}
-        > 
-          {visible ? (<MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }}/>) : (<></>)}
-        </MapView>
+          <AutoComplete setRegion={setRegion}/>
+          <MapView 
+            provider={PROVIDER_GOOGLE} 
+            region={region}
+            ref={mapView}
+            onPress={(e) =>handleMapPress(e.nativeEvent.coordinate)}
+            key="Gmap"
+            style={styles.map}
+          > 
+            {visible ? (<MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }}/>) : (<></>)}
+          </MapView>
+          <Text>{region.latitude}</Text>
         </>
       )}
     </View>

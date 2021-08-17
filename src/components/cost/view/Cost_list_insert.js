@@ -8,13 +8,15 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
-  Alert,
   ScrollView
 } from "react-native";
+import { COST } from "../../../lib/types";
 import {Picker} from '@react-native-community/picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import uuid from "react-native-uuid";
 import Cost_map_coordinates from '../elements/Googlemap';
 import { getAllTravelList } from "../../../lib/api/travelList";
+import { addTravelBlock } from "../../../lib/api/travelBlock";
 
 export default function Cost_list_insert() {
   
@@ -22,7 +24,7 @@ export default function Cost_list_insert() {
   const [cost, setCost] = useState();
   const [dayList, setDayList] = useState(['출발 전']);
   const [day, setDay] = useState();
-  const [location, setLocation] = useState();
+  const [title, setTitle] = useState();
   const [type, setType] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [coordinate, setcoordinate] = useState();
@@ -58,6 +60,25 @@ export default function Cost_list_insert() {
     setIsLoading(false)
  }
 
+ const setInfo = async () => {
+  let obj = {
+    id: uuid.v4(), // uuid로
+    createdWhere: COST,
+    title: title,
+    time: day,
+    type: type,
+    cost: parseInt(cost.replace(/,/g, "")),
+    location: { latitude: coordinate.latitude, longitude: coordinate.longitude },
+  };
+
+  //파이어베이스 추가 + 로딩
+  await addTravelBlock(
+  "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+  "1627379541738",
+  obj
+  );
+ }
+
   useEffect(() => { 
     getInfo();    
   }, []);
@@ -67,8 +88,6 @@ export default function Cost_list_insert() {
       {isLoading ? (
         <Text>loading...</Text>
       ):(
-
-      
       <ScrollView style={styles.content}>
         <View style={[styles.box,styles.box1]}> 
           <Text style={styles.boxText}>금액</Text>
@@ -93,12 +112,12 @@ export default function Cost_list_insert() {
           </Picker>
         </View>
         <View style={[styles.box,styles.box3]}>
-          <Text style={styles.boxText}>장소명</Text>
+          <Text style={styles.boxText}>제목</Text>
           <TextInput
             style={styles.input}
-            onChangeText={setLocation}
-            placeholder="장소명을 입력하세요"
-            value={location}
+            onChangeText={setTitle}
+            placeholder="제목(장소명)을 입력하세요"
+            value={title}
           />
         </View>
         <View style={[styles.box,styles.box4]}>
@@ -161,12 +180,14 @@ export default function Cost_list_insert() {
             
           </Pressable>
         </View>
-        <Pressable
-          style={styles.pressableBtn}
-          onPress={() => console.log('hi')}
-        >
-            <Text style={styles.pressableBtnText}>저장</Text>
-        </Pressable>
+        <View style={[styles.box,styles.box6]}>
+          <Pressable
+            style={styles.pressableBtn}
+            onPress={() => setInfo()}
+          >
+              <Text style={styles.pressableBtnText}>저장</Text>
+          </Pressable>
+        </View>
       </ScrollView>
       )}
     </View>
@@ -177,19 +198,19 @@ export default function Cost_list_insert() {
 const styles = StyleSheet.create({
   container: {
    flex: 1,
-   paddingTop: 22,
    alignItems: "center",
    justifyContent: "center",
-   height: Dimensions.get('window').height-10,
-    width:Dimensions.get('window').width,
+   height: Dimensions.get('window').height,
+   width:Dimensions.get('window').width,
   },
   content: {
-    
   },
-  box:{
-    
+  box:{    
     width:Dimensions.get('window').width,
     padding:10,
+  },
+  box6:{
+    paddingBottom:50
   },
   boxText:{
     fontSize:20,

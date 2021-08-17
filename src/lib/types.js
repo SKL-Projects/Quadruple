@@ -4,6 +4,7 @@ export const START = "start";
 export const END = "end";
 
 export const TRAVEL = "travel";
+export const COST = "cost";
 
 export const detailTypes = {
    HOTEL: "hotel",
