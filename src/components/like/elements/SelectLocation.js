@@ -36,13 +36,6 @@ const styles = StyleSheet.create({
    headerText: {
       fontSize: 20,
    },
-   border: {
-      width: "90%",
-      borderWidth: 1,
-      borderRadius: 30,
-      borderColor: "gray",
-      padding: 10,
-   },
    addressContainer: {
       width: "90%",
       overflow: "scroll",

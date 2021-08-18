@@ -21,6 +21,7 @@ export const addLikeBlock = async (uid, planId, obj) => {
       return res;
    } catch (err) {
       console.log(err);
+      throw err;
    }
 };
 
@@ -33,5 +34,6 @@ export const removeLikeBlock = async (uid, planId, obj) => {
       return res;
    } catch (err) {
       console.log(err);
+      throw err;
    }
 };

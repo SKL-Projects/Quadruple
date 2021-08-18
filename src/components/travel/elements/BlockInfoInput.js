@@ -84,7 +84,6 @@ function BlockInfoInput({
             ]}>
             {label("예상 지출액")}
             <Input
-               placeholder="금액을 입력해주세요."
                value={ThousandSeperator(cost)}
                onChangeText={onChangeCost}
                errorMessage={errMsg.cost}

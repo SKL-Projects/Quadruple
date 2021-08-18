@@ -41,10 +41,16 @@ function LikeContainer({ navigation }) {
    useEffect(() => {
       const getLikeList = async () => {
          setLoading(true);
-         const res = await getLikeListApi(
-            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-            1627379541738
-         );
+         let res;
+         try {
+            res = await getLikeListApi(
+               "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+               1627379541738
+            );
+         } catch (err) {
+            setLoading(false);
+            return;
+         }
          setLikeList(res?.likes);
          //없으면 현재 위치로 region 정하기
          if (!res?.likes || res.likes.length === 0) {
@@ -86,11 +92,16 @@ function LikeContainer({ navigation }) {
    // 블록 삭제
    const onRemoveBlock = useCallback(async (item) => {
       setLoading(true);
-      await removeLikeBlock(
-         "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-         1627379541738,
-         item
-      );
+      try {
+         await removeLikeBlock(
+            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+            1627379541738,
+            item
+         );
+      } catch (err) {
+         setLoading(false);
+         return;
+      }
       setRefresh((prev) => prev + 1);
    }, []);
 

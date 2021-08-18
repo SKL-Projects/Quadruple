@@ -8,7 +8,7 @@ export const getPlans = async (uid, planId) => {
          .get();
       return res.data();
    } catch (err) {
-      console.log(err);
+      throw err;
    }
 };
 
@@ -20,7 +20,7 @@ export const addTravelBlock = async (uid, planId, obj) => {
          .update({ plans: fbStoreObj.FieldValue.arrayUnion(obj) });
       return res;
    } catch (err) {
-      console.log(err);
+      throw err;
    }
 };
 
@@ -32,7 +32,7 @@ export const removeTravelBlock = async (uid, planId, obj) => {
          .update({ plans: fbStoreObj.FieldValue.arrayRemove(obj) });
       return res;
    } catch (err) {
-      console.log(err);
+      throw err;
    }
 };
 
@@ -41,7 +41,7 @@ export const editTravelBlock = async (uid, planId, prevBlock, newBlock) => {
       await removeTravelBlock(uid, planId, prevBlock);
       await addTravelBlock(uid, planId, newBlock);
    } catch (err) {
-      console.log(err);
+      throw err;
    }
 };
 
@@ -54,6 +54,6 @@ export const changeSequence = async (uid, planId, data) => {
             plans: data,
          });
    } catch (err) {
-      console.log(err);
+      throw err;
    }
 };

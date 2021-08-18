@@ -42,13 +42,17 @@ function EditModalContainer({
          delete editElement.location;
          delete editElement.direction;
       }
-      await editTravelBlock(
-         "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-         1627379541738,
-         editElement,
-         { ...editElement, title: title, detailType: detailType, memo: memo }
-      );
-      setLoading(false);
+      try {
+         await editTravelBlock(
+            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+            1627379541738,
+            editElement,
+            { ...editElement, title: title, detailType: detailType, memo: memo }
+         );
+      } catch (err) {
+         setLoading(false);
+         return;
+      }
       setRefresh((prev) => prev + 1);
       close();
    };

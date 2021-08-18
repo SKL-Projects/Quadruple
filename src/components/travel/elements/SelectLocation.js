@@ -9,15 +9,13 @@ function SelectLocation({ region, errMsg }) {
                상단에서 추가하실 블록의 위치를 검색해주세요.
             </Text>
          </View>
-         <View style={styles.border}>
-            <View style={styles.addressContainer}>
-               <Text style={styles.addressText}>
-                  {region.formatted_address}
-               </Text>
-            </View>
-            <View style={styles.addressContainer}>
-               <Text style={styles.addressText}>{region.name}</Text>
-            </View>
+         <View style={styles.addressContainer}>
+            <Text style={styles.addressText}>
+               주소 : {region.formatted_address}
+            </Text>
+         </View>
+         <View style={styles.addressContainer}>
+            <Text style={styles.addressText}>상세주소 : {region.name}</Text>
          </View>
          {errMsg ? <Text style={styles.errMsg}>{errMsg}</Text> : <></>}
       </View>
@@ -39,15 +37,9 @@ const styles = StyleSheet.create({
    headerText: {
       fontSize: 20,
    },
-   border: {
-      width: "90%",
-      borderWidth: 1,
-      borderRadius: 30,
-      borderColor: "gray",
-      padding: 10,
-   },
    addressContainer: {
       width: "90%",
+      overflow: "scroll",
       height: 20,
       marginBottom: 20,
    },

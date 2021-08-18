@@ -26,7 +26,12 @@ function AddBlock({
          location: { ...region },
       };
       //파이어베이스 추가 + 로딩
-      await addLikeBlock("aT1JPMs3GXg7SrkRE1C6KZPJupu1", 1627379541738, obj);
+      try {
+         await addLikeBlock("aT1JPMs3GXg7SrkRE1C6KZPJupu1", 1627379541738, obj);
+      } catch (err) {
+         setLoading(false);
+         return;
+      }
       //리프레시
       onPressAddCancel();
       setRefresh((prev) => prev + 1);

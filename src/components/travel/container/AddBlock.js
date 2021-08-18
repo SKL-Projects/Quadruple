@@ -15,12 +15,19 @@ import { binarySearch } from "../../utils/lower_bound";
 
 // 메모, 예산 안함
 
-function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
+function AddBlock({
+   plans,
+   region,
+   setRegion,
+   onPressAddCancel,
+   setRefresh,
+   setLoading,
+}) {
    const [title, setTitle] = useState("");
    const [date, setDate] = useState(new Date());
    const [type, setType] = useState(WAYPOINT);
    const [detailType, setDetailType] = useState(0);
-   const [cost, setCost] = useState("0");
+   const [cost, setCost] = useState("");
    const [memo, setMemo] = useState("");
    const [selectedIds, setSelectedIds] = useState([]);
    const [errMsg, setErrMsg] = useState({ title: "", time: "" });
@@ -105,18 +112,24 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          title: title,
          time: date,
          type: WAYPOINT,
-         cost: parseInt(cost.replace(/,/g, "")),
+         cost: parseInt(cost.replace(/,/g, "")) || 0,
          memo: memo,
          detailType: detailType,
          location: { latitude: region.latitude, longitude: region.longitude },
       };
 
+      setLoading(true);
       //파이어베이스 추가 + 로딩
-      await addTravelBlock(
-         "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-         "1627379541738",
-         obj
-      );
+      try {
+         await addTravelBlock(
+            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+            1627379541738,
+            obj
+         );
+      } catch (err) {
+         setLoading(false);
+         return;
+      }
       //리프레시
       onPressAddCancel();
       setRefresh((prev) => prev + 1);
@@ -159,13 +172,23 @@ function AddBlock({ plans, region, setRegion, onPressAddCancel, setRefresh }) {
          time: new Date(first.time.getTime()),
          type: TRANSIT,
          detailType: detailType,
-         cost: parseInt(cost.replace(/,/g, "")),
+         cost: parseInt(cost.replace(/,/g, "")) || 0,
          memo: memo,
          priority: priority,
       };
 
+      setLoading(true);
       //파이어베이스 추가 + 로딩
-      await addTravelBlock("aT1JPMs3GXg7SrkRE1C6KZPJupu1", 1627379541738, obj);
+      try {
+         await addTravelBlock(
+            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+            1627379541738,
+            obj
+         );
+      } catch (err) {
+         setLoading(false);
+         return;
+      }
       //리프레시
       onPressAddCancel();
       setRefresh((prev) => prev + 1);

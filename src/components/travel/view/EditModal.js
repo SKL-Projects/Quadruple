@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import { Button, Input } from "react-native-elements";
-import { bindDetailTypes, WAYPOINT } from "../../../lib/types";
+import { bindDetailTypes, END, START, WAYPOINT } from "../../../lib/types";
 import CustomModalFooter from "../../elements/CustomModalFooter";
 import CustomModalHeader from "../../elements/CustomModalHeader";
 import CustomModal from "../../utils/CustomModal";
@@ -48,28 +48,33 @@ function EditModal({
                   errorMessage={errMsg}
                />
             </View>
-            <View style={styles.line}>
-               {label("세부타입")}
-               <FlatList
-                  data={bindDetailTypes[editElement.type === WAYPOINT ? 0 : 1]}
-                  keyExtractor={(item) => item.value}
-                  numColumns={3}
-                  columnWrapperStyle={{
-                     width: "100%",
-                     justifyContent: "space-evenly",
-                     marginBottom: 20,
-                  }}
-                  renderItem={({ item }) => (
-                     <Button
-                        title={item.name}
-                        buttonStyle={
-                           stylesFunc(detailType === item.value).buttonContainer
-                        }
-                        onPress={() => setDetailType(item.value)}
-                     />
-                  )}
-               />
-            </View>
+            {editElement.type !== START && editElement.type !== END && (
+               <View style={styles.line}>
+                  {label("세부타입")}
+                  <FlatList
+                     data={
+                        bindDetailTypes[editElement.type === WAYPOINT ? 0 : 1]
+                     }
+                     keyExtractor={(item) => item.value}
+                     numColumns={3}
+                     columnWrapperStyle={{
+                        width: "100%",
+                        justifyContent: "space-evenly",
+                        marginBottom: 20,
+                     }}
+                     renderItem={({ item }) => (
+                        <Button
+                           title={item.name}
+                           buttonStyle={
+                              stylesFunc(detailType === item.value)
+                                 .buttonContainer
+                           }
+                           onPress={() => setDetailType(item.value)}
+                        />
+                     )}
+                  />
+               </View>
+            )}
             <View style={styles.line}>
                {label("간단 메모")}
                <Input

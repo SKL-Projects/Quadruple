@@ -48,11 +48,13 @@ function TravelContainer({ route }) {
    useEffect(() => {
       const getTravel = async () => {
          setLoading(true);
-         const res = await getPlans(
-            "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-            1627379541738
-         );
-
+         let res;
+         try {
+            res = await getPlans("aT1JPMs3GXg7SrkRE1C6KZPJupu1", 1627379541738);
+         } catch (err) {
+            setLoading(false);
+            return;
+         }
          // timeStamp, geoPoint 데이터 preprocessing
          const processedDatas = res.plans.map((item) => {
             const todate = item.time.toDate();
@@ -91,9 +93,11 @@ function TravelContainer({ route }) {
             startPoint;
          bridgePlans.forEach((item, idx) => {
             if (transitIdx === -1) {
-               item.type === TRANSIT
-                  ? (transitIdx = idx)
-                  : (startPoint = item.location);
+               if (item.type === TRANSIT) {
+                  transitIdx = idx;
+               } else {
+                  startPoint = item.location;
+               }
             } else if (item.type === WAYPOINT || item.type === END) {
                let location = {
                   latitude: (startPoint.latitude + item.location.latitude) / 2,
@@ -104,6 +108,7 @@ function TravelContainer({ route }) {
                   bridgePlans[i].location = location;
                   bridgePlans[i].direction = [startPoint, item.location];
                }
+               startPoint = item.location;
                transitIdx = -1;
             }
          });
@@ -156,12 +161,16 @@ function TravelContainer({ route }) {
             };
 
             //date, location,
-            await changeSequence(
-               "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-               1627379541738,
-               originalData
-            );
-            setLoading(false);
+            try {
+               await changeSequence(
+                  "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+                  1627379541738,
+                  originalData
+               );
+            } catch (err) {
+               setLoading(false);
+               return;
+            }
             setRefresh((prev) => prev + 1);
          }
       },
@@ -173,12 +182,16 @@ function TravelContainer({ route }) {
       async (id, index) => {
          if (original[index].id === id) {
             setLoading(true);
-            await removeTravelBlock(
-               "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-               1627379541738,
-               original[index]
-            );
-            setLoading(false);
+            try {
+               await removeTravelBlock(
+                  "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+                  1627379541738,
+                  original[index]
+               );
+            } catch (err) {
+               setLoading(false);
+               return;
+            }
             setRefresh((prev) => prev + 1);
          }
       },
@@ -239,6 +252,7 @@ function TravelContainer({ route }) {
                   onDragEnd={onDragEnd}
                   onRemoveBlock={onRemoveBlock}
                   onPressListItem={onPressListItem}
+                  setLoading={setLoading}
                />
                {visibleEditModal && (
                   <EditModalContainer

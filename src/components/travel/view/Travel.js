@@ -23,6 +23,7 @@ function Travel({
    onDragEnd,
    onRemoveBlock,
    onPressListItem,
+   setLoading,
 }) {
    const [curSnap, setCurSnap] = useState(1);
    const heightAim = useRef(new Animated.Value(getMapHeight(curSnap))).current;
@@ -60,6 +61,7 @@ function Travel({
                   setRegion={setRegion}
                   onPressAddCancel={onPressAddCancel}
                   setRefresh={setRefresh}
+                  setLoading={setLoading}
                />
             ) : (
                <Panel
