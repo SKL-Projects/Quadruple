@@ -4,7 +4,7 @@ import { Button } from "react-native-elements";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { hhmm, yyyymmdd } from "../../utils/DateString";
 
-function SelectDate({ date, setDate, errMsg, setErrMsg }) {
+function SelectDate({ date, setDate, errMsg, setErrMsg, start, end }) {
    const [showDatePicker, setShowDatePicker] = useState(false);
    const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -56,6 +56,8 @@ function SelectDate({ date, setDate, errMsg, setErrMsg }) {
                mode="date"
                is24Hour={true}
                onChange={onChange}
+               maximumDate={end}
+               minimumDate={start}
             />
          )}
 

@@ -8,6 +8,8 @@ import { graph } from "../../utils/Graph";
 import { LIST_ITEM_HEIGHT } from "./itemHeight";
 
 function BlockSelect({ plans, selectedIds, setSelectedIds }) {
+   // 블록 누르면 누른 곳과 그 아래의 border가 색깔이 변함. 맨 아래 누르면 위에거랑 됨
+   // 다시 누르면 취소됨
    const onPressListItem = (idx) => {
       let isLast = idx === plans.length - 1;
 
@@ -62,6 +64,8 @@ function BlockSelect({ plans, selectedIds, setSelectedIds }) {
       </View>
    );
 }
+
+// 선택되면 isSelected = true가 되어 border가 변화됨
 const stylesFunc = (isSelected) =>
    StyleSheet.create({
       listItem: {
@@ -104,7 +108,6 @@ const styles = StyleSheet.create({
    dayHeader: {
       fontSize: 20,
    },
-   graphContainer: {},
 });
 
 export default BlockSelect;

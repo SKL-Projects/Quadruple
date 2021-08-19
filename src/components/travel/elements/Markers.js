@@ -40,7 +40,7 @@ function Markers({ markers, interpolations, onPressMarker }) {
                      </>
                   ) : (
                      <>
-                        <View style={styles.line}>
+                        <View>
                            <Text></Text>
                         </View>
                      </>

@@ -17,17 +17,19 @@ function Direction({ region, markers }) {
       setLoading(true);
       setShowPoly(false);
       if (region.idx !== undefined) {
+         // 마지막
          if (region.idx === markers.length - 1) {
             setLast(true);
             return;
          }
+         // 경로일때, 마커에 이미 있는 direction을 그냥 집어넣음.
          if (markers[region.idx].type === TRANSIT) {
             setCoords(markers[region.idx].direction);
          } else {
-            //다음이 transit이면 가까운 다음 waypoint
             const next = markers[region.idx + 1];
             const origin = markers[region.idx].location;
 
+            //다음이 transit이면, 이동블록마커에 저장되어있는 direction을 이용하여 경로 표시
             const dest =
                next.type === TRANSIT ? next.direction[1] : next.location;
             setCoords([origin, dest]);
@@ -36,6 +38,8 @@ function Direction({ region, markers }) {
       setLoading(false);
    }, [region, markers]);
 
+   // 마지막이거나 로딩중이면 안보이게 함
+   // 경로를 찾을 수 없을때는 일직선으로 긋게함.
    return (
       <>
          {!last || !loading ? (

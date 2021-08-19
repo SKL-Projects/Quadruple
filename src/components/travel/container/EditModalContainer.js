@@ -31,6 +31,8 @@ function EditModalContainer({
    const onChangeMemo = useCallback((v) => {
       setMemo(v);
    }, []);
+
+   // 수정 등록.
    const editSubmit = async () => {
       if (title.length === 0) {
          setErrMsg("최소 한글자를 적어주세요.");

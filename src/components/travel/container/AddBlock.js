@@ -24,7 +24,7 @@ function AddBlock({
    setLoading,
 }) {
    const [title, setTitle] = useState("");
-   const [date, setDate] = useState(new Date());
+   const [date, setDate] = useState(plans[0].time);
    const [type, setType] = useState(WAYPOINT);
    const [detailType, setDetailType] = useState(0);
    const [cost, setCost] = useState("");
@@ -83,7 +83,7 @@ function AddBlock({
          return;
       }
 
-      // 시작 전, 끝 후, 겹치는 시간 있는지 확인
+      // 시작 전, 끝 후인지
       date.setSeconds(0);
       date.setMilliseconds(0);
       let dateTime = date.getTime();
@@ -97,6 +97,7 @@ function AddBlock({
          }));
          return;
       }
+      // 겹치는 시간 있는지 확인
       const idx = binarySearch(plans, dateTime);
       if (plans[idx].time.getTime() === dateTime) {
          setErrMsg((prev) => ({
@@ -217,6 +218,8 @@ function AddBlock({
                   setDate={setDate}
                   errMsg={errMsg.time}
                   setErrMsg={setErrMsg}
+                  start={plans[0].time}
+                  end={plans[plans.length - 1].time}
                />
                <SelectLocation region={region} errMsg={errMsg.region} />
             </>
@@ -232,7 +235,7 @@ function AddBlock({
          )}
          <View style={styles.completeButtonContainer}>
             <Button
-               containerStyle={styles.buttonContainerStyle}
+               containerStyle={styles.buttonContainer}
                title="완료"
                titleStyle={{ fontSize: 20 }}
                type="clear"
@@ -251,11 +254,14 @@ const styles = StyleSheet.create({
       marginBottom: 60,
       backgroundColor: theme.color.white,
    },
+   label: {
+      fontSize: 18,
+   },
    completeButtonContainer: {
       width: "100%",
       alignItems: "center",
    },
-   buttonContainerStyle: {
+   buttonContainer: {
       width: 100,
    },
    line: {

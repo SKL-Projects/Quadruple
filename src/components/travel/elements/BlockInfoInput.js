@@ -23,6 +23,19 @@ function BlockInfoInput({
       []
    );
 
+   // 세부타입 버튼. 눌렀을때 detailType === item.value 가 true가 되어 색상이 변경됨.
+   const detailTypeButton = useCallback(
+      (item, idx) => (
+         <Button
+            key={`${item.name}_${idx}`}
+            title={item.name}
+            buttonStyle={stylesFunc(detailType === item.value).buttonContainer}
+            onPress={() => setDetailType(item.value)}
+         />
+      ),
+      [detailType]
+   );
+
    return (
       <View>
          <View style={styles.line}>
@@ -57,25 +70,16 @@ function BlockInfoInput({
          </View>
          <View style={styles.line}>
             {label("세부타입")}
-            <FlatList
-               data={bindDetailTypes[type === WAYPOINT ? 0 : 1]}
-               keyExtractor={(item) => item.value}
-               numColumns={3}
-               columnWrapperStyle={{
-                  width: "100%",
-                  justifyContent: "space-evenly",
-                  marginBottom: 20,
-               }}
-               renderItem={({ item }) => (
-                  <Button
-                     title={item.name}
-                     buttonStyle={
-                        stylesFunc(detailType === item.value).buttonContainer
-                     }
-                     onPress={() => setDetailType(item.value)}
-                  />
-               )}
-            />
+            <View style={styles.detailTypeLine}>
+               {bindDetailTypes[type === WAYPOINT ? 0 : 1]
+                  .slice(0, 3)
+                  .map((item, idx) => detailTypeButton(item, idx))}
+            </View>
+            <View style={styles.detailTypeLine}>
+               {bindDetailTypes[type === WAYPOINT ? 0 : 1]
+                  .slice(3, 6)
+                  .map((item, idx) => detailTypeButton(item, idx))}
+            </View>
          </View>
          <View
             style={[
@@ -117,6 +121,12 @@ const styles = StyleSheet.create({
    },
    detailType: {
       marginBottom: 10,
+   },
+   detailTypeLine: {
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-evenly",
+      marginBottom: 20,
    },
 });
 

@@ -51,7 +51,7 @@ function Travel({
             style={[
                styles.panel,
                {
-                  height: getSnapHeight(curSnap),
+                  height: getSnapHeight(curSnap), // 높이는 이 함수랑, getMapHeight 함수만 조절 하면 됨. 현재 snap에 맞춰서 높이 반환함
                },
             ]}>
             {onAddBlock ? (
@@ -88,6 +88,8 @@ function Travel({
          </View>
       );
    };
+
+   // 헤더 손잡이
    const renderHeader = useCallback(
       () => (
          <View style={styles.header}>

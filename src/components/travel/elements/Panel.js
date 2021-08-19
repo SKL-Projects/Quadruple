@@ -23,16 +23,21 @@ function Panel({
       dateHeader = item.date;
       return (
          <>
-            {isDifferent && !isActive && (
-               <>
-                  <View style={styles.dayContainer} />
-                  <Text style={styles.dayHeader}>{item.date}</Text>
-               </>
-            )}
+            {
+               // 일별로 분리한 것중 가장 위에 있는 것만 날짜랑 같이 렌더함.
+               // 길게 눌러서 띄었을때는 안보이도록 함
+               // 맨 첫번째 날짜는 blank를 안주기 위해 flattlist 의 header로 줌.
+               isDifferent && !isActive && (
+                  <>
+                     <View style={styles.dayBlank} />
+                     <Text style={styles.dayHeader}>{item.date}</Text>
+                  </>
+               )
+            }
             <ListItem.Swipeable
                containerStyle={[
                   styles.listItem,
-                  stylesFunc(isActive).listItemElevation,
+                  stylesFunc(isActive).listItemElevation, // 길게 눌러서 띄었을때 그림자 강화
                ]}
                underlayColor="white"
                onPress={() =>
@@ -99,7 +104,7 @@ const stylesFunc = (isActive) =>
    });
 
 const styles = StyleSheet.create({
-   dayContainer: {
+   dayBlank: {
       height: 80,
    },
    dayHeader: {

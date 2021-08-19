@@ -4,7 +4,7 @@ import { Button, Input } from "react-native-elements";
 import { bindDetailTypes, END, START, WAYPOINT } from "../../../lib/types";
 import CustomModalFooter from "../../elements/CustomModalFooter";
 import CustomModalHeader from "../../elements/CustomModalHeader";
-import CustomModal from "../../utils/CustomModal";
+import CustomModal from "../../elements/CustomModal";
 
 function EditModal({
    visible,
@@ -17,6 +17,8 @@ function EditModal({
    errMsg,
    editSubmit,
 }) {
+   // react-native-modals 에서 쓰이는 모든 props 쓸 수 있음.
+   // 여기선 간단히 텍스트랑 버튼을 경우 함수만 넣어둠
    const titleProps = { title: "재생목록 추가", hasTitleBar: true };
    const footerButtons = [
       {
@@ -28,10 +30,14 @@ function EditModal({
          onPress: editSubmit,
       },
    ];
+
+   // 자주쓰이는 라벨을 위해 따로 함수를 빼줌.
    const label = useCallback(
       (content) => <Text style={styles.label}>{content}</Text>,
       []
    );
+
+   // 타입이 출발, 끝이면 세부타입은 보여주지 않음
    return (
       <CustomModal
          visible={visible}
