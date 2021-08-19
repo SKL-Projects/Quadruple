@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal, Pressable  } from 'react-native';
-import {expected_price} from './mapData';
+import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput  } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Cost_list_insert from './Cost_list_insert'
+import { editTravelBlock } from "../../../lib/api/travelBlock";
+import { Snackbar } from 'react-native-paper';
 
 export default function Cost_list({fb_plans,fb_infos}) {
 
   const [cost, setCost] = useState(0);
-  const [currentItem, setCurrentItem] = useState();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [snackVisible, setSnackVisible] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
 
   const images = {
+    start:'arrow-forward-outline' ,
+    end:'arrow-back-outline' ,
     hotel:'home-outline' ,
-    airplane:'airplane-outline' ,
-    food:'fast-food-outline' ,
+    airline:'airplane-outline' ,
+    food:'restaurant-outline' ,
     shopping:'cart-outline' ,
     attraction:'camera-outline', 
     activity:'body-outline', 
@@ -23,10 +25,40 @@ export default function Cost_list({fb_plans,fb_infos}) {
     boat:'boat-outline',
     car:'car-outline',
     taxi:'car-sport-outline',
-    etc:'ellipsis-horizontal-outline' ,
+    etc_waypoint:'ellipsis-horizontal-outline' ,
   }
   
-  
+  const editCost = () =>{ 
+    if(isEditable){
+      setIsEditable(false)
+    }  
+    else
+      setIsEditable(true)
+
+  }
+
+  const makeAmountCost = () =>{
+    setCost(0)
+    {fb_plans.map((data) => {
+      setCost((cost) => cost+data.cost)      
+    })}
+  }
+
+  const submitCost = async (item,c,i) => {
+    if(c.length >0){
+      const intCost = parseInt(c)
+      await editTravelBlock(
+        "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+        1627379541738,
+        item,
+        { ...item, cost:intCost }
+        
+      );
+      fb_plans[i].cost = intCost
+      makeAmountCost()
+      setSnackVisible(true)
+    }
+ };
 
   const makeComma = (num) => {
     var len, point, str;        
@@ -44,9 +76,7 @@ export default function Cost_list({fb_plans,fb_infos}) {
   }
 
   useEffect(() => {
-    {fb_plans.map((data) => {
-      setCost((cost) => cost+data.cost)      
-    })}
+    makeAmountCost();
   }, []);
 
   return (
@@ -54,12 +84,17 @@ export default function Cost_list({fb_plans,fb_infos}) {
       <ScrollView  style={styles.content}>
         <View style={styles.header}>
           <View style={styles.headerTitle}>
-            <Text style={styles.headerTitleText}>'여행 제목'의 소비</Text>
+            <Text style={styles.headerTitleText}>'{fb_infos.title}'의 소비</Text>
+            <View style={styles.itemEdit}>                
+              <TouchableOpacity onPress={() => editCost()}>
+                <Text style={styles.itemDayText2}>{isEditable ? '확인' : '편집'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.headerCost}>
             <View style={styles.headerCost1}>
               <Text style={styles.headerCostText1_1}>{makeComma(cost)}원</Text>
-              {cost>expected_price ? (
+              {cost>fb_infos.expectedCost ? (
                 <Text style={[styles.headerCostText1_2,styles.text_blue]}>{makeComma(Math.abs(cost-fb_infos.expectedCost))}원 초과</Text>
               ) : (
                 <Text style={[styles.headerCostText1_2,styles.text_red]}>{makeComma(Math.abs(cost-fb_infos.expectedCost))}원 남음</Text>
@@ -72,172 +107,217 @@ export default function Cost_list({fb_plans,fb_infos}) {
         <View style={styles.list}>
           {fb_plans.map((item,i)=>(
             <>
-              {item.day == 0 || fb_plans[i]?.time.getDate() != fb_plans[i-1]?.time.getDate() ? (
+              {(item.day == 0 || fb_plans[i]?.time.getDate() != fb_plans[i-1]?.time.getDate()) && (
                 <View style={styles.itemDay} key={'day'+i}>
                   <Text style={styles.itemDayText}>{item.time.getMonth() + 1}월 {item.time.getDate()}일</Text>
                 </View>  
-              ) : (
-                <View></View>
               )}
-              <TouchableOpacity
+              <View
                 style={styles.pressableBtn}
-                onPress={() =>[setCurrentItem(item),setModalVisible(true)]}
                 key={i}
                 style={styles.item}
               >       
                 <View style={styles.item_left}>
-                  <Icon name={images[item.detailType]} size={30} color="#753BBD" style={styles.icon}/>
+                  <Icon name={images[item.detailType]} size={35} color="#753BBD" style={styles.icon}/>
                 </View>
                 <View style={styles.item_right}>
-                  <View style={styles.item1}>
-                    <Text>{item.title}</Text>
-                  </View>
+                  {!isEditable && (
+                    <View style={styles.item1}>
+                      <Text style={styles.item1Text}>{item.title}</Text>
+                    </View>
+                  )}
                   <View style={styles.item2}>
-                    <Text style={styles.item2Text}>{makeComma(item.cost)}원</Text>
+                    {isEditable ?
+                      <TextInput 
+                        placeholder={makeComma(item.cost)}
+                        style={[styles.item2Text,styles.item2InputTextType1,
+                        ]}
+                        editable={isEditable}
+                        onEndEditing={event => submitCost(item,event.nativeEvent.text,i)}
+                        keyboardType="numeric"
+                      /> :
+                      <TextInput 
+                        value={makeComma(item.cost)}
+                        style={[styles.item2Text,styles.item2InputTextType2
+                        ]}
+                        editable={isEditable}
+                      />
+                    }
+                    <Text style={styles.item2Text}>&nbsp;원</Text>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </View>
             </>
           ))}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View>
-              <View style={styles.modalView}>
-                <Cost_list_insert item={currentItem}/>
-              </View>
-            </View>
-          </Modal>
         </View>
       </ScrollView >
+      <Snackbar
+        visible={snackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        duration={500}
+      >
+        수정되었습니다
+      </Snackbar>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-   flex: 1,
-   paddingTop: 22,
-   alignItems: "center",
-   justifyContent: "center",
+    flex: 1,
+    paddingTop: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
-    height: Dimensions.get('window').height-90,
-    width:Dimensions.get('window').width,
-    position:"absolute",
-    bottom:5
+    height: Dimensions.get('window').height - 90,
+    width: Dimensions.get('window').width,
+    position: 'absolute',
+    bottom: 5,
+    backgroundColor: '#e9e9e9',
   },
-  header:{
-    flex:1,
-    padding:10,
-    
+  header: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.84,
+    elevation: 10,
   },
-  headerTitle:{
-    flex:1,
-  },
-  headerTitleText:{
-    fontSize:25,
-    fontWeight:'bold',
-  },
-  headerCost:{
-    flex:2,
-    marginLeft:10,
-    paddingTop:5,
-    paddingBottom:5,
-  },
-  headerCost1:{
+  headerTitle: {
+    flex: 1,
     flexDirection: 'row',
   },
-  headerCostText1_1:{
-    fontSize:30,
-    fontWeight:'bold',
-    flex:1.5,
+  itemEdit: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingRight: 10,
   },
-  headerCostText1_2:{
-    fontSize:20,
-    fontWeight:'bold',
-    flex:1,
+  headerTitleText: {
+    fontSize: 25,
+    fontFamily: 'Font',
   },
-  text_red:{
-    color:'red'
+  headerCost: {
+    flex: 2,
+    marginLeft: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
-  text_blue:{
-    color:'blue'
+  headerCost1: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  headerCostText2:{
-    fontSize:15,
-    color:'#753BBD',
+  headerCostText1_1: {
+    fontSize: 30,
+    flex: 1.5,
+    fontFamily: 'Font',
   },
-  line:{
-    flex:0.1,
-    backgroundColor:"#c8c8c8"
+  headerCostText1_2: {
+    fontSize: 20,
+    fontFamily: 'Font',
+    flex: 1,
   },
-  list:{
-    flex:3,
-    paddingTop:20,
-    padding:10
+  text_red: {
+    color: 'red',
   },
-  itemDay:{
+  text_blue: {
+    color: 'blue',
+  },
+  headerCostText2: {
+    fontSize: 15,
+    color: '#753BBD',
+    fontFamily: 'Font',
+  },
+  line: {
+    flex: 0.1,
+    backgroundColor: '#e9e9e9',
+  },
+  list: {
+    flex: 3,
+    paddingTop: 20,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.84,
+    elevation: 10,
+  },
+  itemDay: {
     padding: 10,
   },
-  itemDayText:{
+  itemDayText: {
     fontSize: 20,
-    fontWeight:'bold',
+    fontFamily: 'Font',
   },
-  item:{
-    height:60,
-    paddingTop:10,
-    paddingBottom:10,
-    marginLeft:10,
+  itemDayText2: {
+    fontSize: 18,
+    fontFamily: 'Font',
+    textAlign: 'right',
+    color: '#a0a0a0',
+  },
+  item: {
+    height: 85,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginLeft: 10,
     flexDirection: 'row',
   },
-  item_left:{
-    flex:1,
-    alignItems: "center",
-   justifyContent: "center",
+  item_left: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  item_right:{
-    flex:9
+  item_right: {
+    flex: 9,
   },
-  icon:{
-    position:"relative",
-    top:5
+  icon: {
+    position: 'relative',
+    right: 5,
   },
   item1: {
-    flex:1,
+    flex: 1.3,
     padding: 5,
+    height:25,
     fontSize: 18,
-    textAlign:'left',
-    fontWeight:'bold'
+    textAlign: 'left',
+    fontWeight: 'bold',
+  },
+  item1Text: {
+    fontFamily: 'Font',
+    fontSize: 20,
   },
   item2: {
-    flex:1,
+    flex: 1,
     padding: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  item2Text: {
+    fontFamily: 'Font',
     fontSize: 15,
   },
-  item2Text:{
-    fontWeight:'bold'
+  item2InputTextType1: {
+    width: 80,
+    height: 40,
+    paddingLeft: 5,
+    borderWidth: 1,
+    color: '#bdbdbd',
   },
-  modalView: {
-    height: Dimensions.get('window').height,
-    width:Dimensions.get('window').width,
-    zIndex:2,
-    backgroundColor:'#ffffff'
-  },
-  pressableBtn_hide: {
-    zIndex:2,
-    position:'absolute',
-    bottom:30,
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  pressableBtn_hide1: {
-    left:20
+  item2InputTextType2: {
+    borderWidth: 0,
+    color: '#000000',
   },
 });

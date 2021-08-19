@@ -9,6 +9,7 @@ function CostContainer({ navigation }) {
    const [infos, setInfos] = useState({}); // 날짜별로 그룹지어진 블록등
    const [plans, setPlans] = useState({}); // 날짜별로 그룹지어진 블록등
    const [loading, setLoading] = useState(true);
+   const [refresh, setRefresh] = useState(0); // 블록 다시 받아오기
    const [region, setRegion] = useState({
       // 현재 보여주는 지역
       latitude: 0,
@@ -19,7 +20,6 @@ function CostContainer({ navigation }) {
    LogBox.ignoreLogs(['Setting a timer']);
    const getTravel = async () => {
       const travel = await getAllTravelList("aT1JPMs3GXg7SrkRE1C6KZPJupu1");
-
       // timeStamp, geoPoint 데이터 preprocessing
       const datas = travel[0].plans.plans.map((item) => {
          return {
@@ -87,6 +87,7 @@ function CostContainer({ navigation }) {
                plans={plans}
                region={region}
                infos={infos}
+               setRefresh={setRefresh}
             />
          )}
       </>

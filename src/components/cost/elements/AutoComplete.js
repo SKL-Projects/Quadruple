@@ -17,13 +17,15 @@ export default function AutoComplete( props ) {
           key: GOOGLE_PLACES_API_KEY,
           language: 'ko', // language of the results
         }}
-        onPress={(data, details = null) => {
+        onPress={(data, details) => {
+          console.log(details)
           const pos = {
             latitude: details.geometry.location.lat,
             longitude: details.geometry.location.lng,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           }
+          
           props.setRegion(pos);                    
         }}
         fetchDetails={true}
@@ -37,8 +39,8 @@ const styles = StyleSheet.create({
   autoCompleteContainer:{
     flex: 1,
     position:'absolute',
-    top:10,
+    top:15,
     zIndex:999,
-    width:'95%'
+    width:'90%'
   },
 });

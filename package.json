@@ -22,6 +22,7 @@
       "expo": "~42.0.0",
       "expo-application": "^3.2.0",
       "expo-auth-session": "^3.3.1",
+      "expo-font": "^9.2.1",
       "expo-image-picker": "~10.2.2",
       "expo-linear-gradient": "^9.2.0",
       "expo-location": "^12.1.2",
@@ -45,12 +46,17 @@
       "react-native-modals": "^0.22.3",
       "react-native-neomorph-shadows": "^1.1.2",
       "react-native-pager-view": "^5.2.1",
+      "react-native-paper": "^4.9.2",
       "react-native-reanimated": "~2.2.0",
       "react-native-safe-area-context": "3.2.0",
       "react-native-screens": "~3.4.0",
       "react-native-scroll-into-view": "^2.0.1",
       "react-native-simple-select-button": "^0.0.6",
+<<<<<<< HEAD
       "react-native-swiper": "^1.6.0",
+=======
+      "react-native-snackbar": "^2.4.0",
+>>>>>>> feature/14
       "react-native-uuid": "^2.0.1",
       "react-native-vector-icons": "^8.1.0",
       "react-native-web": "~0.13.12",

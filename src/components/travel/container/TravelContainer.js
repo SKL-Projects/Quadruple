@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Travel from "../view/Travel";
 import LottieView from "lottie-react-native";
-import { Keyboard, View } from "react-native";
+import { Keyboard, View,LogBox } from "react-native";
 import EditModalContainer from "./EditModalContainer";
 import { END, TRANSIT, WAYPOINT } from "../../../lib/types";
 import {
@@ -22,6 +22,7 @@ function TravelContainer({ route }) {
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
    });
+   LogBox.ignoreLogs(['Setting a timer']);
    const [onAddBlock, setOnAddBlock] = useState(false); // 블록 추가 화면인지
    const [refresh, setRefresh] = useState(0); // 블록 다시 받아오기
    const [visibleEditModal, setVisibleEditModal] = useState(false); // 수정 모달 띄우기
