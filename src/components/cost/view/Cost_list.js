@@ -107,12 +107,10 @@ export default function Cost_list({fb_plans,fb_infos}) {
         <View style={styles.list}>
           {fb_plans.map((item,i)=>(
             <>
-              {item.day == 0 || fb_plans[i]?.time.getDate() != fb_plans[i-1]?.time.getDate() ? (
+              {(item.day == 0 || fb_plans[i]?.time.getDate() != fb_plans[i-1]?.time.getDate()) && (
                 <View style={styles.itemDay} key={'day'+i}>
                   <Text style={styles.itemDayText}>{item.time.getMonth() + 1}월 {item.time.getDate()}일</Text>
                 </View>  
-              ) : (
-                <View></View>
               )}
               <View
                 style={styles.pressableBtn}

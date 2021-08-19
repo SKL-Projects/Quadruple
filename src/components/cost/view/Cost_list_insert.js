@@ -33,11 +33,11 @@ export default function Cost_list_insert({parent_setModalVisible}) {
     
   const images = [
     {label:'home-outline',value:'hotel',text:'숙소'},
-    {label:'airplane-outline',value:'airline',text:'비행'},
     {label:'restaurant-outline',value:'food',text:'식당'},
     {label:'cart-outline',value:'shopping',text:'쇼핑'},
     {label:'camera-outline',value:'attraction',text:'관광'},
     {label:'body-outline',value:'activity',text:'액티비티'},
+    {label:'airplane-outline',value:'airline',text:'비행'},
     {label:'train-outline',value:'train',text:'기차'},
     {label:'subway-outline',value:'subway',text:'지하철'},
     {label:'walk-outline',value:'walking',text:'걷기'},
