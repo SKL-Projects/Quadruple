@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
-import CustomModal from "../../utils/CustomModal";
+import CustomModal from "../../elements/CustomModal";
 import LottieView from "lottie-react-native";
 
 function RemoveUserModal({

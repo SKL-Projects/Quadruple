@@ -6,7 +6,7 @@ import {
    ModalFooter,
    ModalTitle,
 } from "react-native-modals";
-import CustomModal from "../../utils/CustomModal";
+import CustomModal from "../../elements/CustomModal";
 
 function VerifyEmailModal({ visible, onCloseSentEmail }) {
    const title = <ModalTitle title="안내" hasTitleBar />;
