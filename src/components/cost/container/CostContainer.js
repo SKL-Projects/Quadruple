@@ -87,6 +87,7 @@ function CostContainer({ navigation }) {
                plans={plans}
                region={region}
                infos={infos}
+               setRefresh={setRefresh}
             />
          )}
       </>

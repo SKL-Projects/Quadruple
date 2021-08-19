@@ -19,9 +19,9 @@ export default function Cost({
   navigation,
   plans,
   region,
-  infos
-  }
-){
+  infos,
+  setRefresh
+  }){
   const [isLoading, setIsLoading] = useState(true);
   const [p, setP] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -87,7 +87,7 @@ export default function Cost({
             >
               <View>
                 <View style={styles.modalView}>
-                  <Cost_list_insert/>
+                  <Cost_list_insert parent_setModalVisible={setModalVisible}/>
                 </View>
               </View>
             </Modal>
