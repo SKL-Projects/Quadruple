@@ -54,6 +54,7 @@ export default function Cost({
               <Cost_map               
                 fb_region={region}              
                 fb_plans={plans}
+                fb_infos={infos}
               />
             )}
             <View style={styles.selector}>

@@ -112,9 +112,9 @@ export default function Cost_list({fb_plans,fb_infos}) {
                   <Text style={styles.itemDayText}>{item.time.getMonth() + 1}월 {item.time.getDate()}일</Text>
                 </View>  
               )}
-              <View
+              <TouchableOpacity
                 style={styles.pressableBtn}
-                key={i}
+                key={i.toString()}
                 style={styles.item}
               >       
                 <View style={styles.item_left}>
@@ -146,7 +146,7 @@ export default function Cost_list({fb_plans,fb_infos}) {
                     <Text style={styles.item2Text}>&nbsp;원</Text>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             </>
           ))}
         </View>

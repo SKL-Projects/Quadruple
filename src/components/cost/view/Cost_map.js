@@ -16,13 +16,13 @@ const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 
-export default function Cost_map({fb_region,fb_plans}) {
+export default function Cost_map({fb_region,fb_plans,fb_infos}) {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
   const [x, setX] = useState(0);
   const [dis, setDis] = useState([]);
   const [dayCost, setDayCost] = useState(0);
-  const [leftCost, setLeftCost] = useState([expected_price-fb_plans[0].cost]);
+  const [leftCost, setLeftCost] = useState([fb_infos.expectedCost-fb_plans[0].cost]);
   
 
   const mapView = React.createRef();   
@@ -166,15 +166,14 @@ export default function Cost_map({fb_region,fb_plans}) {
             ref={mapView}
             key="Gmap"
             style={styles.map}>
-            {markers.map((marker, index) => {
+            {markers.filter((x) => x.location != null).map((marker, index) => {
               const scaleStyle = {
                 transform: [{scale: interpolations[index].scale,},],
-              };
-                
+              };              
               return (
                 <MapView.Marker key={index} coordinate={marker.location} onPress={(e)=>onMarkerPress(e)} style={[{opacity:dis[index]},styles.markerWrap]} >
                   <Animated.View 
-                    style={ scaleStyle}
+                    style={scaleStyle}
                   >
                     <ImageBackground source={require('../../../../assets/map_marker.png')} resizeMode="contain" style={styles.marker}>
                       <Text style={styles.markerText}>&nbsp;{makeComma(marker.cost)}&nbsp;</Text>

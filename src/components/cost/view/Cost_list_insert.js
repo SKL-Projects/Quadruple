@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Alert,
   ScrollView
 } from "react-native";
 import { COST } from "../../../lib/types";
@@ -29,7 +30,7 @@ export default function Cost_list_insert({parent_setModalVisible}) {
   const [memo,setMemo] = useState('');
   const [type, setType] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [coordinate, setcoordinate] = useState('');  
+  const [coordinate, setcoordinate] = useState({latitude:null,longitude:null});  
     
   const images = [
     {label:'home-outline',value:'hotel',text:'숙소'},
@@ -52,34 +53,49 @@ export default function Cost_list_insert({parent_setModalVisible}) {
 
     let startDate = info[0].info.departTime.toDate()
     let endDate = info[0].info.arrivalTime.toDate()
-    while(startDate <= endDate){
-      const day = startDate.toISOString().split("T")[0]
-      setDayList(dayList => [...dayList,(day[5]=='0' ? day.substring(6,7) : day.substring(5,7)) +'월 '+day.substring(8,10)+'일']);
-		  startDate.setDate(startDate.getDate() + 1);
-    }
+    setDay(startDate)
+    setDayList([startDate,endDate])
     setIsLoading(false)
  }
 
- const setInfo = async () => {
-  let obj = {
-    id: uuid.v4(), // uuid로
-    createdWhere: COST,
-    title: title,
-    time: day,
-    memo:memo,
-    detailType: type,
-    cost: parseInt(cost.replace(/,/g, "")),
-    location: { latitude: coordinate.latitude, longitude: coordinate.longitude },
-  };
+  const setInfo = async () => {
+    let obj = {
+      id: uuid.v4(), // uuid로
+      createdWhere: COST,
+      title: title,
+      time: day,
+      memo:memo,
+      detailType: type,
+      cost: parseInt(cost.replace(/,/g, "")),
+      location: { latitude: coordinate.latitude, longitude: coordinate.longitude },
+    };
 
-  //파이어베이스 추가 + 로딩
-  await addTravelBlock(
-    "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
-    "1627379541738",
-    obj
-  );
-  parent_setModalVisible(false);
- }
+    if (cost.length === 0 ){
+      Alert.alert('', '금액을 입력해주세요', [{ text: '확인' }]);
+      this.scrollView.scrollTo({y: 0 });
+    }
+    else if (title.length === 0){
+      Alert.alert('', '제목을 입력해주세요', [{ text: '확인' }]);
+      this.scrollView.scrollTo({y: 0 });
+    }
+    else if (day === dayList[0]){
+      Alert.alert('', '날짜를 입력해주세요', [{ text: '확인' }]);
+      this.scrollView.scrollTo({y: 0 });
+    }
+    else if (type.length === 0){
+      Alert.alert('', '타입을 선택해주세요', [{ text: '확인' }]);
+      this.scrollView.scrollTo({y: 100 });
+    }
+    else{
+      //파이어베이스 추가 + 로딩
+      await addTravelBlock(
+        "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+        "1627379541738",
+        obj
+      );
+      parent_setModalVisible(false);
+    }
+  }
 
   useEffect(() => { 
     getInfo();    
@@ -114,8 +130,8 @@ export default function Cost_list_insert({parent_setModalVisible}) {
               <SelectDate
                 date={day}
                 setDate={setDay}
-                startDate={new Date('2021-11-07')}
-                endDate={new Date('2021-11-28')}
+                startDate={dayList[0]}
+                endDate={dayList[1]}
               />
           </View>
           
