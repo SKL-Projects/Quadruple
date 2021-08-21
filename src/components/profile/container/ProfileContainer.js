@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Profile from "../view/Profile";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -9,10 +9,12 @@ import {
 import PwUpdateContainer from "./PwUpdateContainer";
 import ReauthenticateModalContainer from "./ReauthenticateModalContainer";
 import RemoveUserModalContainer from "./RemoveUserModalContainer";
+import { Overlay } from "react-native-elements";
+import LottieView from "lottie-react-native";
 
 function ProfileContainer({ navigation }) {
    const { user } = useSelector(({ auth }) => auth);
-   const [loading, setLoading] = useState({ photo: false, name: false });
+   const [loading, setLoading] = useState(false);
    const [onEdit, setOnEdit] = useState({});
    const [editUserInfo, setEditUserInfo] = useState({});
    const [modalVisible, setModalVisible] = useState(false);
@@ -20,14 +22,6 @@ function ProfileContainer({ navigation }) {
    const [reauthenticated, setReauthenticated] = useState(false);
    const [reauthVisible, setReauthVisible] = useState(false);
    const [errMsg, setErrMsg] = useState({ name: "" });
-   const dispatch = useDispatch();
-
-   useEffect(() => {
-      const reload = async () => {
-         await user.reload();
-      };
-      reload();
-   }, []);
 
    const changeAvatar = async () => {
       try {
@@ -44,18 +38,18 @@ function ProfileContainer({ navigation }) {
             aspect: [4, 4],
             quality: 1,
          });
-         setLoading((prev) => ({ ...prev, photo: true }));
+         setLoading(true);
          if (!result.cancelled) {
             await updateProfileAvatar(user.uid, result.uri, user);
          }
       } catch (err) {
          console.log(err);
       }
-      setLoading((prev) => ({ ...prev, photo: false }));
+      setLoading(false);
    };
 
    const changeDisplayName = async () => {
-      setLoading((prev) => ({ ...prev, name: true }));
+      setLoading(true);
       if (user.displayName !== editUserInfo.name) {
          try {
             await updateDisplayName(user, editUserInfo.name);
@@ -69,7 +63,7 @@ function ProfileContainer({ navigation }) {
       } else {
          setOnEdit({});
       }
-      setLoading((prev) => ({ ...prev, name: false }));
+      setLoading(false);
    };
 
    const onPressOnEdit = (name, value) => {
@@ -97,7 +91,6 @@ function ProfileContainer({ navigation }) {
          <Profile
             user={user}
             changeAvatar={changeAvatar}
-            loading={loading}
             changeDisplayName={changeDisplayName}
             onPressOnEdit={onPressOnEdit}
             onEdit={onEdit}
@@ -112,21 +105,41 @@ function ProfileContainer({ navigation }) {
                reauthVisible={reauthVisible}
                setReauthVisible={setReauthVisible}
                setReauthenticated={setReauthenticated}
+               setLoading={setLoading}
             />
          ) : (
             <>
                <PwUpdateContainer
                   visible={modalVisible}
                   setVisible={setModalVisible}
+                  setLoading={setLoading}
                />
                <RemoveUserModalContainer
                   visible={removeUserVisible}
                   setVisible={setRemoveUserVisible}
                   navigation={navigation}
                   user={user}
+                  setLoading={setLoading}
                />
             </>
          )}
+
+         <Overlay
+            isVisible={loading}
+            overlayStyle={{
+               padding: 0,
+               elevation: 0,
+               backgroundColor: "transparent",
+            }}>
+            <LottieView
+               style={{
+                  width: 100,
+                  height: 100,
+               }}
+               autoPlay
+               source={require("../../../lib/styles/lottie/loading-circle.json")}
+            />
+         </Overlay>
       </>
    );
 }

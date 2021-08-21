@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Avatar, Icon, Input, Button } from "react-native-elements";
-import { ActivityIndicator } from "react-native";
 
 const styles = StyleSheet.create({
    loading: {
@@ -31,7 +30,6 @@ const styles = StyleSheet.create({
 function Header({
    user,
    changeAvatar,
-   loading,
    changeDisplayName,
    onPressOnEdit,
    onEdit,
@@ -51,23 +49,15 @@ function Header({
                   ? { source: { uri: user?.photoURL } }
                   : { title: user?.displayName.slice(0, 2) };
             })()}>
-            {loading.photo ? (
-               <ActivityIndicator
-                  style={styles.loading}
-                  size={30}
-                  color="white"
-               />
-            ) : (
-               <Avatar.Accessory
-                  icon={{
-                     name: "pencil",
-                     type: "font-awesome",
-                     raised: true,
-                  }}
-                  size={40}
-                  onPress={changeAvatar}
-               />
-            )}
+            <Avatar.Accessory
+               icon={{
+                  name: "pencil",
+                  type: "font-awesome",
+                  raised: true,
+               }}
+               size={40}
+               onPress={changeAvatar}
+            />
          </Avatar>
          {onEdit.name ? (
             <View style={{ flexDirection: "row", width: "50%" }}>
@@ -88,22 +78,14 @@ function Header({
          ) : (
             <>
                <Text style={styles.name}>{user?.displayName}</Text>
-               {loading.name ? (
-                  <ActivityIndicator
-                     style={styles.editName}
-                     size={20}
-                     color="white"
-                  />
-               ) : (
-                  <Icon
-                     name="pencil"
-                     type="font-awesome"
-                     color="white"
-                     size={20}
-                     containerStyle={styles.editName}
-                     onPress={() => onPressOnEdit("name", user?.displayName)}
-                  />
-               )}
+               <Icon
+                  name="pencil"
+                  type="font-awesome"
+                  color="white"
+                  size={20}
+                  containerStyle={styles.editName}
+                  onPress={() => onPressOnEdit("name", user?.displayName)}
+               />
             </>
          )}
       </>

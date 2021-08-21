@@ -5,7 +5,7 @@ export const getProfile = async () => {
       const res = await fbAuth.currentUser;
       return res;
    } catch (err) {
-      console.log(err);
+      throw err;
    }
 };
 
@@ -44,14 +44,15 @@ export const updateDisplayName = async (user, newName) => {
       const res = await user.updateProfile({ displayName: newName });
       return res;
    } catch (err) {
-      return err;
+      throw err;
    }
 };
 
 export const deleteProfile = async (uid) => {
    try {
-      console.log(asd);
+      var desertRef = fbStorageRef.child(`avatars/${uid}.png`);
+      await desertRef.delete();
    } catch (err) {
-      return err;
+      throw err;
    }
 };

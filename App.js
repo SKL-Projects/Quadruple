@@ -18,7 +18,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home";
 import Auth from "./src/screens/Auth";
-import { fbAuth } from "./firebase";
 import CostScreen from "./src/screens/Cost";
 import ProfileScreen from "./src/screens/Profile";
 
@@ -35,6 +34,7 @@ sagaMiddleware.run(rootSaga);
 
 /* logbox */
 import { LogBox, Platform } from "react-native";
+import AppInit from "./AppInit";
 
 if (Platform.OS !== "web") {
    LogBox.ignoreLogs([
@@ -51,37 +51,39 @@ export default function App() {
    return (
       <ThemeProvider theme={theme}>
          <Provider store={store}>
-            <NavigationContainer>
-               <Stack.Navigator initialRouteName="Home">
-                  <Stack.Screen
-                     name="Home"
-                     component={HomeScreen}
-                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                     name="Auth"
-                     component={Auth}
-                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                     name="Cost"
-                     component={CostScreen}
-                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                     name="Travel"
-                     component={TravelScreen}
-                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                     name="Template"
-                     component={Template}
-                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen name="Profile" component={ProfileScreen} />
-               </Stack.Navigator>
-            </NavigationContainer>
-            <ModalPortal />
+            <AppInit>
+               <NavigationContainer>
+                  <Stack.Navigator initialRouteName="Home">
+                     <Stack.Screen
+                        name="Home"
+                        component={HomeScreen}
+                        options={{ headerShown: false }}
+                     />
+                     <Stack.Screen
+                        name="Auth"
+                        component={Auth}
+                        options={{ headerShown: false }}
+                     />
+                     <Stack.Screen
+                        name="Cost"
+                        component={CostScreen}
+                        options={{ headerShown: false }}
+                     />
+                     <Stack.Screen
+                        name="Travel"
+                        component={TravelScreen}
+                        options={{ headerShown: false }}
+                     />
+                     <Stack.Screen
+                        name="Template"
+                        component={Template}
+                        options={{ headerShown: false }}
+                     />
+                     <Stack.Screen name="Profile" component={ProfileScreen} />
+                  </Stack.Navigator>
+               </NavigationContainer>
+               <ModalPortal />
+            </AppInit>
          </Provider>
       </ThemeProvider>
    );

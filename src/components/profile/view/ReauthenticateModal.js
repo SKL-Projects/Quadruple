@@ -4,8 +4,6 @@ import { Input } from "react-native-elements";
 import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../elements/CustomModal";
 
-import LottieView from "lottie-react-native";
-
 function ReauthenticateModal({
    reauthenticate,
    onClose,
@@ -15,7 +13,6 @@ function ReauthenticateModal({
    onChange,
    errMsg,
    password,
-   loading,
 }) {
    const title = <ModalTitle title="재인증" hasTitleBar />;
    const footer = (
@@ -35,38 +32,26 @@ function ReauthenticateModal({
          title={title}
          footer={reauthPw ? footerPw : footer}>
          <View style={styles.container}>
-            {!loading ? (
-               reauthPw ? (
-                  <>
-                     <Text style={{ fontSize: 20 }}>
-                        현재 비밀번호를 입력해주세요.
-                     </Text>
-                     <Input
-                        secureTextEntry={true}
-                        value={password}
-                        errorMessage={errMsg.password}
-                        onChangeText={onChange}
-                     />
-                  </>
-               ) : (
-                  <Text
-                     style={{
-                        fontSize: 20,
-                        alignItems: "center",
-                     }}>
-                     비밀번호 변경/회원탈퇴를 위해선 재로그인이 필요합니다.
+            {reauthPw ? (
+               <>
+                  <Text style={{ fontSize: 20 }}>
+                     현재 비밀번호를 입력해주세요.
                   </Text>
-               )
+                  <Input
+                     secureTextEntry={true}
+                     value={password}
+                     errorMessage={errMsg.password}
+                     onChangeText={onChange}
+                  />
+               </>
             ) : (
-               <LottieView
+               <Text
                   style={{
-                     width: 100,
-                     height: 100,
-                     backgroundColor: "white",
-                  }}
-                  autoPlay
-                  source={require("../../../lib/styles/lottie/loading-circle.json")}
-               />
+                     fontSize: 20,
+                     alignItems: "center",
+                  }}>
+                  비밀번호 변경/회원탈퇴를 위해선 재로그인이 필요합니다.
+               </Text>
             )}
          </View>
       </CustomModal>

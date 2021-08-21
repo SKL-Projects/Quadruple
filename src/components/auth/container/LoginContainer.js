@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Login from "../view/Login";
-import { fbAuth, fbAuthObject, fbStore } from "../../../../firebase";
-import { useDispatch } from "react-redux";
-import { signin } from "../../../modules/auth";
+import { fbAuth, fbAuthObject } from "../../../../firebase";
 import { View } from "react-native";
 import PwResetModal from "../view/PwResetModal";
 
@@ -14,6 +12,8 @@ import handleError, {
 } from "../../utils/HandleAuthErr";
 import VerifyEmailModal from "../view/VerifyEmailModal";
 import { config } from "../../utils/GoogleAuthConfig";
+import { Overlay } from "react-native-elements";
+import LottieView from "lottie-react-native";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -37,14 +37,12 @@ function LoginContainer({ navigation }) {
    const [PwResetSended, setPwResetSended] = useState(false);
    const [request, response, promptAsync] =
       Google.useIdTokenAuthRequest(config);
-   const dispatch = useDispatch();
    const [visibleSentEmail, setVisibleSentEmail] = useState(false);
 
    useEffect(() => {
       const googleSignin = async (credential) => {
          const res = await fbAuth.signInWithCredential(credential);
          await fbAuth.setPersistence(fbAuthObject.Auth.Persistence.LOCAL);
-         dispatch(signin(res.user));
       };
       if (response?.type === "success") {
          const { id_token } = response.params;
@@ -79,11 +77,10 @@ function LoginContainer({ navigation }) {
       if (login) {
          setLoading(true);
          try {
-            const res = await fbAuth.signInWithEmailAndPassword(
+            await fbAuth.signInWithEmailAndPassword(
                userInfo.email,
                userInfo.password
             );
-            dispatch(signin(res.user));
             await fbAuth.setPersistence(fbAuthObject.Auth.Persistence.LOCAL);
             navigation.navigate("Home");
          } catch (err) {
@@ -111,36 +108,25 @@ function LoginContainer({ navigation }) {
             );
          } catch (err) {
             catchError(err.code, setErrMsg, "passwordCheck");
+            setLoading(false);
             return;
          }
 
          // 사용자 이름 업데이트
          await res.user.updateProfile({ displayName: userInfo.name });
-         /*
-         await fbStore.collection(res.user.uid).doc("profile").set({
-            createdAt: Date.now(),
-            name: userInfo.name,
-         });*/
 
          // 로그인
          res = await fbAuth.signInWithEmailAndPassword(
             userInfo.email,
             userInfo.password
          );
-         dispatch(signin(res.user, "email"));
 
          // 인증 메일 보내기
          try {
             await res.user.sendEmailVerification();
             setVisibleSentEmail(true);
          } catch (err) {
-            try {
-               await res.user.sendEmailVerification();
-               setVisibleSentEmail(true);
-            } catch (err) {
-               catchError(err.code, setErrMsg, "passwordCheck");
-               return;
-            }
+            catchError(err.code, setErrMsg, "passwordCheck");
          }
       }
       setLoading(false);
@@ -162,6 +148,19 @@ function LoginContainer({ navigation }) {
       setVisibleSentEmail(false);
       navigation.navigate("Home");
    };
+
+   const sendPwResetEmail = async () => {
+      setLoading(true);
+      try {
+         await fbAuth.sendPasswordResetEmail(userInfo.email);
+         setPwResetSended(true);
+         setUserInfo((prev) => ({ ...prev, password: "" }));
+      } catch (err) {
+         console.log(err);
+      }
+      setLoading(false);
+   };
+
    return (
       <View style={{ flex: 1 }}>
          <Login
@@ -182,12 +181,29 @@ function LoginContainer({ navigation }) {
             setModalVisible={setModalVisible}
             email={userInfo.email}
             PwResetSended={PwResetSended}
-            setPwResetSended={setPwResetSended}
+            sendPwResetEmail={sendPwResetEmail}
          />
          <VerifyEmailModal
             visible={visibleSentEmail}
             onCloseSentEmail={onCloseSentEmail}
          />
+
+         <Overlay
+            isVisible={loading}
+            overlayStyle={{
+               padding: 0,
+               elevation: 0,
+               backgroundColor: "transparent",
+            }}>
+            <LottieView
+               style={{
+                  width: 100,
+                  height: 100,
+               }}
+               autoPlay
+               source={require("../../../lib/styles/lottie/loading-circle.json")}
+            />
+         </Overlay>
       </View>
    );
 }

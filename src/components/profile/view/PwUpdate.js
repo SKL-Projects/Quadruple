@@ -3,7 +3,6 @@ import { StyleSheet, View, Text } from "react-native";
 import { Input } from "react-native-elements";
 import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../elements/CustomModal";
-import LottieView from "lottie-react-native";
 
 function PwUpdate({
    visible,
@@ -13,7 +12,6 @@ function PwUpdate({
    onPasswordUpdate,
    errMsg,
    success,
-   loading,
 }) {
    const title = <ModalTitle title="비밀번호 변경" hasTitleBar />;
    const footer = (
@@ -37,35 +35,23 @@ function PwUpdate({
          title={title}
          footer={success ? footerSuccess : footer}>
          <View style={styles.container}>
-            {!loading ? (
-               success ? (
-                  <Text style={{ fontSize: 20 }}>
-                     비밀번호 변경에 성공하셨습니다.
-                  </Text>
-               ) : (
-                  <>
-                     <Text style={{ fontSize: 20 }}>
-                        새로운 비밀번호를 입력해주세요.
-                     </Text>
-                     <Input
-                        style={{ width: "80%" }}
-                        secureTextEntry={true}
-                        value={password}
-                        errorMessage={errMsg.password}
-                        onChangeText={onChange}
-                     />
-                  </>
-               )
+            {success ? (
+               <Text style={{ fontSize: 20 }}>
+                  비밀번호 변경에 성공하셨습니다.
+               </Text>
             ) : (
-               <LottieView
-                  style={{
-                     width: 100,
-                     height: 100,
-                     backgroundColor: "white",
-                  }}
-                  autoPlay
-                  source={require("../../../lib/styles/lottie/loading-circle.json")}
-               />
+               <>
+                  <Text style={{ fontSize: 20 }}>
+                     새로운 비밀번호를 입력해주세요.
+                  </Text>
+                  <Input
+                     style={{ width: "80%" }}
+                     secureTextEntry={true}
+                     value={password}
+                     errorMessage={errMsg.password}
+                     onChangeText={onChange}
+                  />
+               </>
             )}
          </View>
       </CustomModal>

@@ -5,7 +5,7 @@ import ReauthenticateModal from "../view/ReauthenticateModal";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import handleError, { checkPassword } from "../../utils/HandleAuthErr";
-import { fbAuth, fbAuthObject } from "../../../../firebase";
+import { fbAuthObject } from "../../../../firebase";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -13,6 +13,7 @@ function ReauthenticateModalContainer({
    setReauthenticated,
    reauthVisible,
    setReauthVisible,
+   setLoading,
 }) {
    const { user } = useSelector(({ auth }) => auth);
    const [request, response, promptAsync] =
@@ -20,7 +21,6 @@ function ReauthenticateModalContainer({
    const [reauthPw, setReauthPw] = useState(false);
    const [password, setPassword] = useState("");
    const [errMsg, setErrMsg] = useState({ password: "" });
-   const [loading, setLoading] = useState(false);
 
    useEffect(() => {
       const callReauth = async (credential) => {
@@ -101,7 +101,6 @@ function ReauthenticateModalContainer({
          onChange={onChange}
          errMsg={errMsg}
          password={password}
-         loading={loading}
       />
    );
 }

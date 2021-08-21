@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import PwUpdate from "../view/PwUpdate";
-import handleError, { checkPassword } from "../../utils/HandleAuthErr";
-import testPassword from "../../utils/testPassword";
+import { checkPassword } from "../../utils/HandleAuthErr";
 import { fbAuth } from "../../../../firebase";
 
-function PwUpdateContainer({ visible, setVisible }) {
+function PwUpdateContainer({ visible, setVisible, setLoading }) {
    const [password, setPassword] = useState("");
    const [success, setSuccess] = useState(false);
    const [errMsg, setErrMsg] = useState({ password: "" });
-   const [loading, setLoading] = useState(false);
 
    const onPasswordUpdate = async (pw) => {
       if (success) {
@@ -52,7 +50,6 @@ function PwUpdateContainer({ visible, setVisible }) {
          onPasswordUpdate={onPasswordUpdate}
          errMsg={errMsg}
          success={success}
-         loading={loading}
       />
    );
 }

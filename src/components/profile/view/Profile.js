@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
 function Profile({
    user,
    changeAvatar,
-   loading,
    changeDisplayName,
    onPressOnEdit,
    onEdit,
@@ -42,7 +41,6 @@ function Profile({
             <Header
                user={user}
                changeAvatar={changeAvatar}
-               loading={loading}
                changeDisplayName={changeDisplayName}
                onPressOnEdit={onPressOnEdit}
                onEdit={onEdit}
