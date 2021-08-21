@@ -11,7 +11,7 @@ import AutoComplete from './AutoComplete'
 
 const mapView = React.createRef();   
 
-export default function Cost_map(props) {
+export default function Cost_map({currentCoordinate}) {
   
   const [region, setRegion] = useState('');  
   const [isLoading, setIsLoading] = useState(true);
@@ -20,10 +20,9 @@ export default function Cost_map(props) {
   const setLocation = async () => { //위치 가져오기
     try {
       setRegion({
-        latitude:33,
-        longitude:127,
-        latitudeDelta: 40,
-        longitudeDelta: 40,
+        ...currentCoordinate,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
       })
       //setDirectionData( data.filter((x) => x.type=='transit') )
       setIsLoading(false);
@@ -33,17 +32,7 @@ export default function Cost_map(props) {
     }
   }
 
-   const handleMapPress = (latlng) => {
-    
-    const pos = {
-      ...latlng,
-      latitudeDelta: region.latitudeDelta,
-      longitudeDelta: region.longitudeDelta,
-    }
-    setRegion(pos) 
-    setVisible(1)
-    props.setcoordinate(pos)
-  }
+   
 
   useEffect(() => {
     if(isLoading)
@@ -53,37 +42,47 @@ export default function Cost_map(props) {
   
   
   return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <View style={styles.content}>
-          <Text>Loading...</Text>
-        </View>
-      ):(
-        <>
-          <AutoComplete setRegion={setRegion}/>
+    <View style={styles.centeredView}>
+      <View style={styles.modalView}>
+        {isLoading ? (
+          <View style={styles.content}>
+            <Text>Loading...</Text>
+          </View>
+        ):(
           <MapView 
             provider={PROVIDER_GOOGLE} 
             region={region}
             ref={mapView}
-            onPress={(e) =>handleMapPress(e.nativeEvent.coordinate)}
             key="Gmap"
             style={styles.map}
           > 
-            {visible ? (<MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }}/>) : (<></>)}
+            {currentCoordinate && <MapView.Marker coordinate={currentCoordinate}/>}
           </MapView>
-          <Text>{region.latitude}</Text>
-        </>
-      )}
+        )}
+      </View>
     </View>
    );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  centeredView: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   },
   content: {
     position:'absolute',
@@ -92,8 +91,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   map: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width/1.5,
+    height: Dimensions.get('window').height/2,
     zIndex:1,
   },
 });

@@ -3,13 +3,17 @@ import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal
 import Icon from 'react-native-vector-icons/Ionicons';
 import { editTravelBlock } from "../../../lib/api/travelBlock";
 import { Snackbar } from 'react-native-paper';
+import GoogleMap from '../elements/Googlemap';
+import { Alert } from "react-native";
 
 export default function Cost_list({fb_plans,fb_infos}) {
 
   const [cost, setCost] = useState(0);
   const [snackVisible, setSnackVisible] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentCoordinate, setCurrentCoordinate] = useState();
+  
   const images = {
     start:'arrow-forward-outline' ,
     end:'arrow-back-outline' ,
@@ -42,6 +46,15 @@ export default function Cost_list({fb_plans,fb_infos}) {
     {fb_plans.map((data) => {
       setCost((cost) => cost+data.cost)      
     })}
+  }
+
+  const isModalVisible = (loca) =>{
+    loca ? (
+      setModalVisible(true),
+      setCurrentCoordinate(loca)
+    ) : (
+      Alert.alert('','좌표가 없는 위치입니다')
+    ) 
   }
 
   const submitCost = async (item,c,i) => {
@@ -116,6 +129,7 @@ export default function Cost_list({fb_plans,fb_infos}) {
                 style={styles.pressableBtn}
                 key={i.toString()}
                 style={styles.item}
+                onPress={() => isModalVisible(item.location)}
               >       
                 <View style={styles.item_left}>
                   <Icon name={images[item.detailType]} size={35} color="#753BBD" style={styles.icon}/>
@@ -151,6 +165,20 @@ export default function Cost_list({fb_plans,fb_infos}) {
           ))}
         </View>
       </ScrollView >
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View>
+          <View style={styles.modalView}>
+            <GoogleMap currentCoordinate={currentCoordinate}/>
+          </View>
+        </View>
+      </Modal>
       <Snackbar
         visible={snackVisible}
         onDismiss={() => setSnackVisible(false)}
@@ -168,6 +196,7 @@ const styles = StyleSheet.create({
     paddingTop: 22,
     alignItems: 'center',
     justifyContent: 'center',
+    
   },
   content: {
     height: Dimensions.get('window').height - 90,
@@ -319,5 +348,10 @@ const styles = StyleSheet.create({
   item2InputTextType2: {
     borderWidth: 0,
     color: '#000000',
+  },
+  modalView: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+    zIndex: 2,
   },
 });

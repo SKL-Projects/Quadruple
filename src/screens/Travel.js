@@ -2,6 +2,7 @@ import React from "react";
 import TravelContainer from "../components/travel/container/TravelContainer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LikeContainer from "../components/like/container/LikeContainer";
+import CostContainer from "../components/cost/container/CostContainer";
 import { Icon } from "react-native-elements";
 
 const Tab = createBottomTabNavigator();
@@ -27,6 +28,16 @@ export default function TravelScreen({}) {
                tabBarLabel: "일정",
                tabBarIcon: (props) => (
                   <Icon {...props} name="road" type="font-awesome" />
+               ),
+            }}
+         />
+         <Tab.Screen
+            name="Cost"
+            component={CostContainer}
+            options={{
+               tabBarLabel: "가계부",
+               tabBarIcon: (props) => (
+                  <Icon {...props} name="calculator" type="font-awesome" />
                ),
             }}
          />
