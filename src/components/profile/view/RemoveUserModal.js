@@ -1,7 +1,8 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../elements/CustomModal";
+import CustomModalFooter from "../../elements/CustomModalFooter";
+import CustomModalHeader from "../../elements/CustomModalHeader";
 
 function RemoveUserModal({
    visible,
@@ -10,27 +11,19 @@ function RemoveUserModal({
    removeUserFunc,
    success,
 }) {
-   const title = <ModalTitle title="주의" hasTitleBar />;
-   const footer = (
-      <ModalFooter>
-         <ModalButton
-            text="탈퇴"
-            textStyle={{ color: "red" }}
-            onPress={removeUserFunc}
-         />
-         <ModalButton text="취소" onPress={() => setVisible(false)} />
-      </ModalFooter>
-   );
-   const footerOnSuccess = (
-      <ModalFooter>
-         <ModalButton text="확인" onPress={afterRemove} />
-      </ModalFooter>
-   );
+   const footer = [
+      { text: "탈퇴", textStyle: { color: "red" }, onPress: removeUserFunc },
+      { text: "취소", onPress: () => setVisible(false) },
+   ];
+   const footerOnSuccess = [{ text: "확인", onPress: afterRemove }];
+
    return (
       <CustomModal
          visible={visible}
-         title={title}
-         footer={success ? footerOnSuccess : footer}>
+         title={<CustomModalHeader title="주의" hasTitleBar />}
+         footer={
+            <CustomModalFooter buttons={success ? footerOnSuccess : footer} />
+         }>
          <View style={styles.container}>
             <Text style={{ fontSize: 20 }}>
                {success

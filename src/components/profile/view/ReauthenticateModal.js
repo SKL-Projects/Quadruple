@@ -1,8 +1,9 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Input } from "react-native-elements";
-import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../elements/CustomModal";
+import CustomModalFooter from "../../elements/CustomModalFooter";
+import CustomModalHeader from "../../elements/CustomModalHeader";
 
 function ReauthenticateModal({
    reauthenticate,
@@ -14,23 +15,23 @@ function ReauthenticateModal({
    errMsg,
    password,
 }) {
-   const title = <ModalTitle title="재인증" hasTitleBar />;
-   const footer = (
-      <ModalFooter>
-         <ModalButton text="취소" onPress={onClose} />
-         <ModalButton text="재로그인" onPress={reauthenticate} />
-      </ModalFooter>
-   );
-   const footerPw = (
-      <ModalFooter>
-         <ModalButton text="확인" onPress={reauthWithPw} />
-      </ModalFooter>
-   );
+   const footer = [
+      { text: "재로그인", onPress: reauthenticate },
+      { text: "취소", onPress: onClose },
+   ];
+
+   const footerPw = [
+      { text: "확인", onPress: reauthWithPw },
+      { text: "취소", onPress: onClose },
+   ];
+
+   // 재로그인 누르면, 구글 회원일 경우 구글로그인창으로,
+   // 일반회원일경우 비밀번호 입력창이 나옴
    return (
       <CustomModal
          visible={visible}
-         title={title}
-         footer={reauthPw ? footerPw : footer}>
+         title={<CustomModalHeader title="재로그인" hasTitleBar />}
+         footer={<CustomModalFooter buttons={reauthPw ? footerPw : footer} />}>
          <View style={styles.container}>
             {reauthPw ? (
                <>

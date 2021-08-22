@@ -16,9 +16,11 @@ const styles = StyleSheet.create({
    },
    content: {
       flex: 5,
+      width: "100%",
+      alignItems: "center",
    },
    input: {
-      width: 400,
+      width: 350,
    },
    header: {
       flex: 1,
@@ -26,7 +28,13 @@ const styles = StyleSheet.create({
    },
    inputContainer: {
       flex: 5,
-      width: 400,
+      width: 350,
+      alignItems: "center",
+   },
+   buttonContainers: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      width: 350,
    },
    button: {
       width: 100,
@@ -94,12 +102,7 @@ function Login({
                      onChangeText={(value) => onChange("passwordCheck", value)}
                   />
                )}
-               <View
-                  style={{
-                     flexDirection: "row",
-                     justifyContent: "flex-end",
-                     width: 400,
-                  }}>
+               <View style={styles.buttonContainers}>
                   {wrongPW && (
                      <Button
                         title="비밀번호 찾기"
@@ -126,6 +129,7 @@ function Login({
                      title="구글로 로그인하기"
                      type="outline"
                      iconPosition="left"
+                     containerStyle={{ width: 350 }}
                      onPress={onGoogleSignin}
                      icon={
                         <Icon

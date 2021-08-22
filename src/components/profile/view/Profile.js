@@ -1,4 +1,5 @@
 import React from "react";
+import { Dimensions } from "react-native";
 import { StyleSheet, View, Text } from "react-native";
 import { ListItem } from "react-native-elements";
 import { Button } from "react-native-elements";
@@ -6,18 +7,19 @@ import Header from "./Header";
 const styles = StyleSheet.create({
    container: {
       flex: 1,
+      height: Dimensions.get("window").height,
       backgroundColor: "#fff",
    },
    avatar: {
-      flex: 2,
       alignItems: "center",
       justifyContent: "center",
+      padding: 20,
    },
-   content: {
-      flex: 4,
-   },
+   content: {},
    bottomBar: {
-      flex: 1,
+      position: "absolute",
+      width: "100%",
+      bottom: 0,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-around",
@@ -60,7 +62,11 @@ function Profile({
          </View>
          <View style={styles.bottomBar}>
             {user?.providerData[0].providerId === "password" && (
-               <Button title="비밀번호 변경" onPress={showChangePassword} />
+               <Button
+                  title="비밀번호 변경"
+                  onPress={showChangePassword}
+                  type="clear"
+               />
             )}
             <Button
                title="회원탈퇴"

@@ -3,6 +3,8 @@ import { StyleSheet, View, Text } from "react-native";
 import { Input } from "react-native-elements";
 import { ModalButton, ModalFooter, ModalTitle } from "react-native-modals";
 import CustomModal from "../../elements/CustomModal";
+import CustomModalFooter from "../../elements/CustomModalFooter";
+import CustomModalHeader from "../../elements/CustomModalHeader";
 
 function PwUpdate({
    visible,
@@ -13,27 +15,27 @@ function PwUpdate({
    errMsg,
    success,
 }) {
-   const title = <ModalTitle title="비밀번호 변경" hasTitleBar />;
-   const footer = (
-      <ModalFooter>
-         <ModalButton
-            text={"변경"}
-            onPress={() => onPasswordUpdate(password)}
-         />
-         <ModalButton text={success ? "확인" : "취소"} onPress={clear} />
-      </ModalFooter>
-   );
-   const footerSuccess = (
-      <ModalFooter>
-         <ModalButton text="확인" onPress={clear} />
-      </ModalFooter>
-   );
+   const footer = [
+      {
+         text: "변경",
+         onPress: () => onPasswordUpdate(password),
+      },
+      { text: "취소", onPress: clear },
+   ];
+   const footerSuccess = [
+      {
+         text: "확인",
+         onPress: clear,
+      },
+   ];
 
    return (
       <CustomModal
          visible={visible}
-         title={title}
-         footer={success ? footerSuccess : footer}>
+         title={<CustomModalHeader title="비밀번호 변경" hasTitleBar />}
+         footer={
+            <CustomModalFooter buttons={success ? footerSuccess : footer} />
+         }>
          <View style={styles.container}>
             {success ? (
                <Text style={{ fontSize: 20 }}>

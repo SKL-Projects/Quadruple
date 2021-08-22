@@ -39,6 +39,7 @@ function LoginContainer({ navigation }) {
       Google.useIdTokenAuthRequest(config);
    const [visibleSentEmail, setVisibleSentEmail] = useState(false);
 
+   // 구글 로그인 리스너 등록
    useEffect(() => {
       const googleSignin = async (credential) => {
          const res = await fbAuth.signInWithCredential(credential);
@@ -74,6 +75,7 @@ function LoginContainer({ navigation }) {
       } else if (!checkPassword(userInfo.password, setErrMsg)) {
          return;
       }
+      // 로그인일경우 if문이, 회원가입일 경우 else문이 실행됨.
       if (login) {
          setLoading(true);
          try {
@@ -131,10 +133,13 @@ function LoginContainer({ navigation }) {
       }
       setLoading(false);
    };
+
+   //비번 찾기 버튼 눌렀을때
    const passwordReset = () => {
       setModalVisible(true);
    };
 
+   //구글로 로그인하기 버튼 눌렀을때.
    const onGoogleSignin = async () => {
       try {
          await promptAsync();
@@ -144,11 +149,14 @@ function LoginContainer({ navigation }) {
       }
    };
 
+   // 이메일 다 보내고, 닫기
    const onCloseSentEmail = () => {
       setVisibleSentEmail(false);
       navigation.navigate("Home");
    };
 
+   // 가입 후 이메일 인증을 위한 메일보내기.
+   // 인증 안해도 로그인은 됨.
    const sendPwResetEmail = async () => {
       setLoading(true);
       try {

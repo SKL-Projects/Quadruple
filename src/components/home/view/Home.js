@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "react-native-elements";
 import { StyleSheet, View, Text } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useDispatch, useSelector } from "react-redux";
 import logout from "../../auth/container/LogoutFunc";
 
@@ -16,10 +15,7 @@ function Home({ navigation }) {
          <View style={styles.login}>
             {auth.signined ? (
                <>
-                  <Button
-                     title="Log out"
-                     onPress={() => logout(auth, dispatch)}
-                  />
+                  <Button title="Log out" onPress={() => logout(dispatch)} />
                   <Button
                      title="Profile"
                      onPress={() => navigation.navigate("Profile")}
