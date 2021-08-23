@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
+import Direction from "../elements/Direction";
 import {
   StyleSheet,
   Text,
@@ -15,7 +16,6 @@ const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-
 export default function Cost_map({fb_region,fb_plans,fb_infos}) {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState('');
@@ -23,10 +23,10 @@ export default function Cost_map({fb_region,fb_plans,fb_infos}) {
   const [dis, setDis] = useState([]);
   const [dayCost, setDayCost] = useState(0);
   const [leftCost, setLeftCost] = useState([fb_infos.expectedCost-fb_plans[0].cost]);
+  const [points, setpoints] = useState({startPoint:{latitude:0,longitude:0},endPoint:{latitude:0,longitude:0}});
   
 
-  const mapView = React.createRef();   
-  let mapIndex = 0;
+  const mapView = React.createRef();     
   const _scrollView = React.useRef(null);
   let mapAnimation = new Animated.Value(0);
   let markers = fb_plans;
@@ -78,11 +78,24 @@ export default function Cost_map({fb_region,fb_plans,fb_infos}) {
       
       setX(index)
       //animateion 설정
-      
-      pos = {
-        ...location,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
+      if(location){
+        pos = {
+          ...location,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }
+        setpoints({startPoint:{latitude:0,longitude:0},endPoint:{latitude:0,longitude:0}})
+      }
+      else{
+        const pos1 = markers[index-1].location
+        const pos2 = markers[index+1].location
+        pos = {
+          latitude:Math.abs((pos1.latitude+pos2.latitude)/2),
+          longitude:Math.abs((pos1.longitude+pos2.longitude)/2),
+          latitudeDelta: Math.abs((pos1.latitude-pos2.latitude)*1.2),
+          longitudeDelta: Math.abs((pos1.longitude-pos2.longitude)*1.2),
+        }
+        setpoints({startPoint:pos1,endPoint:pos2})
       }
       
       mapView.current.animateToRegion(pos,350)
@@ -166,22 +179,30 @@ export default function Cost_map({fb_region,fb_plans,fb_infos}) {
             ref={mapView}
             key="Gmap"
             style={styles.map}>
-            {markers.filter((x) => x.location != null).map((marker, index) => {
+            {markers.map((marker, index) => {
               const scaleStyle = {
                 transform: [{scale: interpolations[index].scale,},],
               };              
               return (
-                <MapView.Marker key={index} coordinate={marker.location} onPress={(e)=>onMarkerPress(e)} style={[{opacity:dis[index]},styles.markerWrap]} >
-                  <Animated.View 
-                    style={scaleStyle}
-                  >
-                    <ImageBackground source={require('../../../../assets/map_marker.png')} resizeMode="contain" style={styles.marker}>
-                      <Text style={styles.markerText}>&nbsp;{makeComma(marker.cost)}&nbsp;</Text>
-                    </ImageBackground>
-                  </Animated.View >
-                </MapView.Marker>
+                <>
+                  {marker.location ? (
+                    <MapView.Marker key={index} coordinate={marker.location} onPress={(e)=>onMarkerPress(e)} style={[{opacity:dis[index]},styles.markerWrap]} >
+                      <Animated.View 
+                        style={scaleStyle}
+                      >
+                        <ImageBackground source={require('../../../../assets/map_marker.png')} resizeMode="contain" style={styles.marker}>
+                          <Text style={styles.markerText}>&nbsp;{makeComma(marker.cost)}&nbsp;</Text>
+                        </ImageBackground>
+                      </Animated.View >
+                    </MapView.Marker>
+                  ):(
+                    <></>
+                  )}
+                  
+                </>
               );
-            })}          
+            })}    
+            <Direction points={points} />      
           </MapView>
           <View style={styles.scrollHeader}>
             <Text>{markers[x].time.getMonth() + 1}월 {markers[x].time.getDate()}일</Text>
