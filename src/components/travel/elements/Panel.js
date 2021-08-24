@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { graph } from "../../utils/Graph";
 import { Button, ListItem } from "react-native-elements";
@@ -18,21 +18,35 @@ function Panel({
    onRemoveBlock,
    onPressListItem,
 }) {
-   let dateHeader = plans[0].date;
+   const [headerArr, setHeaderArr] = useState();
+
+   useEffect(() => {
+      let dateHeader = plans[0].date;
+      let arr = [false];
+      for (let i = 1; i < plans.length; i++) {
+         if (dateHeader !== plans[i].date) {
+            arr.push(true);
+            dateHeader = plans[i].date;
+         } else {
+            arr.push(false);
+         }
+      }
+      setHeaderArr(arr);
+   }, []);
 
    const renderItem = ({ item, index, drag, isActive }) => {
-      const isDifferent = dateHeader !== item.date;
-      dateHeader = item.date;
       return (
          <>
             {
                // 일별로 분리한 것중 가장 위에 있는 것만 날짜랑 같이 렌더함.
                // 길게 눌러서 띄었을때는 안보이도록 함
                // 맨 첫번째 날짜는 blank를 안주기 위해 flattlist 의 header로 줌.
-               isDifferent && !isActive && (
+               headerArr && headerArr[index] && (
                   <>
                      <View style={styles.dayBlank} />
-                     <Text style={styles.dayHeader}>{item.date}</Text>
+                     {!isActive && (
+                        <Text style={styles.dayHeader}>{item.date}</Text>
+                     )}
                   </>
                )
             }
@@ -94,7 +108,7 @@ function Panel({
          renderItem={renderItem}
          onDragEnd={onDragEnd}
          ListHeaderComponent={
-            <Text style={styles.dayHeader}>{dateHeader}</Text>
+            <Text style={styles.dayHeader}>{plans[0].date}</Text>
          }
          ListFooterComponent={<View style={styles.dayContainer} />}
          dragItemOverflow
