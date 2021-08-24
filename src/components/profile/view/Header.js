@@ -37,6 +37,7 @@ function Header({
    editUserInfo,
    errMsg,
 }) {
+   let a;
    return (
       <>
          <Avatar
