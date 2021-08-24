@@ -8,6 +8,7 @@ import DraggableFlatList from "react-native-draggable-flatlist";
 import { WINDOW_WIDTH } from "../../../lib/styles/pixels";
 import { END, START, TRANSIT } from "../../../lib/types";
 import { hhmm } from "../../utils/DateString";
+import SwipeWhenNotActive from "./SwipeWhenNotActive";
 
 function Panel({
    plans,
@@ -18,6 +19,7 @@ function Panel({
    onPressListItem,
 }) {
    let dateHeader = plans[0].date;
+
    const renderItem = ({ item, index, drag, isActive }) => {
       const isDifferent = dateHeader !== item.date;
       dateHeader = item.date;
@@ -34,7 +36,8 @@ function Panel({
                   </>
                )
             }
-            <ListItem.Swipeable
+            <SwipeWhenNotActive
+               isActive={isActive}
                containerStyle={[
                   styles.listItem,
                   stylesFunc(isActive).listItemElevation, // 길게 눌러서 띄었을때 그림자 강화
@@ -73,7 +76,7 @@ function Panel({
                   </ListItem.Title>
                </ListItem.Content>
                <ListItem.Chevron />
-            </ListItem.Swipeable>
+            </SwipeWhenNotActive>
          </>
       );
    };
@@ -91,7 +94,7 @@ function Panel({
             <Text style={styles.dayHeader}>{dateHeader}</Text>
          }
          ListFooterComponent={<View style={styles.dayContainer} />}
-         activationDistance={30}
+         activationDistance={0}
       />
    );
 }
