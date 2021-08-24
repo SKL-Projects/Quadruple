@@ -9,9 +9,6 @@ import { WINDOW_WIDTH } from "../../../lib/styles/pixels";
 import { END, START, TRANSIT } from "../../../lib/types";
 import { hhmm } from "../../utils/DateString";
 import SwipeWhenNotActive from "./SwipeWhenNotActive";
-import { Dimensions } from "react-native";
-import { TouchableHighlight } from "react-native";
-import { TouchableOpacity } from "react-native";
 
 function Panel({
    plans,
@@ -66,32 +63,19 @@ function Panel({
                            onPress={() => onRemoveBlock(item.id, index)}
                         />
                      ),
-                  })}>
+                  })}
+               onLongPress={drag}
+               delayLongPress={250}
+               onPress={() =>
+                  onPressListItem(item.location, item.id, index, item.direction)
+               }>
                {graph(item.type)}
-               <TouchableOpacity
-                  delayPressIn={0}
-                  onLongPress={drag}
-                  underlayColor={"white"}
-                  delayLongPress={250}
-                  activeOpacity={0.5}
-                  onPress={() =>
-                     onPressListItem(
-                        item.location,
-                        item.id,
-                        index,
-                        item.direction
-                     )
-                  }
-                  style={{
-                     width: Dimensions.get("window").width * 0.95 - 180,
-                  }}>
-                  <ListItem.Content>
-                     <ListItem.Title style={{ fontSize: 20 }}>
-                        {item.type !== TRANSIT ? `${hhmm(item.time)}   ` : ""}
-                        {item.title}
-                     </ListItem.Title>
-                  </ListItem.Content>
-               </TouchableOpacity>
+               <ListItem.Content>
+                  <ListItem.Title style={{ fontSize: 20 }}>
+                     {item.type !== TRANSIT ? `${hhmm(item.time)}   ` : ""}
+                     {item.title}
+                  </ListItem.Title>
+               </ListItem.Content>
                <View style={{ width: 60 }}>
                   <ListItem.Chevron />
                </View>
