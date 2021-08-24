@@ -9,6 +9,9 @@ import { WINDOW_WIDTH } from "../../../lib/styles/pixels";
 import { END, START, TRANSIT } from "../../../lib/types";
 import { hhmm } from "../../utils/DateString";
 import SwipeWhenNotActive from "./SwipeWhenNotActive";
+import { Dimensions } from "react-native";
+import { TouchableHighlight } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 function Panel({
    plans,
@@ -43,10 +46,6 @@ function Panel({
                   stylesFunc(isActive).listItemElevation, // 길게 눌러서 띄었을때 그림자 강화
                ]}
                underlayColor="white"
-               onPress={() =>
-                  onPressListItem(item.location, item.id, index, item.direction)
-               }
-               onLongPress={drag}
                leftWidth={Math.floor(WINDOW_WIDTH * 0.4)}
                rightWidth={Math.floor(WINDOW_WIDTH * 0.4)}
                leftContent={
@@ -69,13 +68,33 @@ function Panel({
                      ),
                   })}>
                {graph(item.type)}
-               <ListItem.Content>
-                  <ListItem.Title style={{ fontSize: 20 }}>
-                     {item.type !== TRANSIT ? `${hhmm(item.time)}   ` : ""}
-                     {item.title}
-                  </ListItem.Title>
-               </ListItem.Content>
-               <ListItem.Chevron />
+               <TouchableOpacity
+                  delayPressIn={0}
+                  onLongPress={drag}
+                  underlayColor={"white"}
+                  delayLongPress={250}
+                  activeOpacity={0.5}
+                  onPress={() =>
+                     onPressListItem(
+                        item.location,
+                        item.id,
+                        index,
+                        item.direction
+                     )
+                  }
+                  style={{
+                     width: Dimensions.get("window").width * 0.95 - 180,
+                  }}>
+                  <ListItem.Content>
+                     <ListItem.Title style={{ fontSize: 20 }}>
+                        {item.type !== TRANSIT ? `${hhmm(item.time)}   ` : ""}
+                        {item.title}
+                     </ListItem.Title>
+                  </ListItem.Content>
+               </TouchableOpacity>
+               <View style={{ width: 60 }}>
+                  <ListItem.Chevron />
+               </View>
             </SwipeWhenNotActive>
          </>
       );
@@ -94,7 +113,7 @@ function Panel({
             <Text style={styles.dayHeader}>{dateHeader}</Text>
          }
          ListFooterComponent={<View style={styles.dayContainer} />}
-         activationDistance={0}
+         dragItemOverflow
       />
    );
 }
@@ -132,8 +151,6 @@ const styles = StyleSheet.create({
       },
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
-
-      elevation: 3,
    },
    leftButton: {
       height: LIST_ITEM_HEIGHT,
