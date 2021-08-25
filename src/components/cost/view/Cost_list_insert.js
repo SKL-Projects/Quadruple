@@ -86,6 +86,10 @@ export default function Cost_list_insert({parent_setModalVisible}) {
       Alert.alert('', '타입을 선택해주세요', [{ text: '확인' }]);
       this.scrollView.scrollTo({y: 100 });
     }
+    else if (coordinate.latitude === null){
+      Alert.alert('', '장소를 선택해주세요', [{ text: '확인' }]);
+      this.scrollView.scrollTo({y: 200 });
+    }
     else{
       //파이어베이스 추가 + 로딩
       await addTravelBlock(
@@ -175,7 +179,7 @@ export default function Cost_list_insert({parent_setModalVisible}) {
             </View>
           </View>
           <View style={[styles.box, styles.box6]}>
-            <Text style={styles.boxText}>장소 지정(선택)</Text>
+            <Text style={styles.boxText}>장소 지정</Text>
             <Modal
               animationType="slide"
               transparent={true}
@@ -210,7 +214,7 @@ export default function Cost_list_insert({parent_setModalVisible}) {
             <TouchableOpacity
               style={styles.pressableBtn}
               onPress={() => setModalVisible(true)}>
-              {coordinate ? (
+              {coordinate.latitude ? (
                 <Text style={styles.pressableBtnText}>재설정하기</Text>
               ) : (
                 <Text style={styles.pressableBtnText}>지도에서 설정하기</Text>

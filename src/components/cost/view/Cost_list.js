@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput  } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput,LogBox  } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { editTravelBlock } from "../../../lib/api/travelBlock";
 import { Snackbar } from 'react-native-paper';
@@ -13,7 +13,7 @@ export default function Cost_list({fb_plans,fb_infos}) {
   const [isEditable, setIsEditable] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentCoordinate, setCurrentCoordinate] = useState();
-  
+  LogBox.ignoreLogs(['key']);
   const images = {
     start:'arrow-forward-outline' ,
     end:'arrow-back-outline' ,

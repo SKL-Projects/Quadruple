@@ -78,7 +78,7 @@ export default function Cost_map({fb_region,fb_plans,fb_infos}) {
       
       setX(index)
       //animateion 설정
-      if(location){
+      if(location.latitude){
         pos = {
           ...location,
           latitudeDelta: 0.01,
