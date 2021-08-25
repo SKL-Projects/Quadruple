@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal
 import Icon from 'react-native-vector-icons/Ionicons';
 import { editTravelBlock } from "../../../lib/api/travelBlock";
 import { Snackbar } from 'react-native-paper';
-import GoogleMap from '../elements/Googlemap';
+import GoogleMap2 from '../elements/Googlemap2';
 import { Alert } from "react-native";
 
 export default function Cost_list({fb_plans,fb_infos}) {
@@ -175,7 +175,7 @@ export default function Cost_list({fb_plans,fb_infos}) {
       >
         <View>
           <View style={styles.modalView}>
-            <GoogleMap currentCoordinate={currentCoordinate}/>
+            <GoogleMap2 currentCoordinate={currentCoordinate}/>
           </View>
         </View>
       </Modal>
