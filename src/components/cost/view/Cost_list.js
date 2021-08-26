@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput,LogBox  } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { editTravelBlock } from "../../../lib/api/travelBlock";
+import { editTravelBlock, removeTravelBlock } from "../../../lib/api/travelBlock";
 import { Snackbar } from 'react-native-paper';
 import GoogleMap2 from '../elements/Googlemap2';
 import { Alert } from "react-native";
 
-export default function Cost_list({fb_plans,fb_infos}) {
+export default function Cost_list({fb_plans,fb_infos,fb_setRefresh}) {
 
   const [cost, setCost] = useState(0);
   const [snackVisible, setSnackVisible] = useState(false);
@@ -73,6 +73,14 @@ export default function Cost_list({fb_plans,fb_infos}) {
     }
  };
 
+  const del = async (item) => {
+    await removeTravelBlock(
+      "aT1JPMs3GXg7SrkRE1C6KZPJupu1",
+      1627379541738,
+      item
+    );
+    fb_setRefresh((prev) => prev + 1); 
+  }
   const makeComma = (num) => {
     var len, point, str;        
     num = num + ""; 
@@ -159,6 +167,24 @@ export default function Cost_list({fb_plans,fb_infos}) {
                     }
                     <Text style={styles.item2Text}>&nbsp;원</Text>
                   </View>
+                  {isEditable && item.createdWhere != 'travel' && 
+                    <View style={styles.item3}>
+                      <TouchableOpacity onPress={()=>Alert.alert(
+                        "",
+                        "삭제하시겠습니까",
+                        [
+                          {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          { text: "OK", onPress: () => del(item)}
+                        ]
+                      )}>
+                        <Text style={styles.item3Text}>삭제</Text>
+                      </TouchableOpacity>
+                    </View>
+                  }
                 </View>
               </TouchableOpacity>
             </>
@@ -348,6 +374,22 @@ const styles = StyleSheet.create({
   item2InputTextType2: {
     borderWidth: 0,
     color: '#000000',
+  },
+  item3: {
+    flex: 1,
+    width:60,
+    height:30,
+    position:'absolute',
+    right:10,    
+    top:22,    
+    borderRadius:10,
+    backgroundColor:'#bdbdbd',
+    justifyContent: 'center',
+  },
+  item3Text: {
+    fontFamily: 'Font',
+    fontSize: 15,
+    textAlign:"center",
   },
   modalView: {
     height: Dimensions.get('window').height,

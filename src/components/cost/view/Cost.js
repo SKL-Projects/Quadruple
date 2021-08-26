@@ -49,6 +49,7 @@ export default function Cost({
                 navigation={navigation}
                 fb_plans={plans}
                 fb_infos={infos}
+                fb_setRefresh={setRefresh}
               />
             ) : (
               <Cost_map               
@@ -88,7 +89,7 @@ export default function Cost({
             >
               <View>
                 <View style={styles.modalView}>
-                  <Cost_list_insert parent_setModalVisible={setModalVisible}/>
+                  <Cost_list_insert parent_setModalVisible={setModalVisible} fb_setRefresh={setRefresh}/>
                 </View>
               </View>
             </Modal>

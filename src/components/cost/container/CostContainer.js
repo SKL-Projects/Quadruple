@@ -60,7 +60,7 @@ function CostContainer({ navigation }) {
    useEffect(() => {
       getTravel();
       getInfo()
-   }, []);
+   }, [refresh]);
 
 
    return (

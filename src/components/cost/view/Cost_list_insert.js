@@ -20,7 +20,7 @@ import SelectDate from '../elements/SelectDate';
 import { getAllTravelList } from "../../../lib/api/travelList";
 import { addTravelBlock } from "../../../lib/api/travelBlock";
 
-export default function Cost_list_insert({parent_setModalVisible}) {
+export default function Cost_list_insert({parent_setModalVisible,fb_setRefresh}) {
   
   const [isLoading,setIsLoading] = useState(false);
   const [cost, setCost] = useState('');
@@ -98,6 +98,7 @@ export default function Cost_list_insert({parent_setModalVisible}) {
         obj
       );
       parent_setModalVisible(false);
+      fb_setRefresh((prev) => prev + 1); 
     }
   }
 
